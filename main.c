@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 
-#include "isola.h"
+#include "isola/isola.h"
 
 
 #define TIMER_IMPLEMENTATION
@@ -24,6 +24,7 @@ void loop(void){
 	unsigned char run = 1;
 	unsigned char pause = 0;
 
+
 	setupTimer();
 
 
@@ -34,7 +35,7 @@ void loop(void){
 				switch(event.window.event){
 					case SDL_WINDOWEVENT_SIZE_CHANGED:
 					case SDL_WINDOWEVENT_DISPLAY_CHANGED:
-						isolaGetWindow();
+						renderGlobalUpdate();
 					break;
 					case SDL_WINDOWEVENT_CLOSE:
 						run = !run;
@@ -68,6 +69,7 @@ void loop(void){
 			lastFrame = SDL_GetPerformanceCounter();
 			currentFrame++;
 
+
 			renderGlobalDraw();
 
 
@@ -79,7 +81,7 @@ void loop(void){
 
 
 
-int main(void){
+int main(int argc, char **argv){
 
 	srand(time(0));
 	isolaInit();

@@ -16,7 +16,7 @@ extern unsigned long frameDelay[255];
 #ifdef TIMER_IMPLEMENTATION
 
 
-#include "isola.h"
+#include "isola/isola.h"
 
 
 
