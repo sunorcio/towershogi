@@ -221,9 +221,9 @@ unsigned int isolaShaderCompile(const char* shaderFile,
 	f = fopen(shaderFile, "a+");
 	fseek(f, 0, SEEK_END);
 	l = ftell(f);
-	if(!l){SDL_Log("Shader file missing or empty");fclose(f);return 0;}
+	if(!l){SDL_Log("Shader file missing or empty\n");fclose(f);return 0;}
 	if(l>ISOLA_GLSLCHARMAX){SDL_Log("Shader exceeds character limit \
-									(defined in isola.h)");fclose(f);return 0;}
+		(defined in isola.h)\n");fclose(f);return 0;}
 	memset(isolaShaderSrc, 0, ISOLA_GLSLCHARMAX);
 	fseek(f, 0, SEEK_SET);
 	fread(isolaShaderSrc, 1, l, f);
@@ -238,7 +238,7 @@ unsigned int isolaShaderCompile(const char* shaderFile,
 	if(!l){
 		glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &l);
 		glGetShaderInfoLog(shaderObject, l, &l, isolaShaderSrc);
-		SDL_Log("Compilation failed  :  %s",isolaShaderSrc);
+		SDL_Log("Compilation failed  :  %s\n\n",isolaShaderSrc);
 		return 0;
 	}
 #endif
@@ -254,9 +254,9 @@ char* isolaShaderSrcLoad(const char* shaderFile){
 	f = fopen(shaderFile, "a+");
 	fseek(f, 0, SEEK_END);
 	l = ftell(f);
-	if(!l){SDL_Log("Shader file missing or empty");fclose(f);return 0;}
+	if(!l){SDL_Log("Shader file missing or empty\n");fclose(f);return 0;}
 	if(l>ISOLA_GLSLCHARMAX){SDL_Log("Shader exceeds character limit \
-									(defined in isola.h)");fclose(f);return 0;}
+		(defined in isola.h)\n");fclose(f);return 0;}
 	memset(shaderSrc, 0, ISOLA_GLSLCHARMAX);
 	fseek(f, 0, SEEK_SET);
 	(void)fread(shaderSrc, 1, l, f);
@@ -271,9 +271,9 @@ unsigned char isolaShaderSrcCompare(char* shaderSrc,
 	f = fopen(shaderFile, "a+");
 	fseek(f, 0, SEEK_END);
 	l = ftell(f);
-	if(!l){SDL_Log("Shader file missing or empty");fclose(f);return 0;}
+	if(!l){SDL_Log("Shader file missing or empty\n");fclose(f);return 0;}
 	if(l>ISOLA_GLSLCHARMAX){SDL_Log("Shader exceeds character limit \
-									(defined in isola.h)");fclose(f);return 0;}
+		(defined in isola.h)\n");fclose(f);return 0;}
 	memset(isolaShaderSrc, 0, ISOLA_GLSLCHARMAX);
 	fseek(f, 0, SEEK_SET);
 	fread(isolaShaderSrc, 1, l, f);
