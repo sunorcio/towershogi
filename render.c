@@ -81,7 +81,7 @@ static void createDigitFPS(void){
 	glAttachShader(digitSP[0],vs);
 	glAttachShader(digitSP[0],fs);
 
-	glLinkProgram(digitSP[0]);
+	isolaDBG_(glLinkProgram(digitSP[0]);)
 	glDetachShader(digitSP[0],vs);
 	glDetachShader(digitSP[0],fs);
 	glDeleteShader(vs);
