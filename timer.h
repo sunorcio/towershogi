@@ -7,7 +7,7 @@
 extern unsigned long clockFreq;
 extern unsigned long lastFrame;
 extern unsigned long lastStep;
-extern unsigned long frameDelay[255];
+extern unsigned long frameDelay[256];
 
 
 
@@ -24,8 +24,8 @@ extern unsigned long frameDelay[255];
 unsigned long clockFreq = 0;
 unsigned long lastFrame = 0;
 unsigned long lastStep = 0;
-unsigned long frameDelay[255] = {0};
-static unsigned char currentFrame = 0;
+unsigned long frameDelay[256] = {0};
+static unsigned char frameIndex = 0;
 static unsigned short isolaFPS = 60;
 static unsigned int isolaSPS = 60;
 
@@ -36,6 +36,10 @@ void setupTimer(void){
 	clockFreq = SDL_GetPerformanceFrequency();
 	lastFrame = SDL_GetPerformanceCounter();
 	lastStep = SDL_GetPerformanceCounter();
+	{unsigned int i;
+	for(i = 0;i<256;i++){
+		frameDelay[i] = clockFreq/isolaFPS;
+	}}
 }
 
 

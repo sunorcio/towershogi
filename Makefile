@@ -73,8 +73,8 @@ else ifeq (${TARGET_OS},windows)
 
 
  #CFLAGS =
- CFLAGS = ${INCS} -mwindows -std=c89 -O3 -pipe -DGLEW_STATIC -D_REENTRANT
- #LDFLAGS = 
+ CFLAGS = ${INCS} -std=c89 -O3 -pipe -DGLEW_STATIC -D_REENTRANT
+ #LDFLAGS =
  LDFLAGS = ${LIBS} -mwindows
 
 
@@ -141,7 +141,10 @@ ISOLA_DIR = ~/main/isola/isola
 isola:
 	cp ${ISOLA_DIR} . -r
 
+windows:
+	make TARGET_OS=windows
 
 
 
-.PHONY: default_rule test all clean compdb update isola
+
+.PHONY: default_rule test all clean compdb update isola windows

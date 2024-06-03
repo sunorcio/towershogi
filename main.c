@@ -58,22 +58,24 @@ void loop(void){
 		}
 
 		if(!pause){
-			if(SDL_GetPerformanceCounter()>=lastStep+clockFreq/isolaSPS){
-				lastStep = SDL_GetPerformanceCounter();
+			unsigned long currentStep = SDL_GetPerformanceCounter();
+			if(currentStep>=lastStep+clockFreq/isolaSPS){
+				lastStep = currentStep;
 
 			}
 		}
 
-		if(SDL_GetPerformanceCounter()>=lastFrame+clockFreq/isolaFPS){
-			frameDelay[currentFrame] = SDL_GetPerformanceCounter()-lastFrame;
-			lastFrame = SDL_GetPerformanceCounter();
-			currentFrame++;
+		{ unsigned long currentFrame = SDL_GetPerformanceCounter();
+		if(currentFrame>=lastFrame+clockFreq/isolaFPS){
+			frameDelay[frameIndex] = currentFrame-lastFrame;
+			lastFrame = currentFrame;
+			frameIndex++;
 
 
 			renderGlobalDraw();
 
 
-		}else{SDL_Delay(0);}
+		}else{SDL_Delay(0);} }
 
 	}
 }
