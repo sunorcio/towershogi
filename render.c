@@ -82,9 +82,6 @@ static void createDigitFPS(void){
 	glAttachShader(digitSP[0],fs);
 
 	glLinkProgram(digitSP[0]);
-	{int asdf;
-	glGetProgramiv(digitSP[0],GL_LINK_STATUS,&asdf);
-	SDL_Log("%d",asdf);}
 	glDetachShader(digitSP[0],vs);
 	glDetachShader(digitSP[0],fs);
 	glDeleteShader(vs);
@@ -289,8 +286,13 @@ static void createBitmapFont(void){
 
 	glLinkProgram(bitfontSP[0]);
 	{int asdf;
-	glGetProgramiv(bitfontSP[0],GL_LINK_STATUS,&asdf);
-	SDL_Log("%d",asdf);}
+	glGetProgramiv(bitfontSP[0], GL_LINK_STATUS, &asdf);
+	if(!asdf){
+		glGetProgramiv(bitfontSP[0], GL_INFO_LOG_LENGTH, &asdf);
+		{void* log = malloc(asdf*sizeof(char));
+		glGetProgramInfoLog(bitfontSP[0], asdf, &asdf, (char*)log);
+		SDL_Log("Compilation failed  :  %s",(char*)log);}
+	}}
 	glDetachShader(bitfontSP[0],vs);
 	glDetachShader(bitfontSP[0],fs);
 	glDeleteShader(vs);
