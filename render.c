@@ -144,8 +144,8 @@ static void drawDigitFPS(void){
 
 #define bitfontStringBufferSize 1024
 float bitfontPos[2] = {-1.,1.};
-unsigned int bitfontPixelSize = 8;
-unsigned int bitfontCharWrap = 0;
+unsigned int bitfontPixelSize = 8*3;
+unsigned int bitfontCharWrap = 10;
 float bitfontColor[4] = {0.,0.,0.,1.};
 float bitfontBackColor[4] = {1.,1.,1.,0.75};
 static unsigned int bitfontSP[1] = {0};
@@ -161,8 +161,9 @@ unsigned char bitfontGroup[256] = {0}; */
 void updateBitmapFont(void){
 
 /* 	bitfontCharWrap = isolaInfoWindow.width/bitfontPixelSize; */
+
 	if (!bitfontCharWrap) {
-		bitfontCharWrap = 1024;
+		bitfontCharWrap = bitfontStringBufferSize;
 	}
 	if (bitfontCharWrap <= isolaInfoWindow.width/bitfontPixelSize) {
 		bitfontPos[0] =
