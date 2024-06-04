@@ -238,7 +238,6 @@ unsigned int isolaShaderCompile(const char* shaderFile,
 #ifdef ISOLA_DBG
 	glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &l);
 	if(!l){
-		memset(isolaShaderSrc, 0, ISOLA_GLSLCHARMAX);
 		glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &l);
 		glGetShaderInfoLog(shaderObject, l, &l, isolaShaderSrc);
 		SDL_Log("Compilation failed  :  %s\n\n",isolaShaderSrc);
@@ -267,9 +266,8 @@ unsigned int isolaShaderProgram(const char* vertShaderFile,
 #ifdef ISOLA_DBG
 	glGetProgramiv(sp, GL_LINK_STATUS, &l);
 	if(!l){
-		memset(isolaShaderSrc, 0, ISOLA_GLSLCHARMAX);
 		glGetProgramiv(sp, GL_INFO_LOG_LENGTH, &l);
-		glGetShaderInfoLog(sp, l, &l, isolaShaderSrc);
+		glGetProgramInfoLog(sp, l, &l, isolaShaderSrc);
 		SDL_Log("Compilation failed  :  %s\n\n",isolaShaderSrc);
 		return 0;
 	}
