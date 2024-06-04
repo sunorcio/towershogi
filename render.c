@@ -74,7 +74,22 @@ static void createDigitFPS(void){
 					sizeof(digitED),digitED);
 
 
-	digitSP[0] = isolaShaderProgram("glsl/digit.vert","glsl/digit.frag");
+	{unsigned int vs, fs;
+	digitSP[0] = glCreateProgram();
+	vs = isolaShaderCompile("glsl/digit.vert",GL_VERTEX_SHADER);
+	fs = isolaShaderCompile("glsl/digit.frag",GL_FRAGMENT_SHADER);
+	glAttachShader(digitSP[0],vs);
+	glAttachShader(digitSP[0],fs);
+
+	glLinkProgram(digitSP[0]);
+	{int asdf;
+	glGetProgramiv(digitSP[0],GL_LINK_STATUS,&asdf);
+	SDL_Log("%d",asdf);}
+	glDetachShader(digitSP[0],vs);
+	glDetachShader(digitSP[0],fs);
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+	}
 
 
 	updateDigitFPS();
@@ -265,7 +280,29 @@ static void createBitmapFont(void){
 	}
 
 
-	bitfontSP[0] = isolaShaderProgram("glsl/bitfont.vert","glsl/bitfont.frag");
+	{unsigned int vs, fs;
+	bitfontSP[0] = glCreateProgram();
+	vs = isolaShaderCompile("glsl/bitfont.vert",GL_VERTEX_SHADER);
+	fs = isolaShaderCompile("glsl/bitfont.frag",GL_FRAGMENT_SHADER);
+	glAttachShader(bitfontSP[0],vs);
+	glAttachShader(bitfontSP[0],fs);
+
+	glLinkProgram(bitfontSP[0]);
+	{int asdf;
+	glGetProgramiv(bitfontSP[0], GL_LINK_STATUS, &asdf);
+	if(!asdf){
+		glGetProgramiv(bitfontSP[0], GL_INFO_LOG_LENGTH, &asdf);
+		{void* log = malloc(asdf*sizeof(char));
+		glGetProgramInfoLog(bitfontSP[0], asdf, &asdf, (char*)log);
+		SDL_Log("Compilation failed  :  %s",(char*)log);
+		free(log);}
+	}}
+	glDetachShader(bitfontSP[0],vs);
+	glDetachShader(bitfontSP[0],fs);
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+	}
+
 
 	glUseProgram(bitfontSP[0]);
 
