@@ -3,6 +3,9 @@
 
 
 
+in int vertCharIndex;
+
+
 out vec2 vfTexCoord;
 
 
@@ -12,8 +15,6 @@ uniform float lowResolution;
 uniform vec2 screenPos;
 uniform int pixelSize;
 uniform int charWrap;
-
-uniform int charIndex[1024];
 
 
 
@@ -48,16 +49,16 @@ const vec2 bitfontTexCoord[6] = vec2[](
 void main(){
 
 	vfTexCoord = bitfontTexCoord[gl_VertexID%6] +
-		vec2(charIndex[gl_VertexID/6]%16*charOffsetX,
-			charIndex[gl_VertexID/6]/16*charOffsetY);
+			vec2(vertCharIndex%16*charOffsetX,
+			vertCharIndex/16*charOffsetY);
 
 
 	gl_Position = matProj * 
-		vec4( (bitfontVertPos[gl_VertexID%6]
-		+ ivec2( (gl_VertexID/6)%charWrap, -2*(gl_VertexID/6/charWrap))
-		+ vec2(0.,-2.))*scale
-		,-2.,1. )
-		+ vec4(screenPos,0.,0.);
+			vec4( (bitfontVertPos[gl_VertexID%6]
+			+ ivec2( (gl_VertexID/6)%charWrap, -2*(gl_VertexID/6/charWrap))
+			+ vec2(0.,-2.))*scale
+			,-2.,1. )
+			+ vec4(screenPos,0.,0.);
 }
 
 

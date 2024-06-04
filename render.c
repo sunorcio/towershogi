@@ -22,7 +22,7 @@ static unsigned int digitSP[1] = {0};
 static unsigned int digitVAO[1] = {0};
 static unsigned int digitEBO[1] = {0};
 static unsigned short digitED[16]
-	[sizeof(elementDigit[0])/sizeof(elementDigit[0][0])] = {0};
+		[sizeof(elementDigit[0])/sizeof(elementDigit[0][0])] = {0};
 
 void updateDigitFPS(void){
 
@@ -69,9 +69,9 @@ static void createDigitFPS(void){
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,digitEBO[0]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(digitED),
-					digitED,GL_DYNAMIC_DRAW);
+			digitED,GL_DYNAMIC_DRAW);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,0,
-					sizeof(digitED),digitED);
+			sizeof(digitED),digitED);
 
 
 	digitSP[0] = isolaShaderProgram("glsl/digit.vert","glsl/digit.frag");
@@ -142,6 +142,7 @@ static void drawDigitFPS(void){
 
 
 
+#define bitfontStringBufferSize 1024
 float bitfontPos[2] = {-1.,1.};
 unsigned int bitfontPixelSize = 8;
 unsigned int bitfontCharWrap = 1000;
@@ -150,7 +151,8 @@ float bitfontBackColor[4] = {1.,1.,1.,0.75};
 static unsigned int bitfontSP[1] = {0};
 static unsigned int bitfontTO[1] = {0};
 static unsigned int bitfontVAO[1] = {0};
-static int bitfontCharIndex[1024] = {0};
+static unsigned int bitfontVBO[1] = {0};
+static int bitfontVD[bitfontStringBufferSize*6] = {0};
 /* struct RENDEROBJECT_bitfont{
 	bitfontCharWrapU
 }
@@ -163,9 +165,29 @@ void updateBitmapFont(void){
 		bitfontCharWrap = 1024;
 	}
 	if (bitfontCharWrap <= isolaInfoWindow.width/bitfontPixelSize) {
-		bitfontPos[0] = 
+		bitfontPos[0] =
 			(2.-2.*bitfontPixelSize*bitfontCharWrap/isolaInfoWindow.width)/2.-1;
 	}
+
+
+	{int i;
+	char* asdf = "Me meo depie ysen tado, jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj";
+	for(i = 0;i<strlen(asdf);i++){
+		{unsigned int j;
+		for(j = 0;j<6;j++){
+			bitfontVD[i*6+j] = asdf[i]-32;
+		}}
+	}
+	for(i = strlen(asdf);i<bitfontStringBufferSize;i++){
+		{unsigned int j;
+		for(j = 0;j<6;j++){
+			bitfontVD[i*6+j] = 1;
+		}}
+	}}
+	glBindVertexArray(bitfontVAO[0]);
+	glBindBuffer(GL_ARRAY_BUFFER,bitfontVBO[0]);
+	glBufferSubData(GL_ARRAY_BUFFER,0,
+			sizeof(bitfontVD),bitfontVD);
 
 
 	glUseProgram(bitfontSP[0]);
@@ -173,8 +195,8 @@ void updateBitmapFont(void){
 	{int locProj;
 	float matProj[4*4] = {0};
 	mut_proj_glortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
-		-isolaInfoWindow.yratio,isolaInfoWindow.yratio,
-		0.25,8.,matProj);
+			-isolaInfoWindow.yratio,isolaInfoWindow.yratio,
+			0.25,8.,matProj);
 	locProj = glGetUniformLocation(bitfontSP[0],"matProj");
 	if(locProj == -1){SDL_Log("matProj not found in shader %d",0);}
 	glUniformMatrix4fv(locProj,1,GL_FALSE,matProj);
@@ -207,20 +229,6 @@ void updateBitmapFont(void){
 	glUniform1i(locCharWrap,bitfontCharWrap);
 	}
 
-	{int locCharId;
-	{unsigned int i;
-	char* asdf = "Me meo depie ysen tado, jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj";
-	for(i = 0;i<strlen(asdf);i++){
-		bitfontCharIndex[i] = asdf[i]-32;
-	}
-	for(i = strlen(asdf);i<1024;i++){
-		bitfontCharIndex[i] = 1;
-	}}
-	locCharId = glGetUniformLocation(bitfontSP[0],"charIndex");
-	if(locCharId == -1){SDL_Log("charIndex not found in shader %d",0);}
-	glUniform1iv(locCharId,1024,bitfontCharIndex);
-	}
-
 	{int locBitCol;
 	locBitCol = glGetUniformLocation(bitfontSP[0],"fontColor");
 	if(locBitCol == -1){SDL_Log("fontColor not found in shader %d",0);}
@@ -236,8 +244,19 @@ void updateBitmapFont(void){
 static void createBitmapFont(void){
 
 	glGenVertexArrays(1,&bitfontVAO[0]);
+	glGenBuffers(1,&bitfontVBO[0]);
 
 	glBindVertexArray(bitfontVAO[0]);
+
+
+	glBindBuffer(GL_ARRAY_BUFFER,bitfontVBO[0]);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(bitfontVD),
+			bitfontVD,GL_DYNAMIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER,0,
+			sizeof(bitfontVD),bitfontVD);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribIPointer(0,1,GL_INT,sizeof(bitfontVD[0]),(void*)0);
 
 
 	glGenTextures(1,bitfontTO);
@@ -259,7 +278,7 @@ static void createBitmapFont(void){
 	imagedata = malloc(filesize+1);
 	fread(imagedata,filesize,1,imagefile);
 	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,16*8,8*16,
-		0,GL_RGBA,GL_UNSIGNED_BYTE,(char*)imagedata);
+			0,GL_RGBA,GL_UNSIGNED_BYTE,(char*)imagedata);
 	fclose(imagefile);
 	free(imagedata);
 	}
@@ -285,6 +304,7 @@ static void destroyBitmapFont(void){
 
 	glDeleteTextures(1,bitfontTO);
 	glDeleteProgram(bitfontSP[0]);
+	glDeleteBuffers(1,bitfontVBO);
 	glDeleteVertexArrays(1,bitfontVAO);
 }
 static void drawBitmapFont(void){
@@ -294,7 +314,7 @@ static void drawBitmapFont(void){
 	glActiveTexture(GL_TEXTURE0+0);
 	glBindTexture(GL_TEXTURE_2D,bitfontTO[0]);
 
-	glDrawArrays(GL_TRIANGLES,0,6*1024);
+	glDrawArrays(GL_TRIANGLES,0,bitfontStringBufferSize*6);
 }
 
 
@@ -304,7 +324,7 @@ void renderGlobalUpdate(void){
 
 	isolaGetWindow();
 	glViewport(0,0,isolaInfoWindow.width,
-				isolaInfoWindow.height);
+			isolaInfoWindow.height);
 
 
 	updateDigitFPS();
@@ -315,7 +335,7 @@ void renderGlobalCreate(void){
 /* 	isolaInfoWindow.desktopDisplayMode.w = 360;
 	isolaInfoWindow.desktopDisplayMode.h = 480; */
 	SDL_SetWindowSize(isolaWindow,isolaInfoWindow.desktopDisplayMode.w,
-						isolaInfoWindow.desktopDisplayMode.h);
+			isolaInfoWindow.desktopDisplayMode.h);
 	SDL_SetWindowResizable(isolaWindow,1);
 	isolaGetWindow();
 
