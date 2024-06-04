@@ -74,19 +74,7 @@ static void createDigitFPS(void){
 					sizeof(digitED),digitED);
 
 
-	{unsigned int vs, fs;
-	digitSP[0] = glCreateProgram();
-	vs = isolaShaderCompile("glsl/digit.vert",GL_VERTEX_SHADER);
-	fs = isolaShaderCompile("glsl/digit.frag",GL_FRAGMENT_SHADER);
-	glAttachShader(digitSP[0],vs);
-	glAttachShader(digitSP[0],fs);
-
-	glLinkProgram(digitSP[0]);
-	glDetachShader(digitSP[0],vs);
-	glDetachShader(digitSP[0],fs);
-	glDeleteShader(vs);
-	glDeleteShader(fs);
-	}
+	digitSP[0] = isolaShaderProgram("glsl/digit.vert","glsl/digit.frag");
 
 
 	updateDigitFPS();
