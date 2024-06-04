@@ -75,12 +75,12 @@ extern void isolaQuit(void);
 
 #ifdef ISOLA_DBG
  #define isolaDBG_(x) if(isolaErrorGL()){                                     \
-		SDL_Log(" UNEXPECTED ERROR, line : %d, function : %d, file : %s",   \
+		SDL_Log(" UNEXPECTED ERROR, line : %d, function : %d, file : %s",     \
 		__LINE__,__FUNCTION__,__FILE__);                                      \
 	}                                                                         \
 	x;                                                                        \
 	if(isolaErrorGL()){                                                       \
-		SDL_Log(" ^- in line : %d, function : %d, file : %s\n",             \
+		SDL_Log(" ^- in line : %d, function : %d, file : %s\n",               \
 		__LINE__,__FUNCTION__,__FILE__);                                      \
 	}
 #else
@@ -183,14 +183,18 @@ extern void isolaGetState(void);
 
 /* compile source file into returned gl shader object id */
 extern unsigned int isolaShaderCompile(const char* shaderFile,
-									   unsigned int shaderType);
+		unsigned int shaderType);
+/* compile and link source files into returned gl shader program */
+extern unsigned int isolaShaderProgram(const char* vertShaderFile,
+		const char* fragShaderFile);
+
 
 /* loads srcfile into heap, returns a pointer that can be issued to
    isolaShaderSrcCompare(), you must free this pointer yourself */
 extern char* isolaShaderSrcLoad(const char* shaderFile);
 /* compares srcfile with loaded src, if !=, src is updated and return !0 */
 extern unsigned char isolaShaderSrcCompare(char* shaderSrc,
-										   const char* shaderFile);
+		const char* shaderFile);
 
 
 

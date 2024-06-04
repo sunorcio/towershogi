@@ -29,9 +29,8 @@ signed char isolaErrorGL(void){
 
  #if(  defined(GLEW_KHR_debug) || defined(GLEW_ARB_debug_output)  )
 static void debugCallback(unsigned int source, unsigned int type,
-						  unsigned int id, unsigned int severity,
-						  int length, const char* message,
-						  const void* userParam){
+		unsigned int id, unsigned int severity,
+		int length, const char* message, const void* userParam){
 
 	SDL_Log("%s",message);
 	return;
@@ -81,6 +80,7 @@ void isolaGetWindow(void){
 	SDL_GetDesktopDisplayMode(isolaInfoWindow.displayIndex,
 								&isolaInfoWindow.desktopDisplayMode);
 }
+
 void isolaGetDisplay(void){
 
 	int i,j;
@@ -106,6 +106,7 @@ void isolaGetDisplay(void){
 		buff += isolaInfoDisplay.displayModeCount[i];
 	}
 }
+
 static void isolaGetContext(void){
 
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
@@ -143,36 +144,37 @@ static void isolaGetContext(void){
 									&isolaInfoContext.fbdefColorencoding);
 
 	glGetIntegerv(GL_MAX_ELEMENTS_VERTICES,
-					&isolaInfoContext.maxVertices);
+			&isolaInfoContext.maxVertices);
 	glGetIntegerv(GL_MAX_ELEMENTS_INDICES,
-					&isolaInfoContext.maxIndices);
+			&isolaInfoContext.maxIndices);
 	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS,
-					&isolaInfoContext.maxAttrib);
+			&isolaInfoContext.maxAttrib);
 	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS,
-					&isolaInfoContext.maxVertexUniforms);
+			&isolaInfoContext.maxVertexUniforms);
 	glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS,
-					&isolaInfoContext.maxFragmentUniforms);
+			&isolaInfoContext.maxFragmentUniforms);
 	glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,
-					&isolaInfoContext.maxTexCombinedUnits);
+			&isolaInfoContext.maxTexCombinedUnits);
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,
-					&isolaInfoContext.maxTexUnits);
+			&isolaInfoContext.maxTexUnits);
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE,
-					&isolaInfoContext.maxTexSize);
+			&isolaInfoContext.maxTexSize);
 	glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE,
-					&isolaInfoContext.max3DTexSize);
+			&isolaInfoContext.max3DTexSize);
 	glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE,
-					&isolaInfoContext.maxCubeTexSize);
+			&isolaInfoContext.maxCubeTexSize);
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS,
-					&isolaInfoContext.maxDrawBuffers);
+			&isolaInfoContext.maxDrawBuffers);
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS,
-					&isolaInfoContext.maxColorAttachments);
+			&isolaInfoContext.maxColorAttachments);
 	glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE,
-					&isolaInfoContext.maxRenderbufferSize);
+			&isolaInfoContext.maxRenderbufferSize);
 
 	isolaInfoContext.cpuCount = SDL_GetCPUCount();
 	isolaInfoContext.systemRAM = SDL_GetSystemRAM();
 	isolaInfoContext.cacheSize = SDL_GetCPUCacheLineSize();
 }
+
 void isolaGetState(void){
 
 	int state;
@@ -212,11 +214,11 @@ void isolaGetState(void){
 
 
 unsigned int isolaShaderCompile(const char* shaderFile,
-								unsigned int shaderType){
+		unsigned int shaderType){
 
+	unsigned int shaderObject;
 	FILE* f;
 	int l;
-	unsigned int shaderObject;
 
 	f = fopen(shaderFile, "a+");
 	fseek(f, 0, SEEK_END);
@@ -242,14 +244,50 @@ unsigned int isolaShaderCompile(const char* shaderFile,
 		return 0;
 	}
 #endif
+
 	return shaderObject;
 }
+
+unsigned int isolaShaderProgram(const char* vertShaderFile,
+		const char* fragShaderFile){
+
+	unsigned int sp;
+	unsigned int vs, fs;
+	int l;
+
+	sp = glCreateProgram();
+	vs = isolaShaderCompile(vertShaderFile,GL_VERTEX_SHADER);
+	fs = isolaShaderCompile(fragShaderFile,GL_FRAGMENT_SHADER);
+	glAttachShader(sp,vs);
+	glAttachShader(sp,fs);
+	
+	glLinkProgram(sp);
+
+#ifdef ISOLA_DBG
+	glGetProgramiv(sp, GL_LINK_STATUS, &l);
+	if(!l){
+		glGetProgramiv(sp, GL_INFO_LOG_LENGTH, &l);
+		glGetShaderInfoLog(sp, l, &l, isolaShaderSrc);
+		SDL_Log("Compilation failed  :  %s\n\n",isolaShaderSrc);
+		return 0;
+	}
+#endif
+
+	glDetachShader(sp,vs);
+	glDetachShader(sp,fs);
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+
+	return sp;
+}
+
 
 char* isolaShaderSrcLoad(const char* shaderFile){
 
 	FILE* f;
 	int l;
 	char* shaderSrc;
+
 	shaderSrc = calloc(ISOLA_GLSLCHARMAX+1, sizeof(char));
 	f = fopen(shaderFile, "a+");
 	fseek(f, 0, SEEK_END);
@@ -261,19 +299,22 @@ char* isolaShaderSrcLoad(const char* shaderFile){
 	fseek(f, 0, SEEK_SET);
 	(void)fread(shaderSrc, 1, l, f);
 	fclose(f);
+
 	return shaderSrc;
 }
+
 unsigned char isolaShaderSrcCompare(char* shaderSrc,
-									const char* shaderFile){
+		const char* shaderFile){
 
 	int l;
 	FILE* f;
+
 	f = fopen(shaderFile, "a+");
 	fseek(f, 0, SEEK_END);
 	l = ftell(f);
 	if(!l){SDL_Log("Shader file missing or empty\n");fclose(f);return 0;}
 	if(l>ISOLA_GLSLCHARMAX){SDL_Log("Shader exceeds character limit \
-		(defined in isola.h)\n");fclose(f);return 0;}
+			(defined in isola.h)\n");fclose(f);return 0;}
 	memset(isolaShaderSrc, 0, ISOLA_GLSLCHARMAX);
 	fseek(f, 0, SEEK_SET);
 	fread(isolaShaderSrc, 1, l, f);
@@ -284,6 +325,7 @@ unsigned char isolaShaderSrcCompare(char* shaderSrc,
 		memcpy(shaderSrc, isolaShaderSrc, l);
 		return 1;
 	}
+
 	return 0;
 }
 
@@ -347,7 +389,7 @@ void isolaInit(void){
 #endif
 	
 	SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER |
-			 ISOLA_GAMEPAD*(SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) );
+			ISOLA_GAMEPAD*(SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) );
 
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, ISOLA_MAJOR_VERSION);
@@ -396,8 +438,8 @@ void isolaInit(void){
 #endif
 
 	isolaWindow = SDL_CreateWindow( ISOLA_WINDOWTITLE,
-					SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-					480, 360, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
+			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+			480, 360, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
 
 	if (!isolaWindow) {
 		isolaErrorSDL(-1);
@@ -421,11 +463,11 @@ void isolaInit(void){
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
-							SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+				SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 
 		isolaWindow = SDL_CreateWindow( "isola", SDL_WINDOWPOS_UNDEFINED,
-										SDL_WINDOWPOS_UNDEFINED, 480, 360,
-										SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
+				SDL_WINDOWPOS_UNDEFINED, 480, 360,
+				SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
 		if (!isolaWindow) {
 			SDL_Log("window creation failed (again)");
 			SDL_Log("\n");
