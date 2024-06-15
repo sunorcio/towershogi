@@ -350,7 +350,7 @@ static void drawBitfont(void){
 
 static unsigned char globalWindowFullscreen = 0;
 static unsigned char globalWindowResizable = 1;
-static unsigned char globalWindowBorder = 1;
+static unsigned char globalWindowBorder = 0;
 static unsigned short globalWindowPos[2] = {0,0};
 static unsigned short globalWindowRes[2] = {0,0};
 
