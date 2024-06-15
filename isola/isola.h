@@ -89,7 +89,7 @@ extern void isolaQuit(void);
 
 /* print & clear sdl errors, returns -1 if error, else 0 */
 extern signed char isolaErrorSDL(int SDLfunction);
-/* print & clear gl errors, returns -1 if error, else 0 */
+/* print & clear opengl errors, returns -1 if error, else 0 */
 extern signed char isolaErrorGL(void);
 
 
@@ -108,20 +108,21 @@ struct ISOLA_Context{
 	int fbdefDepthsize;
 	int fbdefStencilsize;		/* GL_LINEAR or GL_SRGB */
 	int fbdefColorencoding;
+	int fbdefDoublebuffer;
 
 	int maxVertices;
-	int maxIndices;				/* at least 16 */
-	int maxAttrib;				/* at least 1024 */
+	int maxIndices;
+	int maxAttrib;				/* at least 16 */
 	int maxVertexUniforms;		/* at least 1024 */
-	int maxFragmentUniforms;	/* at least 64 */
-	int maxTexCombinedUnits;	/* at least 16 */
-	int maxTexUnits;			/* at least 1024 */
-	int maxTexSize;				/* at least 64 */
-	int max3DTexSize;			/* at least 1024 */
-	int maxCubeTexSize;			/* at least 8 */
+	int maxFragmentUniforms;	/* at least 1024 */
+	int maxTexCombinedUnits;	/* at least 48 */
+	int maxTexUnits;			/* at least 16 */
+	int maxTexSize;				/* at least 1024 */
+	int max3DTexSize;			/* at least 64 */
+	int maxCubeTexSize;			/* at least 1024 */
 	int maxDrawBuffers;			/* at least 8 */
 	int maxColorAttachments;	/* at least 8 */
-	int maxRenderbufferSize;
+	int maxRenderbufferSize;    /* at least 8 */
 
 	int cpuCount;
 	int systemRAM;
@@ -157,15 +158,14 @@ typedef enum {
 	ISOLA_STATE_CULLFACE 			= 0x0004,
 	ISOLA_STATE_DEPTHTEST			= 0x0008,
 	ISOLA_STATE_DITHER				= 0x0010,
-	ISOLA_STATE_DOUBLEBUFFER		= 0x0020,
-	ISOLA_STATE_SCISSORTEST 		= 0x0040,
-	ISOLA_STATE_STENCILTEST 		= 0x0080,
-	ISOLA_STATE_SRGBFRAMEBUFFER 	= 0x0100,
-	ISOLA_STATE_POINTSMOOTH 		= 0x0200,
-	ISOLA_STATE_LINESMOOTH			= 0x0400,
-	ISOLA_STATE_POLYGONSMOOTH		= 0x0800,
-	ISOLA_STATE_POINTSIZEPROGRAM	= 0x1000,
-	ISOLA_STATE_MULTISAMPLE 		= 0x2000
+	ISOLA_STATE_SCISSORTEST 		= 0x0020,
+	ISOLA_STATE_STENCILTEST 		= 0x0040,
+	ISOLA_STATE_SRGBFRAMEBUFFER 	= 0x0080,
+	ISOLA_STATE_POINTSMOOTH 		= 0x0100,
+	ISOLA_STATE_LINESMOOTH			= 0x0200,
+	ISOLA_STATE_POLYGONSMOOTH		= 0x0400,
+	ISOLA_STATE_POINTSIZEPROGRAM	= 0x0800,
+	ISOLA_STATE_MULTISAMPLE 		= 0x1000
 }ISOLA_State;
 /* glEnable information. meant for quick debugging. see isolaGetState() */
 extern ISOLA_State isolaInfoState;
@@ -178,13 +178,15 @@ extern void isolaGetDisplay(void);
 /* update currently enabled opengl state (isolaInfoState) */
 extern void isolaGetState(void);
 
+/* sets opengl state to match an ISOLA_State snapshot */
+extern void isolaSetState(ISOLA_State state);
 
 
 
-/* compile source file into returned gl shader object id */
+/* compile source file into returned opengl shader object id */
 extern unsigned int isolaShaderCompile(const char* shaderFile,
 		unsigned int shaderType);
-/* compile and link source files into returned gl shader program */
+/* compile and link source files into returned opengl shader program */
 extern unsigned int isolaShaderProgram(const char* vertShaderFile,
 		const char* fragShaderFile);
 

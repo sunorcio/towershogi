@@ -1,3 +1,5 @@
+
+
 #include "isola.h"
 
 
@@ -62,23 +64,23 @@ static FILE* isolaLog = {0};
 void isolaGetWindow(void){
 
 	SDL_GetWindowPosition(isolaWindow, &isolaInfoWindow.xpos,
-						  &isolaInfoWindow.ypos);
+			&isolaInfoWindow.ypos);
 	SDL_GetWindowSize(isolaWindow, &isolaInfoWindow.width,
-					  &isolaInfoWindow.height);
+			&isolaInfoWindow.height);
 	if (isolaInfoWindow.width > isolaInfoWindow.height) {
 		isolaInfoWindow.yratio = 1.;
-		isolaInfoWindow.xratio = (double)isolaInfoWindow.width/
-									isolaInfoWindow.height;
+		isolaInfoWindow.xratio = (double)isolaInfoWindow.width
+				/isolaInfoWindow.height;
 	}else {
 		isolaInfoWindow.xratio = 1.;
-		isolaInfoWindow.yratio = (double)isolaInfoWindow.height/
-									isolaInfoWindow.width;
+		isolaInfoWindow.yratio = (double)isolaInfoWindow.height 
+				/isolaInfoWindow.width;
 	}
 	isolaInfoWindow.flags = SDL_GetWindowFlags(isolaWindow);
 	isolaInfoWindow.displayIndex = SDL_GetWindowDisplayIndex(isolaWindow);
 	SDL_GetWindowDisplayMode(isolaWindow, &isolaInfoWindow.displayMode);
 	SDL_GetDesktopDisplayMode(isolaInfoWindow.displayIndex,
-								&isolaInfoWindow.desktopDisplayMode);
+			&isolaInfoWindow.desktopDisplayMode);
 }
 
 void isolaGetDisplay(void){
@@ -90,7 +92,7 @@ void isolaGetDisplay(void){
 	isolaInfoDisplay.displayModeCount = calloc(buff+1, sizeof(int));
 	for(i = 0;i<buff;i++){
 		isolaInfoDisplay.displayModeCount[i] = SDL_GetNumDisplayModes(
-												isolaInfoWindow.displayIndex);
+				isolaInfoWindow.displayIndex);
 	}
 
 	for(i = 0;isolaInfoDisplay.displayModeCount[i]==0;i++){
@@ -111,60 +113,48 @@ static void isolaGetContext(void){
 
 	glBindFramebuffer(GL_FRAMEBUFFER,0);
 	glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
-									GL_FRONT_LEFT,
-									GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE,
-									&isolaInfoContext.fbdefRedsize);
+			GL_FRONT_LEFT, GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE,
+			&isolaInfoContext.fbdefRedsize);
+	glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, 
+			GL_FRONT_LEFT, GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE,
+			&isolaInfoContext.fbdefGreensize);
 	glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
-									GL_FRONT_LEFT,
-									GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE,
-									&isolaInfoContext.fbdefGreensize);
+			GL_FRONT_LEFT, GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE,
+			&isolaInfoContext.fbdefBluesize);
 	glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
-									GL_FRONT_LEFT,
-									GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE,
-									&isolaInfoContext.fbdefBluesize);
-	glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
-									GL_FRONT_LEFT,
-									GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE,
-									&isolaInfoContext.fbdefAlphasize);
+			GL_FRONT_LEFT, GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE,
+			&isolaInfoContext.fbdefAlphasize);
 #if ISOLA_DEPTH
 	glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
-									GL_DEPTH,
-									GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE,
-									&isolaInfoContext.fbdefDepthsize);
+			GL_DEPTH, GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE,
+			&isolaInfoContext.fbdefDepthsize);
 #endif
 #if ISOLA_STENCIL
 	glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
-									GL_STENCIL,
-									GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE,
-									&isolaInfoContext.fbdefStencilsize);
+			GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE,
+			&isolaInfoContext.fbdefStencilsize);
 #endif
 	glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
-									GL_FRONT_LEFT,
-									GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING,
-									&isolaInfoContext.fbdefColorencoding);
+			GL_FRONT_LEFT, GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING,
+			&isolaInfoContext.fbdefColorencoding);
 
-	glGetIntegerv(GL_MAX_ELEMENTS_VERTICES,
-			&isolaInfoContext.maxVertices);
-	glGetIntegerv(GL_MAX_ELEMENTS_INDICES,
-			&isolaInfoContext.maxIndices);
-	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS,
-			&isolaInfoContext.maxAttrib);
+	glGetIntegerv(GL_DOUBLEBUFFER, &isolaInfoContext.fbdefDoublebuffer);
+
+	glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &isolaInfoContext.maxVertices);
+	glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &isolaInfoContext.maxIndices);
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &isolaInfoContext.maxAttrib);
 	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS,
 			&isolaInfoContext.maxVertexUniforms);
 	glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS,
 			&isolaInfoContext.maxFragmentUniforms);
 	glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,
 			&isolaInfoContext.maxTexCombinedUnits);
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,
-			&isolaInfoContext.maxTexUnits);
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE,
-			&isolaInfoContext.maxTexSize);
-	glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE,
-			&isolaInfoContext.max3DTexSize);
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &isolaInfoContext.maxTexUnits);
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &isolaInfoContext.maxTexSize);
+	glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &isolaInfoContext.max3DTexSize);
 	glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE,
 			&isolaInfoContext.maxCubeTexSize);
-	glGetIntegerv(GL_MAX_DRAW_BUFFERS,
-			&isolaInfoContext.maxDrawBuffers);
+	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &isolaInfoContext.maxDrawBuffers);
 	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS,
 			&isolaInfoContext.maxColorAttachments);
 	glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE,
@@ -177,7 +167,7 @@ static void isolaGetContext(void){
 
 void isolaGetState(void){
 
-	int state;
+	int state = {0};
 
 	isolaInfoState = 0x0000;
 	glGetIntegerv(GL_BLEND, &state);
@@ -190,8 +180,6 @@ void isolaGetState(void){
 	isolaInfoState = (isolaInfoState | state*ISOLA_STATE_DEPTHTEST);
 	glGetIntegerv(GL_DITHER, &state);
 	isolaInfoState = (isolaInfoState | state*ISOLA_STATE_DITHER);
-	glGetIntegerv(GL_DOUBLEBUFFER, &state);
-	isolaInfoState = (isolaInfoState | state*ISOLA_STATE_DOUBLEBUFFER);
 	glGetIntegerv(GL_SCISSOR_TEST, &state);
 	isolaInfoState = (isolaInfoState | state*ISOLA_STATE_SCISSORTEST);
 	glGetIntegerv(GL_STENCIL_TEST, &state);
@@ -208,6 +196,36 @@ void isolaGetState(void){
 	isolaInfoState = (isolaInfoState | state*ISOLA_STATE_POINTSIZEPROGRAM);
 	glGetIntegerv(GL_MULTISAMPLE, &state);
 	isolaInfoState = (isolaInfoState | state*ISOLA_STATE_MULTISAMPLE);
+}
+
+void isolaSetState(ISOLA_State state){
+
+	if (state&ISOLA_STATE_BLEND) {glEnable(GL_BLEND);}
+	else {glDisable(GL_BLEND);}
+	if (state&ISOLA_STATE_COLORLOGIC) {glEnable(GL_COLOR_LOGIC_OP);}
+	else {glDisable(GL_COLOR_LOGIC_OP);}
+	if (state&ISOLA_STATE_CULLFACE) {glEnable(GL_CULL_FACE);}
+	else {glDisable(GL_CULL_FACE);}
+	if (state&ISOLA_STATE_DEPTHTEST) {glEnable(GL_DEPTH_TEST);}
+	else {glDisable(GL_DEPTH_TEST);}
+	if (state&ISOLA_STATE_DITHER) {glEnable(GL_DITHER);}
+	else {glDisable(GL_DITHER);}
+	if (state&ISOLA_STATE_SCISSORTEST) {glEnable(GL_SCISSOR_TEST);}
+	else {glDisable(GL_SCISSOR_TEST);}
+	if (state&ISOLA_STATE_STENCILTEST) {glEnable(GL_STENCIL_TEST);}
+	else {glDisable(GL_STENCIL_TEST);}
+	if (state&ISOLA_STATE_SRGBFRAMEBUFFER) {glEnable(GL_FRAMEBUFFER_SRGB);}
+	else {glDisable(GL_FRAMEBUFFER_SRGB);}
+	if (state&ISOLA_STATE_POINTSMOOTH) {glEnable(GL_POINT_SMOOTH);}
+	else {glDisable(GL_POINT_SMOOTH);}
+	if (state&ISOLA_STATE_LINESMOOTH) {glEnable(GL_LINE_SMOOTH);}
+	else {glDisable(GL_LINE_SMOOTH);}
+	if (state&ISOLA_STATE_POLYGONSMOOTH) {glEnable(GL_POLYGON_SMOOTH);}
+	else {glDisable(GL_POLYGON_SMOOTH);}
+	if (state&ISOLA_STATE_POINTSIZEPROGRAM) {glEnable(GL_PROGRAM_POINT_SIZE);}
+	else {glDisable(GL_PROGRAM_POINT_SIZE);}
+	if (state&ISOLA_STATE_MULTISAMPLE) {glEnable(GL_MULTISAMPLE);}
+	else {glDisable(GL_MULTISAMPLE);}
 }
 
 
@@ -347,32 +365,38 @@ static void contextPromt(void){
 	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &maj);
 	SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &min);
 	SDL_Log("Context(SDL)  : %d.%d", maj, min);
+
 	SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &prof);
 	if(prof == GL_CONTEXT_CORE_PROFILE_BIT){
-		SDL_Log("core profile");
+		SDL_Log(" core profile");
 	}else if(prof == GL_CONTEXT_COMPATIBILITY_PROFILE_BIT){
-		SDL_Log("compatibility profile");
+		SDL_Log(" compatibility profile");
 	}
 
 	SDL_GL_GetAttribute(SDL_GL_CONTEXT_FLAGS, &flags);
 	if(flags & SDL_GL_CONTEXT_DEBUG_FLAG){
-		SDL_Log("Debug context");
+		SDL_Log(" debug context");
+	}else{
+		SDL_Log(" no debug context");
 	}
 
 	SDL_Log("\n");
 	glGetIntegerv(GL_MAJOR_VERSION, &maj);
 	glGetIntegerv(GL_MINOR_VERSION, &min);
 	SDL_Log("Context(GL)   : %d.%d", maj, min);
+
 	glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &prof);
 	if(prof == GL_CONTEXT_CORE_PROFILE_BIT){
-		SDL_Log("core profile");
+		SDL_Log(" core profile");
 	}else if(prof == GL_CONTEXT_COMPATIBILITY_PROFILE_BIT){
-		SDL_Log("compatibility profile");
+		SDL_Log(" compatibility profile");
 	}
 
 	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
 	if(flags & GL_CONTEXT_FLAG_DEBUG_BIT){
-		SDL_Log("Debug context");
+		SDL_Log(" debug context");
+	}else{
+		SDL_Log(" no debug context");
 	}
 
 	SDL_Log("\n\n\n");

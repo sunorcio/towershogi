@@ -13,99 +13,111 @@
 
 
 
-#define digitPrintAmount 5
-unsigned char b_DigitFPS = 1;
-float digitColor[4] = {0.25,0.25,0.25,0.75};
-int unsigned digitPixelsize = 24;
-static char stringDigitFPS[16] = {0};
-static unsigned int digitSP[1] = {0};
-static unsigned int digitVAO[1] = {0};
-static unsigned int digitEBO[1] = {0};
-static unsigned short digitED[16]
+#define digitfpsPrintAmount 5
+
+unsigned char digitfpsBool = 1;
+float digitfpsColor[4] = {0.25,0.25,0.25,0.75};
+int unsigned digitfpsPixelsize = 8*3;
+
+static ISOLA_State digitfpsState;
+static unsigned int digitfpsSP;
+static unsigned int digitfpsVAO;
+static unsigned int digitfpsEBO;
+static char digitfpsString[16] = {0};
+static unsigned short digitfpsED[16]
 		[sizeof(elementDigit[0])/sizeof(elementDigit[0][0])] = {0};
 
-void updateDigitFPS(void){
 
-	glUseProgram(digitSP[0]);
+static void updateDigitfps(void){
 
+	glUseProgram(digitfpsSP);
 
 	{int locProj;
 	float matProj[4*4] = {0};
 	mut_proj_glortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
-						-isolaInfoWindow.yratio,isolaInfoWindow.yratio,
-						0.25,8.,matProj);
-	locProj = glGetUniformLocation(digitSP[0],"matProj");
+			-isolaInfoWindow.yratio,isolaInfoWindow.yratio, 0.25,8.,matProj);
+	locProj = glGetUniformLocation(digitfpsSP,"matProj");
 	if(locProj == -1){SDL_Log("matProj not found in shader %d",0);}
 	glUniformMatrix4fv(locProj,1,GL_FALSE,matProj);
 	}
 
 	{int locDigitCol;
-	locDigitCol = glGetUniformLocation(digitSP[0],"digitColor");
+	locDigitCol = glGetUniformLocation(digitfpsSP,"digitColor");
 	if(locDigitCol == -1){SDL_Log("digitColor not found in shader %d",0);}
-	glUniform4fv(locDigitCol,1,digitColor);
+	glUniform4fv(locDigitCol,1,digitfpsColor);
 	}
 
 	{int locPixSize;
-	locPixSize = glGetUniformLocation(digitSP[0],"pixelSize");
+	locPixSize = glGetUniformLocation(digitfpsSP,"pixelSize");
 	if(locPixSize == -1){SDL_Log("pixelSize not found in shader %d",0);}
-	glUniform1i(locPixSize,digitPixelsize);
+	glUniform1i(locPixSize,digitfpsPixelsize);
 	}
 
 	{int locLowRes;
 	float lowRes;
 	if (isolaInfoWindow.xratio == 1) { lowRes = isolaInfoWindow.width;
 	}else{ lowRes = isolaInfoWindow.height; }
-	locLowRes = glGetUniformLocation(digitSP[0],"lowResolution");
+	locLowRes = glGetUniformLocation(digitfpsSP,"lowResolution");
 	if(locLowRes == -1){SDL_Log("lowResolution not found in shader %d",0);}
 	glUniform1f(locLowRes,lowRes);
 	}
 }
-static void createDigitFPS(void){
 
-	glGenVertexArrays(1,&digitVAO[0]);
-	glGenBuffers(1,&digitEBO[0]);
+static void createDigitfps(void){
 
-	glBindVertexArray(digitVAO[0]);
+	digitfpsState = 0x00000001;
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,digitEBO[0]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(digitED),
-			digitED,GL_DYNAMIC_DRAW);
+
+	glGenVertexArrays(1,&digitfpsVAO);
+	glGenBuffers(1,&digitfpsEBO);
+
+	glBindVertexArray(digitfpsVAO);
+
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,digitfpsEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(digitfpsED),
+			digitfpsED,GL_DYNAMIC_DRAW);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,0,
-			sizeof(digitED),digitED);
+			sizeof(digitfpsED),digitfpsED);
 
 
-	digitSP[0] = isolaShaderProgram("glsl/digit.vert","glsl/digit.frag");
+	digitfpsSP = isolaShaderProgram("glsl/digit.vert","glsl/digit.frag");
 
 
-	updateDigitFPS();
+	updateDigitfps();
 }
-static void destroyDigitFPS(void){
+
+static void destroyDigitfps(void){
 
 	glUseProgram(0);
 	glBindVertexArray(0);
-	glDeleteProgram(digitSP[0]);
-	glDeleteBuffers(1,digitEBO);
-	glDeleteVertexArrays(1,digitVAO);
+	glDeleteProgram(digitfpsSP);
+	glDeleteBuffers(1,&digitfpsEBO);
+	glDeleteVertexArrays(1,&digitfpsVAO);
 }
-static void drawDigitFPS(void){
 
-	unsigned delaySum = 0;
+static void drawDigitfps(void){
 
+	isolaSetState(digitfpsState);
+
+
+	{unsigned delaySum = 0;
 	{unsigned int i;
 	for(i = 0;i<256;i++){
 		delaySum += frameDelay[i];
 	}}
 
 	{unsigned int i;
-	for(i = 0;i<digitPrintAmount;i++){
-		stringDigitFPS[i] = 0;
+	for(i = 0;i<digitfpsPrintAmount;i++){
+		digitfpsString[i] = 0;
 	}}
-	sprintf(stringDigitFPS,"%f",1./((delaySum/256.)/(double)clockFreq) );
+	sprintf(digitfpsString,"%f",1./((delaySum/256.)/(double)clockFreq) );
+	}
 
 	{unsigned int i;
 	unsigned char digit;
-	for(i = 0;i<digitPrintAmount;i++){
-		switch (stringDigitFPS[i]) {
+	for(i = 0;i<digitfpsPrintAmount;i++){
+		switch (digitfpsString[i]) {
 			case 0:   digit = 0;  break;
 			case ' ': digit = 0;  break;
 			case '0': digit = 1;  break;
@@ -124,18 +136,18 @@ static void drawDigitFPS(void){
 
 		{unsigned char j;
 		for(j = 0;j<sizeof(elementDigit[0])/sizeof(elementDigit[0][0]);j++){
-			digitED[i][j] = elementDigit[digit][j]+15*i;
+			digitfpsED[i][j] = elementDigit[digit][j]+15*i;
 		}}
 	}}
 
-	glBindVertexArray(digitVAO[0]);
+	glBindVertexArray(digitfpsVAO);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,0,
-		( sizeof(digitED)/16 )*digitPrintAmount,digitED);
-	glUseProgram(digitSP[0]);
+		( sizeof(digitfpsED)/16 )*digitfpsPrintAmount,digitfpsED);
+	glUseProgram(digitfpsSP);
 
 	glDrawRangeElements(GL_TRIANGLES,0,
-		(sizeof(elementDigit[0])/sizeof(elementDigit[0][0]))*digitPrintAmount-1,
-		(sizeof(elementDigit[0])/sizeof(elementDigit[0][0]))*digitPrintAmount,
+		(sizeof(elementDigit[0])/sizeof(elementDigit[0][0]))*digitfpsPrintAmount-1,
+		(sizeof(elementDigit[0])/sizeof(elementDigit[0][0]))*digitfpsPrintAmount,
 		GL_UNSIGNED_SHORT,(void*)0);
 }
 
@@ -143,48 +155,32 @@ static void drawDigitFPS(void){
 
 
 #define bitfontStringBufferSize 1024
-float bitfontPos[2] = {-1.,1.};
-unsigned int bitfontPixelSize = 8*3;
-unsigned int bitfontCharWrap = 10;
-float bitfontColor[4] = {0.,0.,0.,1.};
-float bitfontBackColor[4] = {1.,1.,1.,0.75};
+
+char textString[bitfontStringBufferSize];
+float x;
+float y;
+unsigned int pixelSize;
+unsigned int CharWrap;
+float fontColor[4];
+float backColor[4];
+
+static ISOLA_State bitfontState = {0x00000001};
 static unsigned int bitfontSP[1] = {0};
-static unsigned int bitfontTO[1] = {0};
 static unsigned int bitfontVAO[1] = {0};
 static unsigned int bitfontVBO[1] = {0};
-static int bitfontVD[bitfontStringBufferSize*6] = {0};
-/* struct RENDEROBJECT_bitfont{
-	bitfontCharWrapU
-}
-unsigned char bitfontGroup[256] = {0}; */
+static unsigned int bitfontTO[1] = {0};
+static unsigned char bitfontVD[bitfontStringBufferSize*6] = {0};
 
-void updateBitmapFont(void){
 
-/* 	bitfontCharWrap = isolaInfoWindow.width/bitfontPixelSize; */
+void updateBitfont(void){
 
-	if (!bitfontCharWrap) {
-		bitfontCharWrap = bitfontStringBufferSize;
-	}
-	if (bitfontCharWrap <= isolaInfoWindow.width/bitfontPixelSize) {
-		bitfontPos[0] =
-			(2.-2.*bitfontPixelSize*bitfontCharWrap/isolaInfoWindow.width)/2.-1;
+	if (CharWrap
+			<= isolaInfoWindow.width/pixelSize) {
+		x = ( 2.-2.*pixelSize
+				*CharWrap/isolaInfoWindow.width )/2.-1;
 	}
 
 
-	{int i;
-	char* asdf = "Me meo depie ysen tado, jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj";
-	for(i = 0;i<strlen(asdf);i++){
-		{unsigned int j;
-		for(j = 0;j<6;j++){
-			bitfontVD[i*6+j] = asdf[i]-32;
-		}}
-	}
-	for(i = strlen(asdf);i<bitfontStringBufferSize;i++){
-		{unsigned int j;
-		for(j = 0;j<6;j++){
-			bitfontVD[i*6+j] = 1;
-		}}
-	}}
 	glBindVertexArray(bitfontVAO[0]);
 	glBindBuffer(GL_ARRAY_BUFFER,bitfontVBO[0]);
 	glBufferSubData(GL_ARRAY_BUFFER,0,
@@ -212,37 +208,33 @@ void updateBitmapFont(void){
 	glUniform1f(locLowRes,lowRes);
 	}
 
-	{int locBitPos;
-	locBitPos = glGetUniformLocation(bitfontSP[0],"screenPos");
-	if(locBitPos == -1){SDL_Log("screenPos not found in shader %d",0);}
-	glUniform2fv(locBitPos,1,bitfontPos);
-	}
-
-	{int locPixSize;
-	locPixSize = glGetUniformLocation(bitfontSP[0],"pixelSize");
-	if(locPixSize == -1){SDL_Log("pixelSize not found in shader %d",0);}
-	glUniform1i(locPixSize,bitfontPixelSize);
-	}
-
-	{int locCharWrap;
-	locCharWrap = glGetUniformLocation(bitfontSP[0],"charWrap");
-	if(locCharWrap == -1){SDL_Log("charWrap not found in shader %d",0);}
-	glUniform1i(locCharWrap,bitfontCharWrap);
-	}
-
-	{int locBitCol;
-	locBitCol = glGetUniformLocation(bitfontSP[0],"fontColor");
-	if(locBitCol == -1){SDL_Log("fontColor not found in shader %d",0);}
-	glUniform4fv(locBitCol,1,bitfontColor);
-	}
-
-	{int locBitBackCol;
-	locBitBackCol = glGetUniformLocation(bitfontSP[0],"backColor");
-	if(locBitBackCol == -1){SDL_Log("backColor not found in shader %d",0);}
-	glUniform4fv(locBitBackCol,1,bitfontBackColor);
-	}
 }
-static void createBitmapFont(void){
+
+static void createBitfont(void){
+
+	strcpy(textString,"CONTINUE");
+	x = -1.;
+	y = 0.;
+	pixelSize = 8*2;
+	CharWrap = 8;
+	fontColor[0] = 0.;
+	fontColor[1] = 0.;
+	fontColor[2] = 0.;
+	fontColor[3] = 1.;
+	backColor[0] = 1.;
+	backColor[1] = 1.;
+	backColor[2] = 1.;
+	backColor[3] = 0.;
+
+	{int i;
+	for(i = 0;i<strlen(textString);i++){
+		{unsigned int j;
+		for(j = 0;j<6;j++){
+			bitfontVD[i*6+j] = textString[i]-32;
+		}}
+	}}
+
+
 
 	glGenVertexArrays(1,&bitfontVAO[0]);
 	glGenBuffers(1,&bitfontVBO[0]);
@@ -253,11 +245,9 @@ static void createBitmapFont(void){
 	glBindBuffer(GL_ARRAY_BUFFER,bitfontVBO[0]);
 	glBufferData(GL_ARRAY_BUFFER,sizeof(bitfontVD),
 			bitfontVD,GL_DYNAMIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER,0,
-			sizeof(bitfontVD),bitfontVD);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribIPointer(0,1,GL_INT,sizeof(bitfontVD[0]),(void*)0);
+	glVertexAttribIPointer(0,1,GL_UNSIGNED_BYTE,sizeof(bitfontVD[0]),(void*)0);
 
 
 	glGenTextures(1,bitfontTO);
@@ -296,9 +286,10 @@ static void createBitmapFont(void){
 	}
 
 
-	updateBitmapFont();
+	updateBitfont();
 }
-static void destroyBitmapFont(void){
+
+static void destroyBitfont(void){
 
 	glUseProgram(0);
 	glBindVertexArray(0);
@@ -308,17 +299,60 @@ static void destroyBitmapFont(void){
 	glDeleteBuffers(1,bitfontVBO);
 	glDeleteVertexArrays(1,bitfontVAO);
 }
-static void drawBitmapFont(void){
+
+static void drawBitfont(void){
+	
+	isolaSetState(bitfontState);
 
 	glBindVertexArray(bitfontVAO[0]);
 	glUseProgram(bitfontSP[0]);
 	glActiveTexture(GL_TEXTURE0+0);
 	glBindTexture(GL_TEXTURE_2D,bitfontTO[0]);
 
-	glDrawArrays(GL_TRIANGLES,0,bitfontStringBufferSize*6);
+
+	{int locBitPos;
+	locBitPos = glGetUniformLocation(bitfontSP[0],"screenPos");
+	if(locBitPos == -1){SDL_Log("screenPos not found in shader %d",0);}
+	glUniform2f(locBitPos,x,y);
+	}
+
+	{int locPixSize;
+	locPixSize = glGetUniformLocation(bitfontSP[0],"pixelSize");
+	if(locPixSize == -1){SDL_Log("pixelSize not found in shader %d",0);}
+	glUniform1i(locPixSize,pixelSize);
+	}
+
+	{int locCharWrap;
+	locCharWrap = glGetUniformLocation(bitfontSP[0],"charWrap");
+	if(locCharWrap == -1){SDL_Log("charWrap not found in shader %d",0);}
+	glUniform1i(locCharWrap,CharWrap);
+	}
+
+	{int locBitCol;
+	locBitCol = glGetUniformLocation(bitfontSP[0],"fontColor");
+	if(locBitCol == -1){SDL_Log("fontColor not found in shader %d",0);}
+	glUniform4fv(locBitCol,1,fontColor);
+	}
+
+	{int locBitBackCol;
+	locBitBackCol = glGetUniformLocation(bitfontSP[0],"backColor");
+	if(locBitBackCol == -1){SDL_Log("backColor not found in shader %d",0);}
+	glUniform4fv(locBitBackCol,1,backColor);
+	}
+
+	glDrawArrays(GL_TRIANGLES,0,
+			( bitfontStringBufferSize+CharWrap
+			-bitfontStringBufferSize%CharWrap ) *6);
 }
 
 
+
+
+static unsigned char globalWindowFullscreen = 0;
+static unsigned char globalWindowResizable = 1;
+static unsigned char globalWindowBorder = 1;
+static unsigned short globalWindowPos[2] = {0,0};
+static unsigned short globalWindowRes[2] = {0,0};
 
 
 void renderGlobalUpdate(void){
@@ -328,37 +362,44 @@ void renderGlobalUpdate(void){
 			isolaInfoWindow.height);
 
 
-	updateDigitFPS();
-	updateBitmapFont();
+	updateBitfont();
+	updateDigitfps();
 }
+
 void renderGlobalCreate(void){
 
-/* 	isolaInfoWindow.desktopDisplayMode.w = 360;
-	isolaInfoWindow.desktopDisplayMode.h = 480; */
-	SDL_SetWindowSize(isolaWindow,isolaInfoWindow.desktopDisplayMode.w,
-			isolaInfoWindow.desktopDisplayMode.h);
-	SDL_SetWindowResizable(isolaWindow,1);
+	if(!globalWindowRes[0] || globalWindowFullscreen){
+		globalWindowRes[0] = isolaInfoWindow.desktopDisplayMode.w;
+		globalWindowRes[1] = isolaInfoWindow.desktopDisplayMode.h;
+	}
+	SDL_SetWindowSize(isolaWindow,globalWindowRes[0],globalWindowRes[1]);
+	SDL_SetWindowPosition(isolaWindow,globalWindowPos[0],globalWindowPos[1]);
+	SDL_SetWindowResizable(isolaWindow,globalWindowResizable);
+	SDL_SetWindowBordered(isolaWindow,globalWindowBorder);
+
 	isolaGetWindow();
 
 
-	createDigitFPS();
-	createBitmapFont();
+	createBitfont();
+	createDigitfps();
 
 
 	renderGlobalUpdate();
 }
+
 void renderGlobalDestroy(void){
 
-	destroyDigitFPS();
-	destroyBitmapFont();
+	destroyDigitfps();
+	destroyBitfont();
 }
+
 void renderGlobalDraw(void){
 
 	glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 
 
-	drawBitmapFont();
-	if (b_DigitFPS) {drawDigitFPS();}
+	drawBitfont();
+	drawDigitfps();
 
 
 	SDL_GL_SwapWindow(isolaWindow);
