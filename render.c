@@ -350,8 +350,9 @@ static void drawBitfont(void){
 
 static unsigned char globalWindowFullscreen = 0;
 static unsigned char globalWindowResizable = 1;
+static unsigned char globalWindowBorder = 1;
 static unsigned short globalWindowPos[2] = {0,0};
-static unsigned short globalWindowRes[2] = {0,0};
+static unsigned short globalWindowRes[2] = {480,360};
 
 
 void renderGlobalUpdate(void){
@@ -367,14 +368,15 @@ void renderGlobalUpdate(void){
 
 void renderGlobalCreate(void){
 
-	if(!globalWindowRes[0] || globalWindowFullscreen){
-		globalWindowRes[0] = isolaInfoWindow.desktopDisplayMode.w;
-		globalWindowRes[1] = isolaInfoWindow.desktopDisplayMode.h;
-	}
 	SDL_SetWindowSize(isolaWindow,globalWindowRes[0],globalWindowRes[1]);
 	SDL_SetWindowPosition(isolaWindow,globalWindowPos[0],globalWindowPos[1]);
-/* 	SDL_SetWindowResizable(isolaWindow,globalWindowResizable); */
-	SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
+	SDL_SetWindowBordered(isolaWindow,globalWindowBorder);
+	SDL_SetWindowResizable(isolaWindow,globalWindowResizable);
+	if(globalWindowFullscreen){
+/* 		globalWindowRes[0] = isolaInfoWindow.desktopDisplayMode.w;
+		globalWindowRes[1] = isolaInfoWindow.desktopDisplayMode.h; */
+		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
+	}
 
 	isolaGetWindow();
 

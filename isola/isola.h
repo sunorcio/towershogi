@@ -15,6 +15,8 @@
 /* init parameters for SDL context creation ________________________________ */
 
 #define ISOLA_WINDOWTITLE		"isola_example"
+#define ISOLA_WINDOWWIDTH		480
+#define ISOLA_WINDOWHEIGHT		360
 #define ISOLA_GAMEPAD			0  /* [1^0] */
 #define ISOLA_DEPTH				1  /* [1^0] */
 #define ISOLA_STENCIL			0  /* [1^0] */
@@ -76,12 +78,12 @@ extern void isolaQuit(void);
 #ifdef ISOLA_DBG
  #define isolaDBG_(x) if(isolaErrorGL()){                                     \
 		SDL_Log(" UNEXPECTED ERROR, line : %d, function : %d, file : %s",     \
-		__LINE__,__FUNCTION__,__FILE__);                                      \
+				__LINE__,__FUNCTION__,__FILE__);                              \
 	}                                                                         \
 	x;                                                                        \
 	if(isolaErrorGL()){                                                       \
 		SDL_Log(" ^- in line : %d, function : %d, file : %s\n",               \
-		__LINE__,__FUNCTION__,__FILE__);                                      \
+				__LINE__,__FUNCTION__,__FILE__);                              \
 	}
 #else
  #define isolaDBG_(x) x;
@@ -153,19 +155,19 @@ struct ISOLA_Display{
 }extern isolaInfoDisplay;
 
 typedef enum {
-	ISOLA_STATE_BLEND				= 0x0001,
-	ISOLA_STATE_COLORLOGIC			= 0x0002,
-	ISOLA_STATE_CULLFACE 			= 0x0004,
-	ISOLA_STATE_DEPTHTEST			= 0x0008,
-	ISOLA_STATE_DITHER				= 0x0010,
-	ISOLA_STATE_SCISSORTEST 		= 0x0020,
-	ISOLA_STATE_STENCILTEST 		= 0x0040,
-	ISOLA_STATE_SRGBFRAMEBUFFER 	= 0x0080,
-	ISOLA_STATE_POINTSMOOTH 		= 0x0100,
-	ISOLA_STATE_LINESMOOTH			= 0x0200,
-	ISOLA_STATE_POLYGONSMOOTH		= 0x0400,
-	ISOLA_STATE_POINTSIZEPROGRAM	= 0x0800,
-	ISOLA_STATE_MULTISAMPLE 		= 0x1000
+	ISOLA_STATE_BLEND				= 0x00000001,
+	ISOLA_STATE_COLORLOGIC			= 0x00000002,
+	ISOLA_STATE_CULLFACE 			= 0x00000004,
+	ISOLA_STATE_DEPTHTEST			= 0x00000008,
+	ISOLA_STATE_DITHER				= 0x00000010,
+	ISOLA_STATE_SCISSORTEST 		= 0x00000020,
+	ISOLA_STATE_STENCILTEST 		= 0x00000040,
+	ISOLA_STATE_SRGBFRAMEBUFFER 	= 0x00000080,
+	ISOLA_STATE_POINTSMOOTH 		= 0x00000100,
+	ISOLA_STATE_LINESMOOTH			= 0x00000200,
+	ISOLA_STATE_POLYGONSMOOTH		= 0x00000400,
+	ISOLA_STATE_POINTSIZEPROGRAM	= 0x00000800,
+	ISOLA_STATE_MULTISAMPLE 		= 0x00001000
 }ISOLA_State;
 /* glEnable information. meant for quick debugging. see isolaGetState() */
 extern ISOLA_State isolaInfoState;
