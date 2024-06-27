@@ -4,6 +4,7 @@
 
 
 in vec2 vfTexCoord;
+flat in int vfCharIndex;
 
 
 out vec4 fragColor;
@@ -19,11 +20,12 @@ uniform vec4 backColor;
 
 void main(){
 
-
-	if (texture(bitfontAtlas, vfTexCoord).w == 0.){
-		fragColor = backColor;
-	}else{
-		fragColor = fontColor;
+	if(vfCharIndex != 0){
+		if (texture(bitfontAtlas, vfTexCoord).w == 0.){
+			fragColor = backColor;
+		}else{
+			fragColor = fontColor;
+		}
 	}
 }
 

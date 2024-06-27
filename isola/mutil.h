@@ -18,13 +18,13 @@ static void mut_proj_glortho(float left, float right, float bottom, float top,
 
 	float rl,tb,fn;
 
-	rl = 1./(right-left);
-	tb = 1./(top-bottom);
-	fn =-1./(farZ-nearZ);
+	rl = 1/(right-left);
+	tb = 1/(top-bottom);
+	fn = -1/(farZ-nearZ);
 
-	dest[0*4+0] = 2.*rl;
-	dest[1*4+1] = 2.*tb;
-	dest[2*4+2] = 2.*fn;
+	dest[0*4+0] = 2*rl;
+	dest[1*4+1] = 2*tb;
+	dest[2*4+2] = 2*fn;
 	dest[3*4+0] = -(right+left)*rl;
 	dest[3*4+1] = -(top+bottom)*tb;
 	dest[3*4+2] = (farZ+nearZ)*fn;

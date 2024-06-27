@@ -32,7 +32,7 @@ signed char isolaErrorGL(void){
  #if(  defined(GLEW_KHR_debug) || defined(GLEW_ARB_debug_output)  )
 static void debugCallback(unsigned int source, unsigned int type,
 		unsigned int id, unsigned int severity,
-		int length, const char* message, const void* userParam){
+		int length,const char* message, const void* userParam){
 
 	SDL_Log("%s",message);
 	return;
@@ -377,7 +377,7 @@ static void contextPromt(void){
 	if(flags & SDL_GL_CONTEXT_DEBUG_FLAG){
 		SDL_Log(" debug context");
 	}else{
-		SDL_Log(" no debug context");
+		SDL_Log(" non-debug context");
 	}
 
 	SDL_Log("\n");
@@ -396,7 +396,7 @@ static void contextPromt(void){
 	if(flags & GL_CONTEXT_FLAG_DEBUG_BIT){
 		SDL_Log(" debug context");
 	}else{
-		SDL_Log(" no debug context");
+		SDL_Log(" non-debug context");
 	}
 
 	SDL_Log("\n\n\n");
@@ -404,11 +404,11 @@ static void contextPromt(void){
 
 void isolaInit(void){
 
-	unsigned int contextFlags = 0;
+	int contextFlags = 0;
 
 	isolaShaderSrc = calloc(ISOLA_GLSLCHARMAX+1, sizeof(char));
 
-#if ISOLA_LOG
+#if ISOLA_CONFIG_LOG
 	isolaLog = freopen("isola.log","a+",stderr);
 #endif
 	
@@ -576,7 +576,7 @@ void isolaQuit(void){
 #endif
 
 
-#if ISOLA_LOG
+#if ISOLA_CONFIG_LOG
 	fclose(isolaLog);
 #endif
 	free(isolaShaderSrc);

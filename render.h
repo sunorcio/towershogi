@@ -9,9 +9,24 @@
 
 
 
-extern unsigned char digitfpsBool;
-extern unsigned int digitfpsPixelsize;
-extern float digitfpsColor[4];
+struct DIGITFPS{
+	float color[4];
+	int unsigned pixelsize;
+}extern digitfps;
+
+
+
+
+#define bitfontStringBufferSize 1024
+struct BITFONT{
+	char textString[bitfontStringBufferSize];
+	float x;
+	float y;
+	unsigned int pixelSize;
+	unsigned int charWrap;
+	float fontColor[4];
+	float backColor[4];
+}extern bitfont;
 
 
 

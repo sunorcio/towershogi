@@ -15,7 +15,7 @@
 
 
 
-void loop(void){
+static void loopGlobal(void){
 
 	int keyLength;
 	const unsigned char* keyState = SDL_GetKeyboardState(&keyLength);
@@ -59,23 +59,25 @@ void loop(void){
 
 		if(!pause){
 			unsigned long currentStep = SDL_GetPerformanceCounter();
-			if(currentStep>=lastStep+clockFreq/isolaSPS){
-				lastStep = currentStep;
+			if(currentStep>=timer.lastStep+timer.clockFreq/timer.isolaSPS){
+				timer.lastStep = currentStep;
 
 			}
 		}
 
-		{ unsigned long currentFrame = SDL_GetPerformanceCounter();
-		if(currentFrame>=lastFrame+clockFreq/isolaFPS){
-			frameDelay[frameIndex] = currentFrame-lastFrame;
-			lastFrame = currentFrame;
+		{unsigned long currentFrame = SDL_GetPerformanceCounter();
+		if(currentFrame>=timer.lastFrame+timer.clockFreq/timer.isolaFPS){
+			timer.frameDelay[frameIndex] = currentFrame-timer.lastFrame;
+			timer.lastFrame = currentFrame;
 			frameIndex++;
 
 
 			renderGlobalDraw();
 
 
-		}else{SDL_Delay(0);} }
+		}else{
+			SDL_Delay(0);
+		}}
 
 	}
 }
@@ -89,9 +91,13 @@ int main(int argc, char **argv){
 	isolaInit();
 
 
+
+
 	renderGlobalCreate();
-	loop();
+	loopGlobal();
 	renderGlobalDestroy();
+
+
 
 
 	isolaQuit();

@@ -7,6 +7,7 @@ in int vertCharIndex;
 
 
 out vec2 vfTexCoord;
+flat out int vfCharIndex;
 
 
 uniform mat4 matProj;
@@ -47,6 +48,8 @@ const vec2 bitfontTexCoord[6] = vec2[](
 
 
 void main(){
+
+	vfCharIndex = vertCharIndex;
 
 	vfTexCoord = bitfontTexCoord[gl_VertexID%6] +
 			vec2(vertCharIndex%16*charOffsetX,
