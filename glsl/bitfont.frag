@@ -20,12 +20,14 @@ uniform vec4 backColor;
 
 void main(){
 
-	if(vfCharIndex != 0){
+	if(vfCharIndex != 127){
 		if (texture(bitfontAtlas, vfTexCoord).w == 0.){
 			fragColor = backColor;
 		}else{
 			fragColor = fontColor;
 		}
+	}else{
+		fragColor = vec4(0.,0.,0.,0.);
 	}
 }
 

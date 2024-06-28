@@ -62,6 +62,7 @@ static void loopGlobal(void){
 			if(currentStep>=timer.lastStep+timer.clockFreq/timer.isolaSPS){
 				timer.lastStep = currentStep;
 
+
 			}
 		}
 
@@ -70,7 +71,6 @@ static void loopGlobal(void){
 			timer.frameDelay[frameIndex] = currentFrame-timer.lastFrame;
 			timer.lastFrame = currentFrame;
 			frameIndex++;
-
 
 			renderGlobalDraw();
 

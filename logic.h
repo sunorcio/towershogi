@@ -12,8 +12,7 @@
 
 
 
-/* descriptions */
-/* extern declarations */
+extern void buildmenu(void);
 
 
 

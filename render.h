@@ -9,12 +9,21 @@
 
 
 
+struct SCENE {
+	unsigned char windowFullscreen;
+	unsigned char windowBorder;
+	unsigned char windowResizable;
+	int windowPos[2];
+	int windowRes[2];
+};
+
+
+
+
 struct DIGITFPS{
 	float color[4];
-	int unsigned pixelsize;
+	int unsigned pixelSize;
 }extern digitfps;
-
-
 
 
 #define bitfontStringBufferSize 1024
@@ -22,11 +31,11 @@ struct BITFONT{
 	char textString[bitfontStringBufferSize];
 	float x;
 	float y;
-	unsigned int pixelSize;
-	unsigned int charWrap;
+	unsigned short pixelSize;
+	unsigned short charWrap;
 	float fontColor[4];
 	float backColor[4];
-}extern bitfont;
+}extern bitfontexample[2];
 
 
 

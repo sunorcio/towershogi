@@ -22,10 +22,6 @@ uniform int charWrap;
 
 #define scale (2.*pixelSize/lowResolution)
 
-#define charOffsetX 1/16.
-#define charOffsetY 1./8.
-
-
 const vec2 bitfontVertPos[6] = vec2[](
 	vec2(0. ,0. ),
 	vec2(1. ,0. ),
@@ -34,6 +30,10 @@ const vec2 bitfontVertPos[6] = vec2[](
 	vec2(1. ,2. ),
 	vec2(0. ,2. )
 	);
+
+
+#define charOffsetX 1/16.
+#define charOffsetY 1./8.
 
 const vec2 bitfontTexCoord[6] = vec2[](
 	vec2(0*charOffsetX ,1*charOffsetY ),
