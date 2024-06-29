@@ -13,8 +13,8 @@
 
 
 
-static void mut_proj_glortho(float left, float right, float bottom, float top,
-								float nearZ, float farZ, float dest[4*4]){
+static void mut_proj_glortho(float left, float right,
+		float bottom, float top, float nearZ, float farZ, float dest[4*4]){
 
 	float rl,tb,fn;
 
@@ -32,6 +32,7 @@ static void mut_proj_glortho(float left, float right, float bottom, float top,
 }
 
 static unsigned int mut_gcd(int a, int b){
+
 	int t;
 	while(b!=0){
 		t=b;
@@ -42,6 +43,7 @@ static unsigned int mut_gcd(int a, int b){
 }
 
 static void mut_print_m4(float m[4*4]){
+
 	int i;
 	SDL_Log("\n");
 	for(i = 0;i<4;i++){
@@ -51,6 +53,7 @@ static void mut_print_m4(float m[4*4]){
 }
 
 static void mut_print_m3(float m[3*3]){
+
 	int i;
 	SDL_Log("\n");
 	for(i = 0;i<3;i++){
@@ -60,6 +63,7 @@ static void mut_print_m3(float m[3*3]){
 }
 
 static void mut_m3_cp(float src[3*3],float dest[3*3]){
+
 	dest[0*3+0] = src[0*3+0];
 	dest[0*3+1] = src[0*3+1];
 	dest[0*3+2] = src[0*3+2];
@@ -72,6 +76,7 @@ static void mut_m3_cp(float src[3*3],float dest[3*3]){
 }
 
 static void mut_m3_cp_m4(float src[3*3],float dest[4*4]){
+
 	dest[0*4+0] = src[0*3+0];
 	dest[0*4+1] = src[0*3+1];
 	dest[0*4+2] = src[0*3+2];
@@ -84,6 +89,7 @@ static void mut_m3_cp_m4(float src[3*3],float dest[4*4]){
 }
 
 static void mut_m3_mul(float a[3*3],float b[3*3],float dest[3*3]){
+
 	float c[3*3] = {0};
 	c[0*3+0] = a[0*3+0]*b[0*3+0] + a[1*3+0]*b[0*3+1] + a[2*3+0]*b[0*3+2];
 	c[0*3+1] = a[0*3+1]*b[0*3+0] + a[1*3+1]*b[0*3+1] + a[2*3+1]*b[0*3+2];

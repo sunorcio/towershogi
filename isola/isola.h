@@ -55,10 +55,9 @@
 #endif
 
 
-#define STR_(X) #X
-#define STR(X) STR_(X)
 
 
+#include "misc.h"
 
 
 #include <SDL2/SDL.h>

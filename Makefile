@@ -37,8 +37,8 @@ endif
 
 
 
-HDR = render.h isola/isola.h isola/mutil.h isola/mesh.h logic.h
-SRC = main.c render.c isola/isola.c logic.c
+HDR = isola/isola.h isola/mutil.h render/render.h logic/logic.h
+SRC = main.c isola/isola.c render/render.c logic/logic.c
 OBJ = ${SRC:.c=.o}
 
 DEPS = ${SRC} ${HDR} Makefile bin

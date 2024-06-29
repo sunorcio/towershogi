@@ -9,8 +9,8 @@
 
 #define TIMER_IMPLEMENTATION
 #include "timer.h"
-#include "logic.h"
-#include "render.h"
+#include "logic/logic.h"
+#include "render/render.h"
 
 
 
@@ -76,7 +76,7 @@ static void loopGlobal(void){
 
 
 		}else{
-			SDL_Delay(0);
+/* 			SDL_Delay(0); */
 		}}
 
 	}
