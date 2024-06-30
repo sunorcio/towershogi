@@ -4,7 +4,7 @@
 
 
 
-extern void buildmenu(void);
+extern void globalBuildMenu(void);
 
 
 

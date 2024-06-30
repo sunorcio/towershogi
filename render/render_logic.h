@@ -4,8 +4,8 @@
 
 
 
-#include "../isola/isola.h"
-#include "../isola/mutil.h"
+#include <isola/isola.h>
+#include <isola/mutil.h>
 
 
 

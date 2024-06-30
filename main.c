@@ -77,7 +77,7 @@ static void loopGlobal(void){
 
 
 		}else{
-/* 			SDL_Delay(0); */
+			SDL_Delay(0);
 		}}
 
 	}

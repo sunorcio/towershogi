@@ -4,7 +4,7 @@
 #include "render_logic.h"
 
 
-#include "../isola/isola.h"
+#include <isola/isola.h>
 
 
 #include "digitfps.c"
@@ -19,7 +19,7 @@ struct SCENE {
 	unsigned char windowResizable;
 	int windowPos[2];
 	int windowRes[2];
-}static const global = {
+}static const globalscene = {
 			.windowFullscreen = 0,
 			.windowBorder = 1,
 			.windowResizable = 1,
@@ -41,15 +41,13 @@ void renderGlobalUpdate(void){
 
 void renderGlobalCreate(void){
 
-	SDL_SetWindowSize(isolaWindow,global.windowRes[0],global.windowRes[1]);
-	SDL_SetWindowPosition(isolaWindow,global.windowPos[0],global.windowPos[1]);
-	SDL_SetWindowBordered(isolaWindow,global.windowBorder);
-	SDL_SetWindowResizable(isolaWindow,global.windowResizable);
-	if(global.windowFullscreen){
-/* 		global.windowRes[0] = isolaInfoWindow.desktopDisplayMode.w;
-		global.windowRes[1] = isolaInfoWindow.desktopDisplayMode.h;
-		SDL_SetWindowSize(isolaWindow,global.windowRes[0],global.windowRes[1]);
-		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN); */
+	SDL_SetWindowSize(isolaWindow,globalscene.windowRes[0],
+			globalscene.windowRes[1]);
+	SDL_SetWindowPosition(isolaWindow,globalscene.windowPos[0],
+			globalscene.windowPos[1]);
+	SDL_SetWindowBordered(isolaWindow,globalscene.windowBorder);
+	SDL_SetWindowResizable(isolaWindow,globalscene.windowResizable);
+	if(globalscene.windowFullscreen){
 		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
 	}
 
@@ -78,5 +76,7 @@ void renderGlobalDraw(void){
 
 	SDL_GL_SwapWindow(isolaWindow);
 }
+
+
 
 

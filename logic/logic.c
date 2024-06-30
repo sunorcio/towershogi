@@ -3,7 +3,7 @@
 #include "logic.h"
 
 
-#include "../render/render_logic.h"
+#include <render/render_logic.h>
 
 
 
@@ -26,26 +26,7 @@ struct BITFONT_menu{
 }extern bitfontMenu;
 
 
-struct BITFONT_menu bitfontMenu = {
-
-			.screen[0].group[0].textObject[0] = {
-				.string="NEW GAME",
-				.x=0.,.y=0.,
-				.pixelSize=8*2, .charWrap=strlen("NEW GAME"),
-				.fontColor={0.,0.,0.,1.},
-				.backColor={1.,1.,1.,1.},
-			},
-			.screen[0].group[0].textObject[1] = {
-				.string="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-				.x=-1.,.y=1.,
-				.pixelSize=8*2, .charWrap=50,
-				.fontColor={1.,0.,0.,1.},
-				.backColor={1.,1.,1.,1.},
-			},
-		};
-
-
-void buildmenu(void){
+void globalBuildMenu(void){
 
 	bitfontDataSize = 2;
 	bitfontData = calloc(bitfontDataSize,sizeof(struct BITFONT_object));
@@ -68,7 +49,7 @@ void buildmenu(void){
 	bitfontData[1].x = -1.;
 	bitfontData[1].y = 1.;
 	bitfontData[1].pixelSize = 8*2;
-	bitfontData[1].charWrap = 50;
+	bitfontData[1].charWrap = isolaInfoWindow.width/bitfontData[1].pixelSize;
 	bitfontData[1].fontColor[0] = 1.;
 	bitfontData[1].fontColor[1] = 0.;
 	bitfontData[1].fontColor[2] = 0.;
