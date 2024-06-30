@@ -52,7 +52,7 @@ static void loopGlobal(void){
 						pause = !pause;
 					break;
 					case SDLK_SPACE:
-						buildmenu();
+						globalBuildMenu();
 					break;
 				}
 			}
@@ -77,7 +77,7 @@ static void loopGlobal(void){
 
 
 		}else{
-			SDL_Delay(0);
+/* 			SDL_Delay(0); */
 		}}
 
 	}
