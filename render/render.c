@@ -1,12 +1,10 @@
 
 
-#include "render.h"
+#include "render_main.h"
+#include "render_logic.h"
 
-
-#include <stdio.h>
 
 #include "../isola/isola.h"
-#include "../isola/mutil.h"
 
 
 #include "digitfps.c"
@@ -15,14 +13,20 @@
 
 
 
-static const struct SCENE global = {
-
+struct SCENE {
+	unsigned char windowFullscreen;
+	unsigned char windowBorder;
+	unsigned char windowResizable;
+	int windowPos[2];
+	int windowRes[2];
+}static const global = {
 			.windowFullscreen = 0,
 			.windowBorder = 1,
 			.windowResizable = 1,
 			.windowPos = {SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED},
 			.windowRes = {800,600},
 		};
+
 
 void renderGlobalUpdate(void){
 

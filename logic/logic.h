@@ -4,14 +4,6 @@
 
 
 
-/* preprocessor definitions */
-
-
-/* #include <globaldeps> */
-
-
-
-
 extern void buildmenu(void);
 
 

@@ -1,12 +1,6 @@
 
 
-#include "render.h"
-
-
-#include <stdio.h>
-
-#include "../isola/isola.h"
-#include "../isola/mutil.h"
+#include "render_logic.h"
 
 
 #include "mesh.h"
@@ -14,9 +8,11 @@
 
 
 
+
 #define digitfpsPrintAmount 5
 
 struct DIGITFPS digitfps = { .color={0.25,0.25,0.25,0.75},.pixelSize=8*3 };
+
 
 static ISOLA_State digitfpsState = 0x00000001;
 static unsigned int digitfpsSP;
@@ -62,6 +58,7 @@ static void updateDigitfps(void){
 	}
 }
 
+
 static void createDigitfps(void){
 
 	glGenVertexArrays(1,&digitfpsVAO);
@@ -83,6 +80,7 @@ static void createDigitfps(void){
 	updateDigitfps();
 }
 
+
 static void destroyDigitfps(void){
 
 	glUseProgram(0);
@@ -91,6 +89,7 @@ static void destroyDigitfps(void){
 	glDeleteBuffers(1,&digitfpsEBO);
 	glDeleteVertexArrays(1,&digitfpsVAO);
 }
+
 
 static void drawDigitfps(void){
 

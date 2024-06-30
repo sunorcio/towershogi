@@ -37,7 +37,7 @@ endif
 
 
 
-HDR = isola/isola.h isola/mutil.h render/render.h logic/logic.h
+HDR = isola/isola.h isola/mutil.h render/render_main.h render/render_logic.h logic/logic.h
 SRC = main.c isola/isola.c render/render.c logic/logic.c
 OBJ = ${SRC:.c=.o}
 

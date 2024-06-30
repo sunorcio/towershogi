@@ -10,7 +10,7 @@
 #define TIMER_IMPLEMENTATION
 #include "timer.h"
 #include "logic/logic.h"
-#include "render/render.h"
+#include "render/render_main.h"
 
 
 
@@ -52,6 +52,7 @@ static void loopGlobal(void){
 						pause = !pause;
 					break;
 					case SDLK_SPACE:
+						buildmenu();
 					break;
 				}
 			}
