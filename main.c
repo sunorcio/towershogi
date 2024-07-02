@@ -6,7 +6,6 @@
 
 #include "isola/isola.h"
 
-
 #define TIMER_IMPLEMENTATION
 #include "timer.h"
 #include "logic/logic.h"

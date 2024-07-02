@@ -3,6 +3,9 @@
 #include "render_logic.h"
 
 
+#include <stdio.h>
+
+
 
 
 struct BITFONT_object* bitfontData = {0};

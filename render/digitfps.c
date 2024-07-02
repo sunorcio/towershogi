@@ -3,6 +3,9 @@
 #include "render_logic.h"
 
 
+#include <stdio.h>
+
+
 #include "mesh.h"
 #include "../timer.h"
 
