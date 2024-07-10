@@ -1,20 +1,40 @@
 
 
-#include "render_logic.h"
+
+
+#include "digitfps_render.h"
+#include "digitfps_logic.h"
 
 
 #include <stdio.h>
 
 
-#include "mesh.h"
-#include "../timer.h"
+#include <isola/isola.h>
+#include <isola/mutil.h>
+#include <scene/timer.h>
 
 
 
 
 #define digitfpsPrintAmount 5
 
-struct DIGITFPS digitfps = { .color={0.25,0.25,0.25,0.75},.pixelSize=8*3 };
+struct DIGITFPS_font digitfps = { 
+		.color={0.25,0.25,0.25,0.75},
+		.pixelSize=8*3 };
+
+
+struct DIGITFPS_counter{
+	unsigned long fps;
+	unsigned long clockFreq;
+	unsigned long frameDelay[256];
+	unsigned char frameIndex;
+}static digitfpsCounter = {0};
+
+
+void digitfpsCount(unsigned long frameDelay){
+	digitfpsCounter.frameDelay[digitfpsCounter.frameIndex] = frameDelay;
+	digitfpsCounter.frameIndex++;
+}
 
 
 static ISOLA_State digitfpsState = 0x00000001;
@@ -26,7 +46,19 @@ static unsigned short digitfpsED[16]
 		[sizeof(elementDigit[0])/sizeof(elementDigit[0][0])] = {0};
 
 
-static void updateDigitfps(void){
+void updateDigitfps(struct TIMER_timer* timer){
+	
+	if (timer != 0) {
+
+		digitfpsCounter.fps = timer->fps;
+		digitfpsCounter.clockFreq = timer->clockFreq;
+		{unsigned int i;
+		for(i = 0;i<256;i++){
+			digitfpsCounter.frameDelay[i] = digitfpsCounter.clockFreq/
+					digitfpsCounter.fps;
+		}}
+	}
+
 
 	glUseProgram(digitfpsSP);
 
@@ -62,7 +94,7 @@ static void updateDigitfps(void){
 }
 
 
-static void createDigitfps(void){
+void createDigitfps(struct TIMER_timer* timer){
 
 	glGenVertexArrays(1,&digitfpsVAO);
 	glGenBuffers(1,&digitfpsEBO);
@@ -77,14 +109,14 @@ static void createDigitfps(void){
 			sizeof(digitfpsED),digitfpsED);
 
 
-	digitfpsSP = isolaShaderProgram("glsl/digit.vert","glsl/digit.frag");
+	digitfpsSP = isolaShaderProgram("glsl/digitfps.vert","glsl/digitfps.frag");
 
 
-	updateDigitfps();
+	updateDigitfps(timer);
 }
 
 
-static void destroyDigitfps(void){
+void destroyDigitfps(void){
 
 	glUseProgram(0);
 	glBindVertexArray(0);
@@ -94,7 +126,7 @@ static void destroyDigitfps(void){
 }
 
 
-static void drawDigitfps(void){
+void drawDigitfps(void){
 
 	isolaSetState(digitfpsState);
 
@@ -102,14 +134,15 @@ static void drawDigitfps(void){
 	{unsigned long delaySum = 0;
 	{unsigned int i;
 	for(i = 0;i<256;i++){
-		delaySum += timer.frameDelay[i];
+		delaySum += digitfpsCounter.frameDelay[i];
 	}}
 
 	{unsigned int i;
 	for(i = 0;i<digitfpsPrintAmount;i++){
 		digitfpsString[i] = 0;
 	}}
-	sprintf(digitfpsString,"%f",1./((delaySum/256.)/(double)timer.clockFreq) );
+	sprintf(digitfpsString,"%f",
+			1./((delaySum/256.)/(double)digitfpsCounter.clockFreq) );
 	}
 
 	{unsigned int i;
@@ -150,3 +183,7 @@ static void drawDigitfps(void){
 			*digitfpsPrintAmount,
 			GL_UNSIGNED_SHORT,(void*)0);
 }
+
+
+
+

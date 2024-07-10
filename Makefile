@@ -37,8 +37,8 @@ endif
 
 
 
-HDR = isola/isola.h isola/mutil.h render/render_main.h render/render_logic.h logic/logic.h
-SRC = main.c isola/isola.c render/render.c logic/logic.c
+HDR = ${wildcard isola/*.h} ${wildcard scene/*.h} ${wildcard render/*.h} ${wildcard logic/*.h}
+SRC = main.c isola/isola.c scene/mainmenu.c ${wildcard render/*.c} ${wildcard logic/*.c}
 OBJ = ${SRC:.c=.o}
 
 DEPS = ${SRC} ${HDR} Makefile bin
@@ -73,9 +73,9 @@ else ifeq (${TARGET_OS},windows)
 		-ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid
 
 
- #CFLAGS = -DISOLA_DBG /* -g */
+ #CFLAGS = -DISOLA_DBG #-g
  CFLAGS = ${INCS} -std=c89 -O3 -pipe -DGLEW_STATIC -D_REENTRANT -DWIN32_LEAN_AND_MEAN
- #LDFLAGS = /* -v */
+ #LDFLAGS = #-v
  LDFLAGS = ${LIBS} -mwindows
 
 

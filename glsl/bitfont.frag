@@ -20,7 +20,7 @@ uniform vec4 backColor;
 
 void main(){
 
-	if(vfCharIndex != 127){
+	if(vfCharIndex != 127-32){
 		if (texture(bitfontAtlas, vfTexCoord).w == 0.){
 			fragColor = backColor;
 		}else{

@@ -1,15 +1,22 @@
 
 
-#include "render_logic.h"
+
+
+#include "bitfont_render.h"
+#include "bitfont_logic.h"
 
 
 #include <stdio.h>
 
 
+#include <isola/isola.h>
+#include <isola/mutil.h>
 
 
-struct BITFONT_object* bitfontData = {0};
-unsigned int bitfontDataSize = 0;
+
+
+struct BITFONT_textobject* bitfontObjectData = {0};
+unsigned int bitfontObjectAmount = 0;
 
 
 static ISOLA_State bitfontState = 0x00000001;
@@ -20,12 +27,11 @@ static unsigned int bitfontTO[1] = {0};
 static unsigned char bitfontVD[bitfontStringSize*6] = {0};
 
 
-static void updateBitfont(void){
+void updateBitfont(void){
 
 	glBindVertexArray(bitfontVAO[0]);
 	glBindBuffer(GL_ARRAY_BUFFER,bitfontVBO[0]);
-	glBufferSubData(GL_ARRAY_BUFFER,0,
-			sizeof(bitfontVD),bitfontVD);
+	glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(bitfontVD),bitfontVD);
 
 
 	glUseProgram(bitfontSP[0]);
@@ -51,11 +57,11 @@ static void updateBitfont(void){
 }
 
 
-static void createBitfont(void){
+void createBitfont(void){
 
 	{int i;
 	for(i = 0;i<sizeof(bitfontVD)/sizeof(bitfontVD[0]);i++){
-		bitfontVD[i] = 127;
+		bitfontVD[i] = 127-32;
 	}}
 
 	glGenVertexArrays(1,&bitfontVAO[0]);
@@ -112,7 +118,7 @@ static void createBitfont(void){
 }
 
 
-static void destroyBitfont(void){
+void destroyBitfont(void){
 
 	glUseProgram(0);
 	glBindVertexArray(0);
@@ -124,7 +130,7 @@ static void destroyBitfont(void){
 }
 
 
-static void drawBitfont(void){
+void drawBitfont(void){
 
 	glBindVertexArray(bitfontVAO[0]);
 
@@ -137,15 +143,15 @@ static void drawBitfont(void){
 	glBindBuffer(GL_ARRAY_BUFFER,bitfontVBO[0]);
 
 	{unsigned int o;
-	for(o = 0;o<bitfontDataSize;o++){
+	for(o = 0;o<bitfontObjectAmount;o++){
 
 		{int c;
-		for(c = 0;c<strlen(bitfontData[o].string);c++){
+		for(c = 0;c<strlen(bitfontObjectData[o].string);c++){
 
 			{unsigned int v;
 			for(v = 0;v<6;v++){
 
-				bitfontVD[c*6+v] = bitfontData[o].string[c]-32;
+				bitfontVD[c*6+v] = bitfontObjectData[o].string[c]-32;
 			}}
 		}}
 
@@ -153,38 +159,39 @@ static void drawBitfont(void){
 				sizeof(bitfontVD)/sizeof(bitfontVD[0]),bitfontVD);
 
 		{int c;
-		for(c = 0;c<strlen(bitfontData[o].string)*sizeof(bitfontVD[0])*6;c++){
-			bitfontVD[c] = 127;
+		for(c = 0;c<strlen(bitfontObjectData[o].string)*
+				sizeof(bitfontVD[0])*6;c++){
+			bitfontVD[c] = 127-32;
 		}}
 
 		{int locBitPos;
 		locBitPos = glGetUniformLocation(bitfontSP[0],"screenPos");
 		if(locBitPos == -1){SDL_Log("screenPos not found in shader %d",0);}
-		glUniform2f(locBitPos, bitfontData[o].x, bitfontData[o].y);
+		glUniform2f(locBitPos, bitfontObjectData[o].x, bitfontObjectData[o].y);
 		}
 
 		{int locPixSize;
 		locPixSize = glGetUniformLocation(bitfontSP[0],"pixelSize");
 		if(locPixSize == -1){SDL_Log("pixelSize not found in shader %d",0);}
-		glUniform1i(locPixSize, bitfontData[o].pixelSize);
+		glUniform1i(locPixSize, bitfontObjectData[o].pixelSize);
 		}
 
 		{int locCharWrap;
 		locCharWrap = glGetUniformLocation(bitfontSP[0],"charWrap");
 		if(locCharWrap == -1){SDL_Log("charWrap not found in shader %d",0);}
-		glUniform1i(locCharWrap,bitfontData[o].charWrap);
+		glUniform1i(locCharWrap,bitfontObjectData[o].charWrap);
 		}
 
 		{int locBitCol;
 		locBitCol = glGetUniformLocation(bitfontSP[0],"fontColor");
 		if(locBitCol == -1){SDL_Log("fontColor not found in shader %d",0);}
-		glUniform4fv(locBitCol,1, bitfontData[o].fontColor);
+		glUniform4fv(locBitCol,1, bitfontObjectData[o].fontColor);
 		}
 
 		{int locBackCol;
 		locBackCol = glGetUniformLocation(bitfontSP[0],"backColor");
 		if(locBackCol == -1){SDL_Log("backColor not found in shader %d",0);}
-		glUniform4fv(locBackCol,1, bitfontData[o].backColor);
+		glUniform4fv(locBackCol,1, bitfontObjectData[o].backColor);
 		}
 
 		glDrawArrays(GL_TRIANGLES,0,bitfontStringSize*6);
