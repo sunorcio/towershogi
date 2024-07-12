@@ -2,14 +2,20 @@
 
 
 
-#include "mainmenu.h"
-
-
 #include <isola/isola.h>
+#include "scene.h"
 
 
 #include <render/digitfps_render.h>
 #include <render/bitfont_render.h>
+
+
+
+
+extern struct SCENE_scene mainmenu;
+
+
+extern struct TIMING_counter frameCounter;
 
 
 
@@ -22,27 +28,14 @@ void mainmenuRenderUpdate(void){
 
 
 	updateBitfont();
-	updateDigitfps(0);
+	updateDigitfps();
 }
+
 
 void mainmenuRenderCreate(void){
 
-	SDL_SetWindowSize(isolaWindow,mainmenu.windowRes[0],
-			mainmenu.windowRes[1]);
-	SDL_SetWindowPosition(isolaWindow,mainmenu.windowPos[0],
-			mainmenu.windowPos[1]);
-	SDL_SetWindowBordered(isolaWindow,mainmenu.windowBorder);
-	SDL_SetWindowResizable(isolaWindow,mainmenu.windowResizable);
-	if(mainmenu.windowFullscreen){
-		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
-	}
-
-	glClearColor(mainmenu.clearcolor[0],mainmenu.clearcolor[1],
-			mainmenu.clearcolor[2],mainmenu.clearcolor[3]);
-
-
 	createBitfont();
-	createDigitfps(&mainmenu.timer);
+	createDigitfps(&frameCounter);
 
 
 	mainmenuRenderUpdate();

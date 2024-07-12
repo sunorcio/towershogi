@@ -4,13 +4,13 @@
 
 
 
-#include <scene/timer.h>
+#include <timing.h>
 
 
 
 
-extern void updateDigitfps(struct TIMER_timer* timer);
-extern void createDigitfps(struct TIMER_timer* timer);
+extern void updateDigitfps(void);
+extern void createDigitfps(struct TIMING_counter* counter);
 extern void destroyDigitfps(void);
 extern void drawDigitfps(void);
 

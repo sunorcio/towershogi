@@ -128,6 +128,7 @@ struct ISOLA_Context{
 	int cacheSize;
 }extern isolaInfoContext;
 
+
 /* current window state. updated with isolaGetWindow() */
 struct ISOLA_Window{
 	int xpos;
@@ -142,6 +143,7 @@ struct ISOLA_Window{
 	SDL_DisplayMode desktopDisplayMode;
 }extern isolaInfoWindow;
 
+
 /* dysplay modes for all availiable devices. retrieved with isolaGetDisplay() */
 struct ISOLA_Display{
 /* 	number of display modes for the id, access array with desired display id */
@@ -150,6 +152,7 @@ struct ISOLA_Display{
 	(sum of previous counts - 1) to (sum of previous counts + count - 1) */
 	SDL_DisplayMode* displayModes;
 }extern isolaInfoDisplay;
+
 
 typedef enum {
 	ISOLA_STATE_NONE				= 0x00000000,
@@ -173,19 +176,27 @@ extern ISOLA_State isolaInfoState;
 
 /* update window information (isolaInfoWindow) */
 extern void isolaGetWindow(void);
+
+
 /* retrieve all availiable display information (isolaInfoDisplay) */
 extern void isolaGetDisplay(void);
+
+
 /* update currently enabled opengl state (isolaInfoState) */
 extern void isolaGetState(void);
+
 
 /* sets opengl state to match an ISOLA_State snapshot */
 extern void isolaSetState(ISOLA_State state);
 
 
 
+
 /* compile source file into returned opengl shader object id */
 extern unsigned int isolaShaderCompile(const char* shaderFile,
 		unsigned int shaderType);
+
+
 /* compile and link source files into returned opengl shader program */
 extern unsigned int isolaShaderProgram(const char* vertShaderFile,
 		const char* fragShaderFile);
@@ -194,10 +205,11 @@ extern unsigned int isolaShaderProgram(const char* vertShaderFile,
 /* loads srcfile into heap, returns a pointer that can be issued to
    isolaShaderSrcCompare(), you must free this pointer yourself */
 extern char* isolaShaderSrcLoad(const char* shaderFile);
+
+
 /* compares srcfile with loaded src, if !=, src is updated and return !0 */
 extern unsigned char isolaShaderSrcCompare(char* shaderSrc,
 		const char* shaderFile);
-
 
 
 

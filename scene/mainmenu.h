@@ -4,14 +4,6 @@
 
 
 
-#include "scene.h"
-
-
-
-
-extern struct SCENE mainmenu;
-
-
 extern void mainmenuLoop(void);
 
 

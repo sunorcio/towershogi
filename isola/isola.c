@@ -49,6 +49,7 @@ signed char isolaErrorGL(void){return 0;}
 SDL_GLContext* isolaContext = {0};
 SDL_Window* isolaWindow = {0};    
 
+
 struct ISOLA_Context isolaInfoContext = {0};
 struct ISOLA_Window isolaInfoWindow = {0};
 struct ISOLA_Display isolaInfoDisplay = {0};
@@ -83,6 +84,7 @@ void isolaGetWindow(void){
 			&isolaInfoWindow.desktopDisplayMode);
 }
 
+
 void isolaGetDisplay(void){
 
 	int i,j;
@@ -108,6 +110,7 @@ void isolaGetDisplay(void){
 		buff += isolaInfoDisplay.displayModeCount[i];
 	}
 }
+
 
 static void isolaGetContext(void){
 
@@ -165,6 +168,7 @@ static void isolaGetContext(void){
 	isolaInfoContext.cacheSize = SDL_GetCPUCacheLineSize();
 }
 
+
 void isolaGetState(void){
 
 	int state = {0};
@@ -197,6 +201,7 @@ void isolaGetState(void){
 	glGetIntegerv(GL_MULTISAMPLE, &state);
 	isolaInfoState = (isolaInfoState | state*ISOLA_STATE_MULTISAMPLE);
 }
+
 
 void isolaSetState(ISOLA_State state){
 
@@ -266,6 +271,7 @@ unsigned int isolaShaderCompile(const char* shaderFile,
 	return shaderObject;
 }
 
+
 unsigned int isolaShaderProgram(const char* vertShaderFile,
 		const char* fragShaderFile){
 
@@ -320,6 +326,7 @@ char* isolaShaderSrcLoad(const char* shaderFile){
 
 	return shaderSrc;
 }
+
 
 unsigned char isolaShaderSrcCompare(char* shaderSrc,
 		const char* shaderFile){
@@ -401,6 +408,7 @@ static void contextPromt(void){
 
 	SDL_Log("\n\n\n");
 }
+
 
 void isolaInit(void){
 
@@ -567,6 +575,8 @@ void isolaInit(void){
 	isolaGetDisplay();
 	SDL_GL_SetSwapInterval(ISOLA_VSYNC);
 }
+
+
 void isolaQuit(void){
 
 #ifdef ISOLA_DBG

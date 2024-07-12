@@ -6,29 +6,28 @@
 
 
 #include <isola/isola.h>
-
-
-#include <render/digitfps_logic.h>
-#include <logic/bitmenu.h>
+#include <timing.h>
+#include "scene.h"
 
 
 #include "mainmenu_render.c"
+#include "mainmenu_logic.c"
 
 
 
 
-struct SCENE mainmenu = {
+struct SCENE_scene mainmenu = {
 			.windowFullscreen = 0,
 			.windowBorder = 1,
 			.windowResizable = 1,
 			.windowPos = {SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED},
 			.windowRes = {800,600},
-			.clearcolor = {0.,0.,0.,1.},
-			.timer.fps = 60,
-			.timer.sps = 60,
+			.clearColor = {0.,0.,0.,1.},
 		};
 
 
+struct TIMING_timer logicTimer = {0};
+struct TIMING_counter frameCounter = {0};
 
 
 void mainmenuLoop(void){
@@ -40,12 +39,12 @@ void mainmenuLoop(void){
 	unsigned char run = 1;
 	unsigned char pause = 0;
 
-	mainmenu.timer.clockFreq = SDL_GetPerformanceFrequency();
-	mainmenu.timer.lastFrame = SDL_GetPerformanceCounter();
-	mainmenu.timer.lastStep = SDL_GetPerformanceCounter();
 
-	bitmenuCreate();
+	timerSetup(&logicTimer, 60);
+	counterSetup(&frameCounter, 60);
+	sceneSetup(&mainmenu);
 	mainmenuRenderCreate();
+	mainmenuLogicCreate();
 
 
 	while(run){
@@ -76,34 +75,21 @@ void mainmenuLoop(void){
 			}
 		}
 
-		if(!pause){
-			unsigned long currentStep = SDL_GetPerformanceCounter();
-			if(currentStep>=mainmenu.timer.lastStep+
-					mainmenu.timer.clockFreq/mainmenu.timer.sps){
-				mainmenu.timer.lastStep = currentStep;
+		if(!pause && timerStep(&logicTimer)){
 
 
-			}
 		}
 
-		{unsigned long currentFrame = SDL_GetPerformanceCounter();
-		if(currentFrame>=mainmenu.timer.lastFrame+
-				mainmenu.timer.clockFreq/mainmenu.timer.fps){
-			digitfpsCount(currentFrame-mainmenu.timer.lastFrame);
-			mainmenu.timer.lastFrame = currentFrame;
+		if(counterStep(&frameCounter)){
 
 			mainmenuRenderDraw();
 
-
-		}else{
-			SDL_Delay(0);
-		}}
+		}else{ SDL_Delay(0); }
 
 	}
 
 	mainmenuRenderDestroy();
-	bitmenuDestroy();
-
+	mainmenuLogicDestroy();
 }
 
 
