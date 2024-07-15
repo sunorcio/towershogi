@@ -3,16 +3,12 @@
 
 
 #include <isola/isola.h>
-#include "scene.h"
 
 
 #include <render/digitfps_render.h>
 #include <render/bitfont_render.h>
 
 
-
-
-extern struct SCENE_scene mainmenu;
 
 
 extern struct TIMING_counter frameCounter;

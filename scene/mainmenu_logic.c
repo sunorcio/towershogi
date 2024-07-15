@@ -17,23 +17,25 @@
 
 void mainmenuLogicUpdate(void){
 
+	updateBitmenu();
 }
 
 
 void mainmenuLogicCreate(void){
 
-	bitmenuCreate();
+	createBitmenu();
 }
 
 
 void mainmenuLogicDestroy(void){
 
-	bitmenuDestroy();
+	destroyBitmenu();
 }
 
 
 void mainmenuLogicStep(void){
 
+	stepBitmenu();
 }
 
 

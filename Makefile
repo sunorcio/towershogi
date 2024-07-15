@@ -38,7 +38,7 @@ endif
 
 
 HDR = ${wildcard isola/*.h} ${wildcard scene/*.h} ${wildcard render/*.h} ${wildcard logic/*.h}
-SRC = main.c timing.c isola/isola.c scene/scene.c scene/mainmenu.c ${wildcard render/*.c} ${wildcard logic/*.c}
+SRC = main.c timing.c isola/isola.c scene/mainmenu.c ${wildcard render/*.c} ${wildcard logic/*.c}
 OBJ = ${SRC:.c=.o}
 
 DEPS = ${SRC} ${HDR} Makefile bin

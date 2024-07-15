@@ -7,7 +7,6 @@
 
 #include <isola/isola.h>
 #include <timing.h>
-#include "scene.h"
 
 
 #include "mainmenu_render.c"
@@ -16,18 +15,43 @@
 
 
 
-struct SCENE_scene mainmenu = {
-			.windowFullscreen = 0,
-			.windowBorder = 1,
-			.windowResizable = 1,
-			.windowPos = {SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED},
-			.windowRes = {800,600},
-			.clearColor = {0.,0.,0.,1.},
-		};
+struct SCENE_mainmenu {
+	unsigned char windowFullscreen;
+	unsigned char windowBorder;
+	unsigned char windowResizable;
+	int windowPos[2];
+	int windowRes[2];
+	float clearColor[4];
+}mainmenu = {
+		.windowFullscreen = 0,
+		.windowBorder = 1,
+		.windowResizable = 1,
+		.windowPos = {SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED},
+		.windowRes = {800,600},
+		.clearColor = {0.,0.,0.,1.}, };
 
 
-struct TIMING_timer logicTimer = {0};
-struct TIMING_counter frameCounter = {0};
+void sceneSetup(struct SCENE_mainmenu* scene){
+
+	SDL_SetWindowSize(isolaWindow,scene->windowRes[0],
+			scene->windowRes[1]);
+	SDL_SetWindowPosition(isolaWindow,scene->windowPos[0],
+			scene->windowPos[1]);
+	SDL_SetWindowBordered(isolaWindow,scene->windowBorder);
+	SDL_SetWindowResizable(isolaWindow,scene->windowResizable);
+	if(scene->windowFullscreen){
+		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
+	}
+
+	glClearColor(scene->clearColor[0],scene->clearColor[1],
+			scene->clearColor[2],scene->clearColor[3]);
+}
+
+
+
+
+struct TIMING_timer logicTimer;
+struct TIMING_counter frameCounter;
 
 
 void mainmenuLoop(void){
@@ -40,9 +64,9 @@ void mainmenuLoop(void){
 	unsigned char pause = 0;
 
 
+	sceneSetup(&mainmenu);
 	timerSetup(&logicTimer, 60);
 	counterSetup(&frameCounter, 60);
-	sceneSetup(&mainmenu);
 	mainmenuRenderCreate();
 	mainmenuLogicCreate();
 
@@ -55,6 +79,7 @@ void mainmenuLoop(void){
 					case SDL_WINDOWEVENT_SIZE_CHANGED:
 					case SDL_WINDOWEVENT_DISPLAY_CHANGED:
 						mainmenuRenderUpdate();
+						mainmenuLogicUpdate();
 					break;
 					case SDL_WINDOWEVENT_CLOSE:
 						run = !run;
@@ -75,18 +100,23 @@ void mainmenuLoop(void){
 			}
 		}
 
+
 		if(!pause && timerStep(&logicTimer)){
 
-
+			mainmenuLogicStep();
 		}
 
 		if(counterStep(&frameCounter)){
 
 			mainmenuRenderDraw();
+		}
 
-		}else{ SDL_Delay(0); }
-
+#define RESOURCE_PADDING
+#ifdef RESOURCE_PADDING
+		SDL_Delay(1);
+#endif
 	}
+
 
 	mainmenuRenderDestroy();
 	mainmenuLogicDestroy();
