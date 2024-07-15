@@ -19,16 +19,36 @@ struct SCENE_mainmenu {
 	unsigned char windowFullscreen;
 	unsigned char windowBorder;
 	unsigned char windowResizable;
+/* 	unsigned char windowKeepratio; */
 	int windowPos[2];
 	int windowRes[2];
+	int windowMinRes[2];
 	float clearColor[4];
-}mainmenu = {
+}mainmenuScene = {
 		.windowFullscreen = 0,
 		.windowBorder = 1,
 		.windowResizable = 1,
 		.windowPos = {SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED},
 		.windowRes = {800,600},
+		.windowMinRes = {480,360},
 		.clearColor = {0.,0.,0.,1.}, };
+
+
+void sceneUpdate(struct SCENE_mainmenu* scene){
+
+	isolaGetWindow();
+	if (isolaInfoWindow.width < scene->windowMinRes[0]) {
+		isolaInfoWindow.width = scene->windowMinRes[0];
+	}
+	if (isolaInfoWindow.height < scene->windowMinRes[1]) {
+		isolaInfoWindow.height = scene->windowMinRes[1];
+	}
+	SDL_SetWindowSize(isolaWindow,isolaInfoWindow.width,isolaInfoWindow.height);
+
+
+	isolaGetWindow();
+	glViewport(0,0,isolaInfoWindow.width, isolaInfoWindow.height);
+}
 
 
 void sceneSetup(struct SCENE_mainmenu* scene){
@@ -64,7 +84,7 @@ void mainmenuLoop(void){
 	unsigned char pause = 0;
 
 
-	sceneSetup(&mainmenu);
+	sceneSetup(&mainmenuScene);
 	timerSetup(&logicTimer, 60);
 	counterSetup(&frameCounter, 60);
 	mainmenuRenderCreate();
@@ -77,7 +97,10 @@ void mainmenuLoop(void){
 			if(event.type == SDL_WINDOWEVENT){
 				switch(event.window.event){
 					case SDL_WINDOWEVENT_SIZE_CHANGED:
+					case SDL_WINDOWEVENT_RESIZED:
 					case SDL_WINDOWEVENT_DISPLAY_CHANGED:
+						sceneUpdate(&mainmenuScene);
+
 						mainmenuRenderUpdate();
 						mainmenuLogicUpdate();
 					break;

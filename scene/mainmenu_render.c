@@ -18,11 +18,6 @@ extern struct TIMING_counter frameCounter;
 
 void mainmenuRenderUpdate(void){
 
-	isolaGetWindow();
-	glViewport(0,0,isolaInfoWindow.width,
-			isolaInfoWindow.height);
-
-
 	updateBitfont();
 	updateDigitfps();
 }
