@@ -135,8 +135,10 @@ struct ISOLA_Window{
 	int ypos;
 	int width;
 	int height;
-	float xratio;
-	float yratio;
+	double xratio;
+	double yratio;
+	double pixelWidth;
+	double pixelHeight;
 	unsigned int flags;	/* see SDL_WindowFlags for a list of flags */
 	int displayIndex;
 	SDL_DisplayMode displayMode;

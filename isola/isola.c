@@ -77,6 +77,8 @@ void isolaGetWindow(void){
 		isolaInfoWindow.yratio = (double)isolaInfoWindow.height 
 				/isolaInfoWindow.width;
 	}
+	isolaInfoWindow.pixelWidth = (double)2./isolaInfoWindow.width;
+	isolaInfoWindow.pixelHeight = (double)2./isolaInfoWindow.height;
 	isolaInfoWindow.flags = SDL_GetWindowFlags(isolaWindow);
 	isolaInfoWindow.displayIndex = SDL_GetWindowDisplayIndex(isolaWindow);
 	SDL_GetWindowDisplayMode(isolaWindow, &isolaInfoWindow.displayMode);
@@ -581,7 +583,7 @@ void isolaQuit(void){
 
 #ifdef ISOLA_DBG
 	if( isolaErrorGL() || isolaErrorSDL(-1) ){
-		SDL_Log("Uncaught errors left");
+		SDL_Log("UNCAUGHT ERRORS LEFT");
 	}
 #endif
 

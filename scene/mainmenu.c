@@ -7,6 +7,7 @@
 
 #include <isola/isola.h>
 #include <timing.h>
+#include <input.h>
 
 
 #include "mainmenu_render.c"
@@ -76,14 +77,13 @@ struct TIMING_counter frameCounter;
 
 void mainmenuLoop(void){
 
-	int keyLength;
-	const unsigned char* keyState = SDL_GetKeyboardState(&keyLength);
-
 	SDL_Event event = {0};
 	unsigned char run = 1;
 	unsigned char pause = 0;
+	unsigned char textinput = 0;
 
 
+	inputSetup();
 	sceneSetup(&mainmenuScene);
 	timerSetup(&logicTimer, 60);
 	counterSetup(&frameCounter, 60);
@@ -109,7 +109,7 @@ void mainmenuLoop(void){
 					break;
 				}
 			}
-			if(event.type == SDL_KEYDOWN){
+			if(event.type == SDL_KEYDOWN && !event.key.repeat){
 				switch (event.key.keysym.sym){
 					case SDLK_ESCAPE:
 						run = !run;
@@ -117,9 +117,19 @@ void mainmenuLoop(void){
 					case SDLK_p:
 						pause = !pause;
 					break;
-					case SDLK_SPACE:
+					case SDLK_RETURN:
+					if (!textinput) {
+						SDL_StartTextInput();
+						textinput = 1;
+					}else {
+						SDL_StopTextInput();
+						textinput = 0;
+					}
 					break;
 				}
+			}
+			if(event.type == SDL_TEXTINPUT && !event.key.repeat){
+				SDL_Log("%s",event.text.text);;
 			}
 		}
 

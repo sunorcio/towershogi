@@ -47,7 +47,7 @@ static unsigned short elementDigit[12][12] = {
 
 struct DIGITFPS_font digitfps = { 
 		.color={0.25,0.25,0.25,0.75},
-		.pixelSize=8*3 };
+		.pixelSize=8*1 };
 
 
 static struct TIMING_counter* digitfpsCounter = {0};
