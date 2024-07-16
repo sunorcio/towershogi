@@ -138,6 +138,9 @@ void mainmenuLoop(void){
 					break;
 				}
 			}
+			if(event.type == SDL_TEXTEDITING && !event.key.repeat){
+				SDL_Log("%s",event.edit.text);
+			}
 			if(event.type == SDL_TEXTINPUT && !event.key.repeat){
 /* 				SDL_Log("%s",event.text.text);; */
 				unilen += strlen(event.text.text);
