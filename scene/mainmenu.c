@@ -115,6 +115,9 @@ void mainmenuLoop(void){
 			}
 			if(event.type == SDL_KEYDOWN && !event.key.repeat){
 				switch (event.key.keysym.sym){
+					case SDLK_UNKNOWN:
+						SDL_Log("asdf");
+					break;
 					case SDLK_ESCAPE:
 						run = !run;
 					break;
@@ -142,7 +145,7 @@ void mainmenuLoop(void){
 				SDL_Log("%s",event.edit.text);
 			}
 			if(event.type == SDL_TEXTINPUT && !event.key.repeat){
-/* 				SDL_Log("%s",event.text.text);; */
+				SDL_Log("%s",event.text.text);;
 				unilen += strlen(event.text.text);
 				if(unilen >= isolaARRAYSIZE_(unistr)){
 					SDL_StopTextInput();
