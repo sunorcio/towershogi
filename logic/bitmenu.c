@@ -22,8 +22,7 @@ struct BITMENU_group{
 	unsigned int currentObject;
 	unsigned int objectAmount;
 	unsigned int fontPixelsize;
-}group = { .currentObject = 0,
-		.objectAmount = 6 };
+}group = { .currentObject = 0, };
 
 
 
@@ -52,7 +51,8 @@ void createBitmenu(void){
 	int i = 0.;
 
 
-	bitfontObjectAmount = 23;
+	group.objectAmount = 6;
+	bitfontObjectAmount = 6;
 	bitfontObjectData = calloc(bitfontObjectAmount,
 			sizeof(struct BITFONT_textobject));
 

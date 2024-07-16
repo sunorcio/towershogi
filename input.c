@@ -15,6 +15,8 @@ const unsigned char* keyState;
 
 void inputSetup(void){
 
+	if (SDL_IsTextInputActive()) {SDL_StopTextInput();}
+
 	keyState = SDL_GetKeyboardState(&keyLength);
 }
 
