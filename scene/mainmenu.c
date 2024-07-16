@@ -142,10 +142,10 @@ void mainmenuLoop(void){
 				}
 			}
 			if(event.type == SDL_TEXTEDITING && !event.key.repeat){
-				SDL_Log("%s",event.edit.text);
+				SDL_Log("asdf");;
 			}
 			if(event.type == SDL_TEXTINPUT && !event.key.repeat){
-				SDL_Log("%s",event.text.text);;
+				SDL_Log("asdf");;
 				unilen += strlen(event.text.text);
 				if(unilen >= isolaARRAYSIZE_(unistr)){
 					SDL_StopTextInput();
