@@ -81,10 +81,6 @@ void mainmenuLoop(void){
 	SDL_Event event = {0};
 	unsigned char run = 1;
 	unsigned char pause = 0;
-	unsigned char textinput = 0;
-
-	char unistr[32] = {0};
-	unsigned int unilen = {0};
 
 
 	inputSetup();
@@ -115,49 +111,12 @@ void mainmenuLoop(void){
 			}
 			if(event.type == SDL_KEYDOWN && !event.key.repeat){
 				switch (event.key.keysym.sym){
-					case SDLK_UNKNOWN:
-						SDL_Log("asdf");
-					break;
 					case SDLK_ESCAPE:
 						run = !run;
 					break;
 					case SDLK_p:
 						pause = !pause;
 					break;
-					case SDLK_RETURN:
-						if (!textinput) {
-							SDL_StartTextInput();
-							textinput = 1;
-						}else {
-							SDL_StopTextInput();
-							textinput = 0;
-							SDL_Log("%s",unistr);
-							{unsigned int i;
-							for(i = 0;i<isolaARRAYSIZE_(unistr);i++){
-								unistr[i] = 0;
-							}}
-							unilen = 0;
-						}
-					break;
-				}
-			}
-			if(event.type == SDL_TEXTEDITING && !event.key.repeat){
-				SDL_Log("asdf");;
-			}
-			if(event.type == SDL_TEXTINPUT && !event.key.repeat){
-				SDL_Log("asdf");;
-				unilen += strlen(event.text.text);
-				if(unilen >= isolaARRAYSIZE_(unistr)){
-					SDL_StopTextInput();
-					textinput = 0;
-					SDL_Log("%s",unistr);
-					{unsigned int i;
-					for(i = 0;i<isolaARRAYSIZE_(unistr);i++){
-						unistr[i] = 0;
-					}}
-					unilen = 0;
-				}else {
-					strcat(unistr,event.text.text);
 				}
 			}
 		}
