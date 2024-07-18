@@ -81,10 +81,6 @@ void mainmenuLoop(void){
 	SDL_Event event = {0};
 	unsigned char run = 1;
 	unsigned char pause = 0;
-	unsigned char textinput = 0;
-
-	char unistr[32] = {0};
-	unsigned int unilen = {0};
 
 
 	inputSetup();
@@ -113,50 +109,34 @@ void mainmenuLoop(void){
 					break;
 				}
 			}
-			if(event.type == SDL_KEYDOWN && !event.key.repeat){
+			if(event.type == SDL_KEYDOWN){
+				if (!event.key.repeat) {
+					switch (event.key.keysym.sym){
+						case SDLK_ESCAPE:
+							run = !run;
+						break;
+						case SDLK_p:
+							pause = !pause;
+						break;
+						case SDLK_RETURN:
+							if (!textEditing) {
+								inputTextEditingStart(32);
+							}else {
+								inputTextEditingStop();
+							}
+						break;
+					}
+				}
 				switch (event.key.keysym.sym){
-					case SDLK_ESCAPE:
-						run = !run;
-					break;
-					case SDLK_p:
-						pause = !pause;
-					break;
-					case SDLK_RETURN:
-						if (!textinput) {
-							SDL_StartTextInput();
-							textinput = 1;
-						}else {
-							SDL_StopTextInput();
-							textinput = 0;
-							SDL_Log("%s",unistr);
-							{unsigned int i;
-							for(i = 0;i<isolaARRAYSIZE_(unistr);i++){
-								unistr[i] = 0;
-							}}
-							unilen = 0;
-						}
+					case SDLK_BACKSPACE:
+						inputTextEditingPop();
+						SDL_Log("%s",inputTextString);
 					break;
 				}
 			}
 			if(event.type == SDL_TEXTINPUT){
-				unilen += strlen(event.text.text);
-				SDL_Log("%ld",strlen(event.text.text));
-				if(unilen >= isolaARRAYSIZE_(unistr)){
-					SDL_StopTextInput();
-					textinput = 0;
-					SDL_Log("%s",unistr);
-					{unsigned int i;
-					for(i = 0;i<isolaARRAYSIZE_(unistr);i++){
-						unistr[i] = 0;
-					}}
-					unilen = 0;
-				}else {
-					strcat(unistr,event.text.text);
-					SDL_Log("%s",event.text.text);;
-				}
-			}
-			if(event.type == SDL_TEXTEDITING){
-				SDL_Log("asdf");
+				inputTextEditingPush(event.text.text);
+				SDL_Log("%s",inputTextString);
 			}
 		}
 
@@ -178,6 +158,7 @@ void mainmenuLoop(void){
 	}
 
 
+	inputTextEditingStop();
 	mainmenuRenderDestroy();
 	mainmenuLogicDestroy();
 }
