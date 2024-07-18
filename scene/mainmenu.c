@@ -155,6 +155,9 @@ void mainmenuLoop(void){
 					SDL_Log("%s",event.text.text);;
 				}
 			}
+			if(event.type == SDL_TEXTEDITING){
+				SDL_Log("asdf");
+			}
 		}
 
 
