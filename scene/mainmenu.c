@@ -7,9 +7,10 @@
 
 #include <isola/isola.h>
 #include <isola/misc.h>
+
+
 #include <timing.h>
 #include <input.h>
-
 
 #include "mainmenu_render.c"
 #include "mainmenu_logic.c"
@@ -119,24 +120,18 @@ void mainmenuLoop(void){
 							pause = !pause;
 						break;
 						case SDLK_RETURN:
-							if (!textEditing) {
-								inputTextEditingStart(32);
-							}else {
-								inputTextEditingStop();
-							}
+							SDL_Log("%ld",clockFreq);
 						break;
 					}
 				}
 				switch (event.key.keysym.sym){
 					case SDLK_BACKSPACE:
 						inputTextEditingPop();
-						SDL_Log("%s",inputTextString);
 					break;
 				}
 			}
 			if(event.type == SDL_TEXTINPUT){
-				inputTextEditingPush(event.text.text);
-				SDL_Log("%s",inputTextString);
+				inputTextEditingPush(&event.text.text);
 			}
 		}
 
@@ -144,6 +139,7 @@ void mainmenuLoop(void){
 		if(!pause && timerStep(&logicTimer)){
 
 			mainmenuLogicStep();
+			inputRepeat();
 		}
 
 		if(counterStep(&frameCounter)){

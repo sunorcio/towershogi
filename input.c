@@ -7,15 +7,21 @@
 
 
 
-static int keyLength;
+static int keyNum;
 const unsigned char* keyState;
+unsigned char keyRepeat[SDL_NUM_SCANCODES];
 
 
 void inputSetup(void){
 
 	if (SDL_IsTextInputActive()) {SDL_StopTextInput();}
 
-	keyState = SDL_GetKeyboardState(&keyLength);
+	keyState = SDL_GetKeyboardState(&keyNum);
+}
+
+
+void inputRepeat(void){
+	memcpy(keyRepeat,keyState,keyNum*sizeof(unsigned char));
 }
 
 
@@ -26,7 +32,7 @@ void inputSetup(void){
 
 static unsigned int textCursor = 0;
 static unsigned int textStringLength = 0;
-static char(* textChars)[textCharSize] = {0};
+char(* textChars)[textCharSize] = {0};
 char* inputTextString = {0};
 unsigned char textEditing = 0;
 
@@ -41,7 +47,7 @@ static void inputBuildTextString(void){
 }
 
 
-void inputTextEditingStart(unsigned int textLength){
+void inputTextEditingStart(unsigned int textLength, char(* textLoad)[32]){
 
 	if (textEditing) {
 		return;
@@ -62,12 +68,23 @@ void inputTextEditingStart(unsigned int textLength){
 	textCursor = 0;
 
 
+	if (textLoad) {
+		{unsigned int i;
+		for(i = 0;i<textStringLength;i++){
+			{unsigned int j;
+			for(j = 0;j<textCharSize;j++){
+				textChars[i][j] = textLoad[i][j];
+			}}
+		}}
+	}
+
+
 	SDL_StartTextInput();
 	textEditing = 1;
 }
 
 
-void inputTextEditingPush(char textChar[32]){
+void inputTextEditingPush(char(* textChar)[32]){
 
 	if (!textEditing) {
 		return;
@@ -78,11 +95,12 @@ void inputTextEditingPush(char textChar[32]){
 
 	{unsigned int i;
 	for(i = 0;i<textCharSize;i++){
-		textChars[textCursor][i] = textChar[i];
+		textChars[textCursor][i] = textChar[0][i];
 	}}
 	textCursor++;
 
 	inputBuildTextString();
+	SDL_Log("%s",inputTextString);
 }
 
 
@@ -102,6 +120,7 @@ void inputTextEditingPop(void){
 	}}
 
 	inputBuildTextString();
+	SDL_Log("%s",inputTextString);
 }
 
 

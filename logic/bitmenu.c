@@ -5,13 +5,15 @@
 #include "bitmenu.h"
 
 
-#include <isola/isola.h>
-#include <input.h>
-
-
 #include <stdlib.h>
 #include <string.h>
 
+
+#include <isola/isola.h>
+#include <isola/misc.h>
+
+
+#include <input.h>
 
 #include <render/bitfont_logic.h>
 
@@ -19,29 +21,44 @@
 
 
 struct BITMENU_group{
-	unsigned int currentObject;
+	unsigned char visible;
+	unsigned char actionable;
+	unsigned char alignment;
+	float offset;
 	unsigned int objectAmount;
+	unsigned int currentObject;
+	unsigned int largestString;
 	unsigned int fontPixelsize;
-}group = { .currentObject = 0, };
+}bitmenuGroup[] = {
+		{.alignment = 0, .objectAmount = 6,.offset = 1},
+		{.alignment = 1, .objectAmount = 4},
+		{.alignment = 0, .objectAmount = 4},};
 
 
 
 
 void updateBitmenu(void){
 
-	group.fontPixelsize = ( ( isolaInfoWindow.height/
-			(int)((group.objectAmount+1)*1.5) )/16 ) *8;
+	{int pixelsizex;
+	bitmenuGroup[0].fontPixelsize = ( ( isolaInfoWindow.height/
+			(int)((bitmenuGroup[0].objectAmount+1)*1.5) )/16 ) *8;
+	pixelsizex = ( ( isolaInfoWindow.width/
+			(int)(bitmenuGroup[0].largestString+bitmenuGroup[0].offset+1) )/
+			8 )*8;
+	if ( bitmenuGroup[0].fontPixelsize > pixelsizex ) {
+		bitmenuGroup[0].fontPixelsize = pixelsizex;
+	}}
 
 
 	{unsigned int i;
-	for(i = 0;i<group.objectAmount;i++){
-		bitfontObjectData[i].pixelSize = group.fontPixelsize;
+	for(i = 0;i<bitmenuGroup[0].objectAmount;i++){
+		bitfontObjectData[i].pixelSize = bitmenuGroup[0].fontPixelsize;
 
-		bitfontObjectData[i].x = -1. +
-				isolaInfoWindow.pixelWidth*group.fontPixelsize;
+		bitfontObjectData[i].x = -1. + isolaInfoWindow.pixelWidth*
+				bitmenuGroup[0].fontPixelsize*bitmenuGroup[0].offset;
 		bitfontObjectData[i].y = 1.-
-				isolaInfoWindow.pixelHeight*group.fontPixelsize*3.*i-
-				isolaInfoWindow.pixelHeight*group.fontPixelsize*2 ;
+				isolaInfoWindow.pixelHeight*bitmenuGroup[0].fontPixelsize*3.*i-
+				isolaInfoWindow.pixelHeight*bitmenuGroup[0].fontPixelsize*2 ;
 	}}
 }
 
@@ -51,13 +68,12 @@ void createBitmenu(void){
 	int i = 0.;
 
 
-	group.objectAmount = 6;
-	bitfontObjectAmount = 6;
+	{unsigned int i;
+	for(i = 0;i<isolaARRAYSIZE_(bitmenuGroup);i++){
+		bitfontObjectAmount += bitmenuGroup[i].objectAmount;
+	}}
 	bitfontObjectData = calloc(bitfontObjectAmount,
 			sizeof(struct BITFONT_textobject));
-
-
-	updateBitmenu();
 
 
 	i = 0;
@@ -131,6 +147,17 @@ void createBitmenu(void){
 	bitfontObjectData[i].backColor[1] = 1.;
 	bitfontObjectData[i].backColor[2] = 1.;
 	bitfontObjectData[i].backColor[3] = 0.5;
+
+
+	{unsigned int i;
+	for(i = 0;i<bitmenuGroup[0].objectAmount;i++){
+		if(strlen(bitfontObjectData[i].string) > bitmenuGroup[0].largestString){
+			bitmenuGroup[0].largestString = strlen(bitfontObjectData[i].string);
+		}
+	}}
+
+
+	updateBitmenu();
 }
 
 
@@ -140,20 +167,28 @@ void destroyBitmenu(void){
 }
 
 
-static unsigned char kpressed;
-static unsigned char jpressed;
-
-
 void stepBitmenu(void){
 
+	if (keyState[SDL_SCANCODE_J] && !keyRepeat[SDL_SCANCODE_J]) {
+		bitmenuGroup[0].currentObject++;
+		if (bitmenuGroup[0].currentObject==bitmenuGroup[0].objectAmount) {
+			bitmenuGroup[0].currentObject = 0;
+		}
+	}
+	if (keyState[SDL_SCANCODE_K] && !keyRepeat[SDL_SCANCODE_K]) {
+		if (bitmenuGroup[0].currentObject==0) {
+			bitmenuGroup[0].currentObject = bitmenuGroup[0].objectAmount;
+		}
+		bitmenuGroup[0].currentObject--;
+	}
 
 
 	{unsigned int i;
-	for(i = 0;i<group.objectAmount;i++){
+	for(i = 0;i<bitmenuGroup[0].objectAmount;i++){
 		bitfontObjectData[i].backColor[3] = 0.5;
 	}}
 
-	bitfontObjectData[group.currentObject].backColor[3] = 0.875;
+	bitfontObjectData[bitmenuGroup[0].currentObject].backColor[3] = 0.875;
 }
 
 
