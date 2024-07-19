@@ -47,7 +47,7 @@ static unsigned short elementDigit[12][12] = {
 
 struct DIGITFPS_font digitfps = { 
 		.color={0.25,0.25,0.25,0.75},
-		.pixelSize=8*1 };
+		.pixelSize=8*2 };
 
 
 static struct TIMING_counter* digitfpsCounter = {0};
@@ -63,6 +63,13 @@ static unsigned short digitfpsED[18]
 
 
 void updateDigitfps(void){
+
+	if (isolaInfoWindow.height > 720 && isolaInfoWindow.width > 1280) {
+		digitfps.pixelSize = 8*2;
+	}else {
+		digitfps.pixelSize = 8*1;
+	}
+
 
 	glUseProgram(digitfpsSP);
 
