@@ -11,6 +11,9 @@
 #define isolaARRAYSIZE_(x) (sizeof(x)/sizeof(x[0]))
 
 
+#define isolaCLEARLINUXTERMINAL_() SDL_Log("\033[2J");;
+	
+
 
 
 #endif

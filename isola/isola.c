@@ -68,6 +68,7 @@ void isolaGetWindow(void){
 			&isolaInfoWindow.ypos);
 	SDL_GetWindowSize(isolaWindow, &isolaInfoWindow.width,
 			&isolaInfoWindow.height);
+
 	if (isolaInfoWindow.width > isolaInfoWindow.height) {
 		isolaInfoWindow.yratio = 1.;
 		isolaInfoWindow.xratio = (double)isolaInfoWindow.width
@@ -79,6 +80,7 @@ void isolaGetWindow(void){
 	}
 	isolaInfoWindow.pixelWidth = (double)2./isolaInfoWindow.width;
 	isolaInfoWindow.pixelHeight = (double)2./isolaInfoWindow.height;
+
 	isolaInfoWindow.flags = SDL_GetWindowFlags(isolaWindow);
 	isolaInfoWindow.displayIndex = SDL_GetWindowDisplayIndex(isolaWindow);
 	SDL_GetWindowDisplayMode(isolaWindow, &isolaInfoWindow.displayMode);
@@ -564,9 +566,9 @@ void isolaInit(void){
 #endif
 
 
-	glClearColor(0.75f,0.5f,0.75f,1.f);
+	glClearColor(0.5f,0.375f,0.5f,1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	SDL_GL_SwapWindow(isolaWindow);
+/* 	SDL_GL_SwapWindow(isolaWindow); */
 
 
 #ifdef ISOLA_DBG

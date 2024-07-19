@@ -60,7 +60,7 @@ ifeq (${TARGET_OS},linux)
 
  #CFLAGS = -g -DISOLA_DBG -DGLEW_STATIC -Weverything
  CFLAGS = ${INCS} -Wall -Wextra -pedantic -std=c89 -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -MJ $@.json \
-		  -Wno-c99-designator -Wno-unsafe-buffer-usage -Ofast3 -pipe -march=native -D_REENTRANT
+		-Wno-c99-designator -Wno-unsafe-buffer-usage -Ofast3 -pipe -march=native -D_REENTRANT
  #LDFLAGS = -v
  LDFLAGS = ${LIBS} -flto=full
 
