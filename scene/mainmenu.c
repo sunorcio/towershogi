@@ -120,7 +120,6 @@ void mainmenuLoop(void){
 							pause = !pause;
 						break;
 						case SDLK_RETURN:
-							SDL_Log("%ld",SDL_GetPerformanceFrequency());
 						break;
 					}
 				}
