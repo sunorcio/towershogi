@@ -142,6 +142,7 @@ void drawBitfont(void){
 	
 	glBindBuffer(GL_ARRAY_BUFFER,bitfontVBO[0]);
 
+
 	{unsigned int o;
 	for(o = 0;o<bitfontObjectAmount;o++){
 

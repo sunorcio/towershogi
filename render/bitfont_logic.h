@@ -9,8 +9,7 @@
 
 struct BITFONT_textobject{
 	char string[bitfontStringSize];
-	float x;
-	float y;
+	float x, y;
 	unsigned short pixelSize;
 	unsigned short charWrap;
 	float fontColor[4];

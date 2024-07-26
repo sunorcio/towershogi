@@ -12,22 +12,21 @@
 #include <timing.h>
 #include <input.h>
 
-#include "mainmenu_render.c"
 #include "mainmenu_logic.c"
+#include "mainmenu_render.c"
 
 
 
 
-struct SCENE_mainmenu {
+struct MAINMENU_window {
 	unsigned char windowFullscreen;
 	unsigned char windowBorder;
 	unsigned char windowResizable;
-/* 	unsigned char windowKeepratio; */
 	int windowPos[2];
 	int windowRes[2];
 	int windowMinRes[2];
 	float clearColor[4];
-}mainmenuScene = {
+}mainmenuWindow = {
 		.windowFullscreen = 0,
 		.windowBorder = 1,
 		.windowResizable = 1,
@@ -37,59 +36,81 @@ struct SCENE_mainmenu {
 		.clearColor = {0.,0.,0.,1.}, };
 
 
-void sceneUpdate(struct SCENE_mainmenu* scene){
-
-	isolaGetWindow();
-	if (isolaInfoWindow.width < scene->windowMinRes[0]) {
-		isolaInfoWindow.width = scene->windowMinRes[0];
-	}
-	if (isolaInfoWindow.height < scene->windowMinRes[1]) {
-		isolaInfoWindow.height = scene->windowMinRes[1];
-	}
-	SDL_SetWindowSize(isolaWindow,isolaInfoWindow.width,isolaInfoWindow.height);
-
-
-	isolaGetWindow();
-	glViewport(0,0,isolaInfoWindow.width, isolaInfoWindow.height);
-}
-
-
-void sceneSetup(struct SCENE_mainmenu* scene){
-
-	SDL_SetWindowSize(isolaWindow,scene->windowRes[0],
-			scene->windowRes[1]);
-	SDL_SetWindowPosition(isolaWindow,scene->windowPos[0],
-			scene->windowPos[1]);
-	SDL_SetWindowBordered(isolaWindow,scene->windowBorder);
-	SDL_SetWindowResizable(isolaWindow,scene->windowResizable);
-	if(scene->windowFullscreen){
-		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
-	}
-
-	glClearColor(scene->clearColor[0],scene->clearColor[1],
-			scene->clearColor[2],scene->clearColor[3]);
-}
-
-
-
-
 struct TIMING_timer logicTimer;
 struct TIMING_counter frameCounter;
 
 
-void mainmenuLoop(void){
+
+
+void mainmenuUpdate(void){
+
+	inputSetup();
+
+
+	isolaGetWindow();
+	if (isolaInfoWindow.width < mainmenuWindow.windowMinRes[0]) {
+		isolaInfoWindow.width = mainmenuWindow.windowMinRes[0];
+	}
+	if (isolaInfoWindow.height < mainmenuWindow.windowMinRes[1]) {
+		isolaInfoWindow.height = mainmenuWindow.windowMinRes[1];
+	}
+	SDL_SetWindowSize(isolaWindow,isolaInfoWindow.width,isolaInfoWindow.height);
+
+	isolaGetWindow();
+	glViewport(0,0,isolaInfoWindow.width, isolaInfoWindow.height);
+
+
+	mainmenuRenderUpdate();
+	mainmenuLogicUpdate();
+}
+
+
+void mainmenuCreate(void){
+
+	SDL_SetWindowSize(isolaWindow,mainmenuWindow.windowRes[0],
+			mainmenuWindow.windowRes[1]);
+	SDL_SetWindowPosition(isolaWindow,mainmenuWindow.windowPos[0],
+			mainmenuWindow.windowPos[1]);
+	SDL_SetWindowBordered(isolaWindow,mainmenuWindow.windowBorder);
+	SDL_SetWindowResizable(isolaWindow,mainmenuWindow.windowResizable);
+	if(mainmenuWindow.windowFullscreen){
+		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
+	}
+	glClearColor(mainmenuWindow.clearColor[0],mainmenuWindow.clearColor[1],
+			mainmenuWindow.clearColor[2],mainmenuWindow.clearColor[3]);
+
+
+	timerSetup(&logicTimer, 60);
+	counterSetup(&frameCounter, 60);
+
+	mainmenuLogicCreate();
+	mainmenuRenderCreate();
+
+	mainmenuUpdate();
+}
+
+
+void mainmenuDestroy(void){
+
+	inputClean();
+
+
+	mainmenuRenderDestroy();
+	mainmenuLogicDestroy();
+}
+
+
+
+
+unsigned char mainmenuLoop(void){
 
 	SDL_Event event = {0};
 	unsigned char run = 1;
 	unsigned char pause = 0;
+	unsigned char exit = 0;
 
 
-	inputSetup();
-	sceneSetup(&mainmenuScene);
-	timerSetup(&logicTimer, 60);
-	counterSetup(&frameCounter, 60);
-	mainmenuRenderCreate();
-	mainmenuLogicCreate();
+	mainmenuCreate();
 
 
 	while(run){
@@ -100,10 +121,7 @@ void mainmenuLoop(void){
 					case SDL_WINDOWEVENT_SIZE_CHANGED:
 					case SDL_WINDOWEVENT_RESIZED:
 					case SDL_WINDOWEVENT_DISPLAY_CHANGED:
-						sceneUpdate(&mainmenuScene);
-
-						mainmenuRenderUpdate();
-						mainmenuLogicUpdate();
+						mainmenuUpdate();
 					break;
 					case SDL_WINDOWEVENT_CLOSE:
 						run = !run;
@@ -121,6 +139,8 @@ void mainmenuLoop(void){
 						break;
 						case SDLK_RETURN:
 						break;
+						case SDLK_SPACE:
+						break;
 					}
 				}
 				switch (event.key.keysym.sym){
@@ -135,16 +155,19 @@ void mainmenuLoop(void){
 		}
 
 
-		if(!pause && timerStep(&logicTimer)){
+		if (!pause) {
+			if(timerStep(&logicTimer)){
 
-			mainmenuLogicStep();
-			inputRepeat();
+				mainmenuLogicStep();
+				inputRepeat();
+			}
+
+			if(counterStep(&frameCounter)){
+
+				mainmenuRenderDraw();
+			}
 		}
 
-		if(counterStep(&frameCounter)){
-
-			mainmenuRenderDraw();
-		}
 
 #define RESOURCE_PADDING
 #ifdef RESOURCE_PADDING
@@ -153,9 +176,8 @@ void mainmenuLoop(void){
 	}
 
 
-	inputTextEditingStop();
-	mainmenuRenderDestroy();
-	mainmenuLogicDestroy();
+	mainmenuDestroy();
+	return exit;
 }
 
 

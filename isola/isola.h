@@ -86,6 +86,7 @@ extern void isolaQuit(void);
  #define isolaDBG_(x) x;
 #endif
 
+
 /* print & clear sdl errors, returns -1 if error, else 0 */
 extern signed char isolaErrorSDL(int SDLfunction);
 /* print & clear opengl errors, returns -1 if error, else 0 */
@@ -131,18 +132,15 @@ struct ISOLA_Context{
 
 /* current window state. updated with isolaGetWindow() */
 struct ISOLA_Window{
-	int xpos;
-	int ypos;
-	int width;
-	int height;
-	double xratio;
-	double yratio;
-	double pixelWidth;
-	double pixelHeight;
+	int xpos, ypos;
+	int width, height;
+	double xratio, yratio;
+	double pixelWidth, pixelHeight;
 	unsigned int flags;	/* see SDL_WindowFlags for a list of flags */
 	int displayIndex;
 	SDL_DisplayMode displayMode;
 	SDL_DisplayMode desktopDisplayMode;
+	float clearColor[4];
 }extern isolaInfoWindow;
 
 

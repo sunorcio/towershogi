@@ -4,14 +4,15 @@
 
 
 
-#define isolaSTRL_(X) #X
-#define isolaSTR_(X) isolaSTRL_(X)
+#define isolaLITSTR_(X) #X
+#define isolaVARSTR_(X) isolaLITSTR_(X)
 
 
 #define isolaARRAYSIZE_(x) (sizeof(x)/sizeof(x[0]))
 
 
-#define isolaCLEARLINUXTERMINAL_() SDL_Log("\033[2J");;
+/* linux only */
+#define isolaCLEARTERMINAL_() SDL_Log("\033[2J");;
 	
 
 

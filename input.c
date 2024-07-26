@@ -20,6 +20,12 @@ void inputSetup(void){
 }
 
 
+void inputClean(void){
+
+	if (SDL_IsTextInputActive()) {SDL_StopTextInput();}
+}
+
+
 void inputRepeat(void){
 	memcpy(keyRepeat,keyState,keyNum*sizeof(unsigned char));
 }

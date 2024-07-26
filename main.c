@@ -22,7 +22,9 @@ int main(int argc, char **argv){
 
 
 
-	mainmenuLoop();
+	if (mainmenuLoop()) {
+		/* triakontadisLoop(); */
+	}
 
 
 

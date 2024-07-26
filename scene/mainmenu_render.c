@@ -27,9 +27,6 @@ void mainmenuRenderCreate(void){
 
 	createBitfont();
 	createDigitfps(&frameCounter);
-
-
-	mainmenuRenderUpdate();
 }
 
 

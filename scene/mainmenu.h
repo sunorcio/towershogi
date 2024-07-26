@@ -4,7 +4,7 @@
 
 
 
-extern void mainmenuLoop(void);
+extern unsigned char mainmenuLoop(void);
 
 
 

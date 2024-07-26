@@ -86,6 +86,8 @@ void isolaGetWindow(void){
 	SDL_GetWindowDisplayMode(isolaWindow, &isolaInfoWindow.displayMode);
 	SDL_GetDesktopDisplayMode(isolaInfoWindow.displayIndex,
 			&isolaInfoWindow.desktopDisplayMode);
+
+	glGetFloatv(GL_COLOR_CLEAR_VALUE,isolaInfoWindow.clearColor);
 }
 
 
