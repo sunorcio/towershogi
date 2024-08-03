@@ -1,8 +1,9 @@
 
 
 
-
 #include "bitmenu.h"
+
+
 
 
 #include <stdlib.h>
@@ -20,70 +21,104 @@
 
 
 
-#define BITMENU_FORE 0.5
-#define BITMENU_HIGH 1.5
+#define BITMENU_SCREENCHUNK 8
+#define BITMENU_GROUPCHUNK 32
+#define BITMENU_OBJECTCHUNK 256
+
+
+struct BITMENU_screen{
+	unsigned char fontScaleGlobal;
+	unsigned int groupAmount;
+	struct BITMENU_group* group;
+};
 
 
 struct BITMENU_group{
+	unsigned char visible;
+	unsigned char highlighted;
+	unsigned char background;
+	unsigned char axis;
+	unsigned char alignmentX;
+	unsigned char alignmentY;
+	unsigned short wrap;
+	unsigned short fontScale;
+	float x,y;
+	float w,h;
+	float fontColor[4];
+	float backColor[4];
 	unsigned int objectAmount;
-	unsigned int fontPixelsize;
-	unsigned int currentObject;
-}static bitmenuGroup[] = {
-			{ .objectAmount=6, .fontPixelsize=16},
-		};
+	struct BITMENU_object* object;
+};
+
+
+struct BITMENU_object{
+	char name[BITFONT_STRINGSIZE];
+};
+
+
+struct BITMENU_screenData{
+	struct BITMENU_screen data[BITMENU_SCREENCHUNK];
+	struct BITMENU_screenData* next;
+}* bitmenuScreenData;
+
+
+struct BITMENU_groupData{
+	struct BITMENU_group data[BITMENU_GROUPCHUNK];
+	struct BITMENU_groupData* next;
+}* bitmenuGroupData;
+
+
+struct BITMENU_objectData{
+	struct BITMENU_object data[BITMENU_OBJECTCHUNK];
+	struct BITMENU_objectData* next;
+}* bitmenuObjectData;
+
+
 
 
 void updateBitmenu(void){
 
-	{unsigned int i;
-	for(i = 0;i<bitmenuGroup[0].objectAmount;i++){
-		bitfontObjectData[i].y = 1.-
-				isolaInfoWindow.pixelHeight*bitmenuGroup[0].fontPixelsize*2*i;
-	}}
 }
 
 
 void createBitmenu(void){
 
-	int i = 0.;
+	bitmenuScreenData = calloc(1,sizeof(struct BITMENU_screenData));
+	bitmenuGroupData = calloc(1,sizeof(struct BITMENU_groupData));
+	bitmenuObjectData = calloc(1,sizeof(struct BITMENU_objectData));
+	bitfontObjectData = calloc(1,sizeof(struct BITFONT_objectData));
 
-
-	{unsigned int i;
-	for(i = 0;i<isolaARRAYSIZE_(bitmenuGroup);i++){
-		bitfontObjectAmount += bitmenuGroup[i].objectAmount;
-	}}
-	bitfontObjectData = calloc(bitfontObjectAmount,
-			sizeof(struct BITFONT_textobject));
-
-
-	{unsigned int i;
-	for(i = 0;i<bitmenuGroup[0].objectAmount;i++){
-		strcpy(bitfontObjectData[i].string,"asdfasdfasdfasdfasdfasdfasdf");
-		bitfontObjectData[i].pixelSize = bitmenuGroup[0].fontPixelsize;
-		bitfontObjectData[i].charWrap = bitfontStringSize;
-		bitfontObjectData[i].x = -1.;
-		bitfontObjectData[i].fontColor[0] = 0.;
-		bitfontObjectData[i].fontColor[1] = 0.;
-		bitfontObjectData[i].fontColor[2] = 0.;
-		bitfontObjectData[i].fontColor[3] = 1.;
-		bitfontObjectData[i].backColor[0] = 1.;
-		bitfontObjectData[i].backColor[1] = 1.;
-		bitfontObjectData[i].backColor[2] = 1.;
-		bitfontObjectData[i].backColor[3] = 1.;
-	}}
+	
+	strcpy(bitfontObjectData->data[0].string,"sdfasdfasdfadsf");
+	bitfontObjectData->data[0].fontColor[0] = 0.;
+	bitfontObjectData->data[0].fontColor[1] = 0.;
+	bitfontObjectData->data[0].fontColor[2] = 0.;
+	bitfontObjectData->data[0].fontColor[3] = 1.;
+	bitfontObjectData->data[0].backColor[0] = 1.;
+	bitfontObjectData->data[0].backColor[1] = 1.;
+	bitfontObjectData->data[0].backColor[2] = 1.;
+	bitfontObjectData->data[0].backColor[3] = 1.;
+	bitfontObjectData->data[0].charWrap = BITFONT_STRINGSIZE;
+	bitfontObjectData->data[0].pixelSize = 2;
 }
 
 
 void destroyBitmenu(void){
 
-	free(bitfontObjectData);
+	free(bitmenuScreenData);
+	free(bitmenuGroupData);
+	free(bitmenuObjectData);
 }
 
 
 void stepBitmenu(void){
 
-	/* 1 dimensional group node traversal */
-	if (keyState[SDL_SCANCODE_J] && !keyRepeat[SDL_SCANCODE_J]) {
+}
+
+
+
+
+/* 	if (keyState[SDL_SCANCODE_J] && !keyRepeat[SDL_SCANCODE_J]) {
 		bitmenuGroup[0].currentObject++;
 		if (bitmenuGroup[0].currentObject==bitmenuGroup[0].objectAmount) {
 			bitmenuGroup[0].currentObject = 0;
@@ -94,40 +129,4 @@ void stepBitmenu(void){
 			bitmenuGroup[0].currentObject = bitmenuGroup[0].objectAmount;
 		}
 		bitmenuGroup[0].currentObject--;
-	}
-}
-
-
-
-
-	/* retrieve largest string size */
-/* 	{unsigned int i;
-	for(i = 0;i<bitmenuGroup[0].objectAmount;i++){
-		if(strlen(bitfontObjectData[i].string) > bitmenuGroup[0].largestString){
-			bitmenuGroup[0].largestString = strlen(bitfontObjectData[i].string);
-		}
-	}} */
-
-
-	/* update highlight */
-/* 	{unsigned int i;
-	for(i = 0;i<bitmenuGroup[0].objectAmount;i++){
-		bitfontObjectData[i].backColor[3] = BITMENU_FORE;
-		bitfontObjectData[i].fontColor[3] = BITMENU_FORE;
-	}}
-	bitfontObjectData[bitmenuGroup[0].currentObject].fontColor[3] *= 
-			BITMENU_HIGH;
-	bitfontObjectData[bitmenuGroup[0].currentObject].backColor[3] *= 
-			BITMENU_HIGH; */
-
-
-	/* resize font to fit dimensions */
-/* 	{int pixelsizex;
-	bitmenuGroup[0].fontPixelsize = ( ( isolaInfoWindow.height/
-			(int)((bitmenuGroup[0].objectAmount+1)*1.5) )/16 ) *8;
-	pixelsizex = ( ( isolaInfoWindow.width/
-			(int)(bitmenuGroup[0].largestString+bitmenuGroup[0].fontOffset+1) )/
-			8 )*8;
-	if ( bitmenuGroup[0].fontPixelsize > pixelsizex ) {
-		bitmenuGroup[0].fontPixelsize = pixelsizex;
-	}} */
+	} */

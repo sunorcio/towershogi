@@ -15,8 +15,7 @@
 
 
 
-struct BITFONT_textobject* bitfontObjectData = {0};
-unsigned int bitfontObjectAmount = 0;
+struct BITFONT_objectData* bitfontObjectData = {0};
 
 
 static ISOLA_State bitfontState = 0x00000001;
@@ -24,7 +23,7 @@ static unsigned int bitfontSP[1] = {0};
 static unsigned int bitfontVAO[1] = {0};
 static unsigned int bitfontVBO[1] = {0};
 static unsigned int bitfontTO[1] = {0};
-static unsigned char bitfontVD[bitfontStringSize*6] = {0};
+static unsigned char bitfontVD[BITFONT_STRINGSIZE*6] = {0};
 
 
 void updateBitfont(void){
@@ -142,61 +141,62 @@ void drawBitfont(void){
 	
 	glBindBuffer(GL_ARRAY_BUFFER,bitfontVBO[0]);
 
+	if (bitfontObjectData) {
+		{unsigned int o;
+		for(o = 0;o<BITFONT_OBJECTCHUNK;o++){
 
-	{unsigned int o;
-	for(o = 0;o<bitfontObjectAmount;o++){
+			{int c;
+			for(c = 0;c<strlen(bitfontObjectData->data[o].string);c++){
 
-		{int c;
-		for(c = 0;c<strlen(bitfontObjectData[o].string);c++){
+				{unsigned int v;
+				for(v = 0;v<6;v++){
 
-			{unsigned int v;
-			for(v = 0;v<6;v++){
-
-				bitfontVD[c*6+v] = bitfontObjectData[o].string[c]-32;
+					bitfontVD[c*6+v] = bitfontObjectData->data[o].string[c]-32;
+				}}
 			}}
+
+			glBufferSubData(GL_ARRAY_BUFFER,sizeof(bitfontVD[0])*0,
+					sizeof(bitfontVD)/sizeof(bitfontVD[0]),bitfontVD);
+
+			{int c;
+			for(c = 0;c<strlen(bitfontObjectData->data[o].string)*
+					sizeof(bitfontVD[0])*6;c++){
+				bitfontVD[c] = 127-32;
+			}}
+
+			{int locBitPos;
+			locBitPos = glGetUniformLocation(bitfontSP[0],"screenPos");
+			if(locBitPos == -1){SDL_Log("screenPos not found in shader %d",0);}
+			glUniform2f(locBitPos, bitfontObjectData->data[o].x, bitfontObjectData->data[o].y);
+			}
+
+			{int locPixSize;
+			locPixSize = glGetUniformLocation(bitfontSP[0],"pixelSize");
+			if(locPixSize == -1){SDL_Log("pixelSize not found in shader %d",0);}
+			glUniform1i(locPixSize, bitfontObjectData->data[o].pixelSize);
+			}
+
+			{int locCharWrap;
+			locCharWrap = glGetUniformLocation(bitfontSP[0],"charWrap");
+			if(locCharWrap == -1){SDL_Log("charWrap not found in shader %d",0);}
+			glUniform1i(locCharWrap,bitfontObjectData->data[o].charWrap);
+			}
+
+			{int locBitCol;
+			locBitCol = glGetUniformLocation(bitfontSP[0],"fontColor");
+			if(locBitCol == -1){SDL_Log("fontColor not found in shader %d",0);}
+			glUniform4fv(locBitCol,1, bitfontObjectData->data[o].fontColor);
+			}
+
+			{int locBackCol;
+			locBackCol = glGetUniformLocation(bitfontSP[0],"backColor");
+			if(locBackCol == -1){SDL_Log("backColor not found in shader %d",0);}
+			glUniform4fv(locBackCol,1, bitfontObjectData->data[o].backColor);
+			}
+
+			glDrawArrays(GL_TRIANGLES,0,BITFONT_STRINGSIZE*6);
 		}}
-
-		glBufferSubData(GL_ARRAY_BUFFER,sizeof(bitfontVD[0])*0,
-				sizeof(bitfontVD)/sizeof(bitfontVD[0]),bitfontVD);
-
-		{int c;
-		for(c = 0;c<strlen(bitfontObjectData[o].string)*
-				sizeof(bitfontVD[0])*6;c++){
-			bitfontVD[c] = 127-32;
-		}}
-
-		{int locBitPos;
-		locBitPos = glGetUniformLocation(bitfontSP[0],"screenPos");
-		if(locBitPos == -1){SDL_Log("screenPos not found in shader %d",0);}
-		glUniform2f(locBitPos, bitfontObjectData[o].x, bitfontObjectData[o].y);
-		}
-
-		{int locPixSize;
-		locPixSize = glGetUniformLocation(bitfontSP[0],"pixelSize");
-		if(locPixSize == -1){SDL_Log("pixelSize not found in shader %d",0);}
-		glUniform1i(locPixSize, bitfontObjectData[o].pixelSize);
-		}
-
-		{int locCharWrap;
-		locCharWrap = glGetUniformLocation(bitfontSP[0],"charWrap");
-		if(locCharWrap == -1){SDL_Log("charWrap not found in shader %d",0);}
-		glUniform1i(locCharWrap,bitfontObjectData[o].charWrap);
-		}
-
-		{int locBitCol;
-		locBitCol = glGetUniformLocation(bitfontSP[0],"fontColor");
-		if(locBitCol == -1){SDL_Log("fontColor not found in shader %d",0);}
-		glUniform4fv(locBitCol,1, bitfontObjectData[o].fontColor);
-		}
-
-		{int locBackCol;
-		locBackCol = glGetUniformLocation(bitfontSP[0],"backColor");
-		if(locBackCol == -1){SDL_Log("backColor not found in shader %d",0);}
-		glUniform4fv(locBackCol,1, bitfontObjectData[o].backColor);
-		}
-
-		glDrawArrays(GL_TRIANGLES,0,bitfontStringSize*6);
-	}}
+	}
 }
 
 

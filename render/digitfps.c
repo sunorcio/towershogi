@@ -41,12 +41,12 @@ static unsigned short elementDigit[12][12] = {
 
 
 
-/* 0-18 */
+/* [0-18] */
 #define digitfpsPrintAmount 5
 
 
 struct DIGITFPS_font digitfps = { 
-		.color={0.25,0.25,0.25,0.75},
+		.color={0.25,0.125,0.25,0.75},
 		.pixelSize=8*2 };
 
 
@@ -63,13 +63,6 @@ static unsigned short digitfpsED[18]
 
 
 void updateDigitfps(void){
-
-	if (isolaInfoWindow.height > 720 && isolaInfoWindow.width > 1280) {
-		digitfps.pixelSize = 8*2;
-	}else {
-		digitfps.pixelSize = 8*1;
-	}
-
 
 	glUseProgram(digitfpsSP);
 

@@ -1,8 +1,8 @@
 
 
-
-
 #include "mainmenu.h"
+
+
 
 
 #include <isola/isola.h>
@@ -45,6 +45,13 @@ struct TIMING_counter frameCounter;
 void mainmenuUpdate(void){
 
 	inputSetup();
+
+
+	if (isolaInfoWindow.height > 720 && isolaInfoWindow.width > 1280) {
+		digitfps.pixelSize = 8*2;
+	}else {
+		digitfps.pixelSize = 8*1;
+	}
 
 
 	isolaGetWindow();

@@ -6,7 +6,6 @@
 
 
 #include <isola/isola.h>
-#include <isola/misc.h>
 
 
 #include <scene/mainmenu.h>
