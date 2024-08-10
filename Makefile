@@ -41,7 +41,7 @@ HDR = ${wildcard ./*.h} ${wildcard isola/*.h} ${wildcard scene/*.h} ${wildcard r
 SRC = ${wildcard ./*.c} isola/isola.c scene/mainmenu.c ${wildcard render/*.c} ${wildcard logic/*.c}
 OBJ = ${SRC:.c=.o}
 
-DEPS = ${SRC} ${HDR} Makefile bin
+DEPS = ${SRC} ${HDR} bin #Makefile
 
 
 
@@ -96,10 +96,11 @@ ifeq (${TARGET_OS},linux)
 
 test: ${TARGET_BIN} compdb
 	./${TARGET_BIN}
-	make clean
+#	make clean
 
 
 bin:
+	mkdir bin
 
 
 else ifeq (${TARGET_OS},windows)
@@ -129,7 +130,6 @@ ${TARGET_BIN}: ${OBJ}
 
 compdb: ${OBJ}
 	./compdb.sh
-	rm ${OBJ:.o=.o.json} -f
 
 clean:
 	rm ${OBJ} -f

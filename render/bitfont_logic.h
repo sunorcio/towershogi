@@ -22,8 +22,9 @@ struct BITFONT_object{
 
 struct BITFONT_objectData{
 	struct BITFONT_object data[BITFONT_OBJECTCHUNK];
-	struct BITFONT_textobjectData* next;
-}extern * bitfontObjectData;
+	struct BITFONT_objectData* next;
+}extern * bitfontObjectDataHead;
+extern struct BITFONT_objectData* bitfontObjectDataPointer;
 
 
 

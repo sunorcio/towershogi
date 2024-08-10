@@ -32,7 +32,6 @@ struct BITMENU_screen{
 	struct BITMENU_group* group;
 };
 
-
 struct BITMENU_group{
 	unsigned char visible;
 	unsigned char highlighted;
@@ -50,28 +49,28 @@ struct BITMENU_group{
 	struct BITMENU_object* object;
 };
 
-
 struct BITMENU_object{
-	char name[BITFONT_STRINGSIZE];
+	char option[BITFONT_STRINGSIZE];
 };
 
 
 struct BITMENU_screenData{
 	struct BITMENU_screen data[BITMENU_SCREENCHUNK];
 	struct BITMENU_screenData* next;
-}* bitmenuScreenData;
-
+}* bitmenuScreenDataHead;
+struct BITMENU_screenData* bitmenuScreenDataPointer;
 
 struct BITMENU_groupData{
 	struct BITMENU_group data[BITMENU_GROUPCHUNK];
 	struct BITMENU_groupData* next;
-}* bitmenuGroupData;
-
+}* bitmenuGroupDataHead;
+struct BITMENU_groupData* bitmenuGroupDataPointer;
 
 struct BITMENU_objectData{
 	struct BITMENU_object data[BITMENU_OBJECTCHUNK];
 	struct BITMENU_objectData* next;
-}* bitmenuObjectData;
+}* bitmenuObjectDataHead;
+struct BITMENU_objectData* bitmenuObjectDataPointer;
 
 
 
@@ -83,31 +82,57 @@ void updateBitmenu(void){
 
 void createBitmenu(void){
 
-	bitmenuScreenData = calloc(1,sizeof(struct BITMENU_screenData));
-	bitmenuGroupData = calloc(1,sizeof(struct BITMENU_groupData));
-	bitmenuObjectData = calloc(1,sizeof(struct BITMENU_objectData));
-	bitfontObjectData = calloc(1,sizeof(struct BITFONT_objectData));
+	bitmenuScreenDataHead = calloc(1,sizeof(struct BITMENU_screenData));
+	bitmenuGroupDataHead = calloc(1,sizeof(struct BITMENU_groupData));
+	bitmenuObjectDataHead = calloc(1,sizeof(struct BITMENU_objectData));
+	bitfontObjectDataHead = calloc(1,sizeof(struct BITFONT_objectData));
 
 	
-	strcpy(bitfontObjectData->data[0].string,"sdfasdfasdfadsf");
-	bitfontObjectData->data[0].fontColor[0] = 0.;
-	bitfontObjectData->data[0].fontColor[1] = 0.;
-	bitfontObjectData->data[0].fontColor[2] = 0.;
-	bitfontObjectData->data[0].fontColor[3] = 1.;
-	bitfontObjectData->data[0].backColor[0] = 1.;
-	bitfontObjectData->data[0].backColor[1] = 1.;
-	bitfontObjectData->data[0].backColor[2] = 1.;
-	bitfontObjectData->data[0].backColor[3] = 1.;
-	bitfontObjectData->data[0].charWrap = BITFONT_STRINGSIZE;
-	bitfontObjectData->data[0].pixelSize = 2;
+	strcpy(bitfontObjectDataHead->data[0].string,"asdf\77asdf");
+	bitfontObjectDataHead->data[0].fontColor[0] = 0.;
+	bitfontObjectDataHead->data[0].fontColor[1] = 0.;
+	bitfontObjectDataHead->data[0].fontColor[2] = 0.;
+	bitfontObjectDataHead->data[0].fontColor[3] = 1.;
+	bitfontObjectDataHead->data[0].backColor[0] = 1.;
+	bitfontObjectDataHead->data[0].backColor[1] = 1.;
+	bitfontObjectDataHead->data[0].backColor[2] = 1.;
+	bitfontObjectDataHead->data[0].backColor[3] = 1.;
+	bitfontObjectDataHead->data[0].charWrap = BITFONT_STRINGSIZE;
+	bitfontObjectDataHead->data[0].pixelSize = 2;
 }
 
 
 void destroyBitmenu(void){
 
-	free(bitmenuScreenData);
-	free(bitmenuGroupData);
-	free(bitmenuObjectData);
+	void* pointerBuffer = 0;
+
+	bitmenuScreenDataPointer = bitmenuScreenDataHead;
+	while (bitmenuScreenDataPointer != 0) {
+		pointerBuffer = bitmenuScreenDataPointer;
+		bitmenuScreenDataPointer = bitmenuScreenDataPointer->next;
+		free(pointerBuffer);
+	}
+
+	bitmenuGroupDataPointer = bitmenuGroupDataHead;
+	while (bitmenuGroupDataPointer != 0) {
+		pointerBuffer = bitmenuGroupDataPointer;
+		bitmenuGroupDataPointer = bitmenuGroupDataPointer->next;
+		free(pointerBuffer);
+	}
+
+	bitmenuObjectDataPointer = bitmenuObjectDataHead;
+	while (bitmenuObjectDataPointer != 0) {
+		pointerBuffer = bitmenuObjectDataPointer;
+		bitmenuObjectDataPointer = bitmenuObjectDataPointer->next;
+		free(pointerBuffer);
+	}
+
+	bitfontObjectDataPointer = bitfontObjectDataHead;
+	while (bitfontObjectDataPointer != 0) {
+		pointerBuffer = bitfontObjectDataPointer;
+		bitfontObjectDataPointer = bitfontObjectDataPointer->next;
+		free(pointerBuffer);
+	}
 }
 
 
