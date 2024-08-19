@@ -15,6 +15,8 @@ default_rule: test
 TARGET_OS = linux
 #(dynamic^static)
 TARGET_BUILD = dynamic
+#(on^off)
+TARGET_DEBUG = off
 TARGET_BIN = isola_example
 
 
@@ -34,14 +36,20 @@ else
  $(error wrong TARGET_BUILD value)
 endif
 
+ifeq (${TARGET_DEBUG},on)
+else ifeq (${TARGET_DEBUG},off)
+else
+ $(error wrong TARGET_BUILD value)
+endif
+
 
 
 
 HDR = ${wildcard ./*.h} ${wildcard isola/*.h} ${wildcard scene/*.h} ${wildcard render/*.h} ${wildcard logic/*.h}
-SRC = ${wildcard ./*.c} isola/isola.c scene/mainmenu.c ${wildcard render/*.c} ${wildcard logic/*.c}
+SRC = ${wildcard ./*.c} ${wildcard ./scene/*.c} ${wildcard ./isola/*.c} ${wildcard render/*.c} ${wildcard logic/*.c}
 OBJ = ${SRC:.c=.o}
 
-DEPS = ${SRC} ${HDR} bin #Makefile
+DEPS = bin Makefile ${HDR} #${SRC}
 
 
 
@@ -49,20 +57,23 @@ DEPS = ${SRC} ${HDR} bin #Makefile
 ifeq (${TARGET_OS},linux)
 
  INCS = -I./
+
  ifeq (${TARGET_BUILD},static)
- # needs to call 'sdl2-config --static-libs'
- # LIBS = -Wl,-Bstatic -lSDL2 -lGLEW -Wl,-Bdynamic -lGLU -lGL -lm -lX11 -lXext -lXcursor -lXi -lXfixes -lXrandr -lpthread
-  LIBS = -lSDL2 -lGLEW -lGLU -lGL -lm
+  LIBS = -Wl,-Bstatic -lSDL2 -lGLEW -Wl,-Bdynamic -lGLU -lGL ${shell sdl2-config --static-libs}
  else ifeq (${TARGET_BUILD},dynamic)
   LIBS = -lSDL2 -lGLEW -lGLU -lGL -lm
  endif
 
 
- #CFLAGS = -g -DISOLA_DBG -DGLEW_STATIC -Weverything
- CFLAGS = ${INCS} -Wall -Wextra -pedantic -std=c89 -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -MJ $@.json \
-		-Wno-c99-designator -Wno-unsafe-buffer-usage -Ofast3 -pipe -march=native -D_REENTRANT
+ #CFLAGS = -DISOLA_DBG -DGLEW_STATIC -Weverything
+ CFLAGS = ${DEBUG_CFLAGS} ${INCS} -Wall -Wextra -pedantic -std=c89 -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result \
+		  -Wno-sign-compare -MJ $@.json -Wno-c99-designator -Wno-unsafe-buffer-usage -Ofast3 -pipe -march=native -D_REENTRANT
  #LDFLAGS = -v
  LDFLAGS = ${LIBS} -flto=full
+
+ ifeq (${TARGET_DEBUG},on)
+	CFLAGS += -g
+ endif
 
 
 else ifeq (${TARGET_OS},windows)

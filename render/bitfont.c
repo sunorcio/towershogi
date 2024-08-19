@@ -1,9 +1,9 @@
 
 
-
-
 #include "bitfont_render.h"
 #include "bitfont_logic.h"
+
+
 
 
 #include <stdio.h>
@@ -157,7 +157,8 @@ void drawBitfont(void){
 				{unsigned int v;
 				for(v = 0;v<6;v++){
 
-					bitfontVD[c*6+v] = bitfontObjectDataPointer->data[o].string[c]-32;
+					bitfontVD[c*6+v] = 
+							bitfontObjectDataPointer->data[o].string[c]-32;
 				}}
 			}}
 
@@ -173,31 +174,36 @@ void drawBitfont(void){
 			{int locBitPos;
 			locBitPos = glGetUniformLocation(bitfontSP[0],"screenPos");
 			if(locBitPos == -1){SDL_Log("screenPos not found in shader %d",0);}
-			glUniform2f(locBitPos, bitfontObjectDataPointer->data[o].x, bitfontObjectDataPointer->data[o].y);
+			glUniform2f(locBitPos, bitfontObjectDataPointer->data[o].x,
+					bitfontObjectDataPointer->data[o].y);
 			}
 
 			{int locPixSize;
 			locPixSize = glGetUniformLocation(bitfontSP[0],"pixelSize");
 			if(locPixSize == -1){SDL_Log("pixelSize not found in shader %d",0);}
-			glUniform1i(locPixSize, bitfontObjectDataPointer->data[o].pixelSize);
+			glUniform1i(locPixSize,
+					bitfontObjectDataPointer->data[o].pixelSize);
 			}
 
 			{int locCharWrap;
 			locCharWrap = glGetUniformLocation(bitfontSP[0],"charWrap");
 			if(locCharWrap == -1){SDL_Log("charWrap not found in shader %d",0);}
-			glUniform1i(locCharWrap,bitfontObjectDataPointer->data[o].charWrap);
+			glUniform1i(locCharWrap,
+					bitfontObjectDataPointer->data[o].charWrap);
 			}
 
 			{int locBitCol;
 			locBitCol = glGetUniformLocation(bitfontSP[0],"fontColor");
 			if(locBitCol == -1){SDL_Log("fontColor not found in shader %d",0);}
-			glUniform4fv(locBitCol,1, bitfontObjectDataPointer->data[o].fontColor);
+			glUniform4fv(locBitCol,1,
+					bitfontObjectDataPointer->data[o].foreColor);
 			}
 
 			{int locBackCol;
 			locBackCol = glGetUniformLocation(bitfontSP[0],"backColor");
 			if(locBackCol == -1){SDL_Log("backColor not found in shader %d",0);}
-			glUniform4fv(locBackCol,1, bitfontObjectDataPointer->data[o].backColor);
+			glUniform4fv(locBackCol,1,
+					bitfontObjectDataPointer->data[o].backColor);
 			}
 
 			glDrawArrays(GL_TRIANGLES,0,BITFONT_STRINGSIZE*6);

@@ -21,3 +21,7 @@ main.o.json
 timing.o
 timing.o.json
 isola_example
+scene/mainmenu_logic.o.json
+scene/mainmenu_logic.o
+scene/mainmenu_render.o
+scene/mainmenu_render.o.json

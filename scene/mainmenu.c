@@ -12,8 +12,12 @@
 #include <timing.h>
 #include <input.h>
 
-#include "mainmenu_logic.c"
-#include "mainmenu_render.c"
+
+#include <render/digitfps_logic.h>
+
+
+#include "mainmenu_logic.h"
+#include "mainmenu_render.h"
 
 
 
