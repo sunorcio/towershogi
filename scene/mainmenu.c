@@ -30,14 +30,26 @@ struct MAINMENU_window {
 	int windowRes[2];
 	int windowMinRes[2];
 	float clearColor[4];
-}mainmenuWindow = {
+}static mainmenuWindow = {
 		.windowFullscreen = 0,
 		.windowBorder = 1,
 		.windowResizable = 1,
 		.windowPos = {SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED},
 		.windowRes = {800,600},
 		.windowMinRes = {480,360},
-		.clearColor = {0.,0.,0.,1.}, };
+		.clearColor = {0.0625,0.0625,0.0625,1.}, 
+		};
+
+
+struct MAINMENU_state {
+	unsigned char run;
+	unsigned char pause;
+	unsigned char path_return;
+}mainmenuState = {
+		.run = 1,
+		.pause = 0,
+		.path_return = 0,
+		};
 
 
 struct TIMING_timer logicTimer;
@@ -94,6 +106,7 @@ void mainmenuCreate(void){
 	timerSetup(&logicTimer, 60);
 	counterSetup(&frameCounter, 60);
 
+
 	mainmenuLogicCreate();
 	mainmenuRenderCreate();
 
@@ -116,17 +129,14 @@ void mainmenuDestroy(void){
 unsigned char mainmenuLoop(void){
 
 	SDL_Event event = {0};
-	unsigned char run = 1;
-	unsigned char pause = 0;
-	unsigned char exit = 0;
 
 
 	mainmenuCreate();
 
 
-	while(run){
+	while(mainmenuState.run){
 		while (SDL_PollEvent(&event)){
-			if(event.type == SDL_QUIT){run = 0;}
+			if(event.type == SDL_QUIT){mainmenuState.run = 0;}
 			if(event.type == SDL_WINDOWEVENT){
 				switch(event.window.event){
 					case SDL_WINDOWEVENT_SIZE_CHANGED:
@@ -135,7 +145,7 @@ unsigned char mainmenuLoop(void){
 						mainmenuUpdate();
 					break;
 					case SDL_WINDOWEVENT_CLOSE:
-						run = !run;
+						mainmenuState.run = 0;
 					break;
 				}
 			}
@@ -143,10 +153,10 @@ unsigned char mainmenuLoop(void){
 				if (!event.key.repeat) {
 					switch (event.key.keysym.sym){
 						case SDLK_ESCAPE:
-							run = !run;
+							mainmenuState.run = 0;
 						break;
 						case SDLK_p:
-							pause = !pause;
+							mainmenuState.pause = !mainmenuState.pause;
 						break;
 						case SDLK_RETURN:
 						break;
@@ -166,7 +176,7 @@ unsigned char mainmenuLoop(void){
 		}
 
 
-		if (!pause) {
+		if (!mainmenuState.pause) {
 			if(timerStep(&logicTimer)){
 
 				mainmenuLogicStep();
@@ -188,7 +198,7 @@ unsigned char mainmenuLoop(void){
 
 
 	mainmenuDestroy();
-	return exit;
+	return mainmenuState.path_return;
 }
 
 

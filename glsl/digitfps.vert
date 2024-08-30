@@ -11,8 +11,10 @@ uniform int pixelSize;
 
 
 
+#define digitAmount 6
 #define pixelScale (2.*pixelSize/lowResolution)
-#define screenPos vec2(-1.,1.)
+#define screenPos vec2(1.,1.)
+#define scaledOffset vec2(-digitAmount*1.25*pixelScale,-2.25*pixelScale)
 
 
 const vec2 digitVertex[15] = vec2[](
@@ -29,12 +31,13 @@ const vec2 digitVertex[15] = vec2[](
 void main(){
 
 
-	gl_Position = matProj * 
-		( vec4( (digitVertex[gl_VertexID%15]
-		+vec2((gl_VertexID/15)*1.25,0.))*pixelScale,
-		-1.,1. )
-		+ vec4(vec2(0.25*pixelScale,-2.25*pixelScale),0.,0.) )
-		+ vec4(screenPos,0.,0.);
+	gl_Position = matProj * (
+			vec4( (digitVertex[gl_VertexID%15]
+			+vec2((gl_VertexID/15)*1.25,0.))*pixelScale,
+			-1.,1. )
+			+ vec4(scaledOffset,0.,0.) 
+			)
+			+ vec4(screenPos,0.,0.);
 }
 
 

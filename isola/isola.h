@@ -72,7 +72,7 @@ extern void isolaQuit(void);
 
 
 #ifdef ISOLA_DBG
- #define isolaDBG_(x)                                                         \
+ #define isolaGLDBG_(x)                                                         \
 	if(isolaErrorGL()){                                                       \
 		SDL_Log(" UNEXPECTED ERROR, line : %d, function : %d, file : %s",     \
 				__LINE__,__FUNCTION__,__FILE__);                              \
@@ -83,7 +83,7 @@ extern void isolaQuit(void);
 				__LINE__,__FUNCTION__,__FILE__);                              \
 	}
 #else
- #define isolaDBG_(x) x;
+ #define isolaGLDBG_(x) x;
 #endif
 
 

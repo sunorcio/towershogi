@@ -42,11 +42,11 @@ static unsigned short elementDigit[12][12] = {
 
 
 /* [0-18] */
-#define digitfpsPrintAmount 5
+#define digitfpsPrintAmount 6
 
 
 struct DIGITFPS_font digitfps = { 
-		.color={0.25,0.125,0.25,0.75},
+		.color={0.375,0.1875,0.375,0.625},
 		.pixelSize=8*2 };
 
 

@@ -3,6 +3,8 @@
 #include "isola.h"
 
 
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -421,6 +423,7 @@ void isolaInit(void){
 	int contextFlags = 0;
 
 	isolaShaderSrc = calloc(ISOLA_GLSLCHARMAX+1, sizeof(char));
+	if (!isolaShaderSrc) {SDL_Log("Failed allocation");exit(EXIT_FAILURE);}
 
 #if ISOLA_CONFIG_LOG
 	isolaLog = freopen("isola.log","a+",stderr);

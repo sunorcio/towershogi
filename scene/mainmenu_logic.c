@@ -14,6 +14,10 @@
 
 
 
+extern struct MAINMENU_state mainmenuState;
+
+
+
 
 void mainmenuLogicUpdate(void){
 
@@ -24,14 +28,32 @@ void mainmenuLogicUpdate(void){
 void mainmenuLogicCreate(void){
 
 	createBitmenu();
-/* 	bitmenuStartScreen(2);
-	bitmenuStartGroup(-1, 1, 1, 1);
-	bitmenuStartObject("asdf\177asdf");
-	bitmenuStartObject("asdofad\177\177asdofad");
-	bitmenuStartGroup(0, 0, 1, 1);
-	bitmenuStartObject("asdf\177asdf");
-	bitmenuStartObject("asdofad\177\177\177\177asdofad");
-	bitmenuEndScreen(); */
+
+
+/* 	bitmenuBuildMenu();
+	bitmenuBuildGroup(-1,1,1,1);
+	bitmenuBuildScreen(2);
+	bitmenuBuildObject("menu 1, screen 1, group 1");
+	bitmenuBuildObject("play");
+	bitmenuBuildObject("go to group 2");
+	bitmenuBuildGroup(-1,0,1,1);
+		bitmenuBuildObject("menu 1, screen 1, group 2");
+	bitmenuBuildGroupLeave();
+	bitmenuBuildObject("go to screen 2");
+	bitmenuBuildGroup(-1,1,1,1);
+		bitmenuBuildScreen(3);
+		bitmenuBuildObject("menu 1, screen 2, group 3");
+		bitmenuBuildObject("go to group 4");
+		bitmenuBuildGroup(-1,0,1,1);
+			bitmenuBuildObject("menu 1, screen 2, group 4");
+		bitmenuBuildGroupLeave();
+	bitmenuBuildGroupLeave();
+	bitmenuBuildObject("quit");
+
+	bitmenuBuildMenu();
+	bitmenuBuildGroup(0,1,1,1);
+	bitmenuBuildScreen(1);
+	bitmenuBuildObject("menu 2, screen 1, group 1"); */
 }
 
 
