@@ -9,6 +9,7 @@
 
 
 #include <scene/mainmenu.h>
+#include <scene/towershogi.h>
 
 
 
@@ -22,7 +23,7 @@ int main(int argc, char **argv){
 
 
 	if (mainmenuLoop()) {
-		/* towershogiLoop(); */
+		towershogiLoop();
 	}
 
 

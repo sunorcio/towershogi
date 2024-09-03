@@ -12,21 +12,18 @@ const unsigned char* keyState;
 unsigned char keyRepeat[SDL_NUM_SCANCODES];
 
 
-void inputSetup(void){
+void inputClear(void){
 
 	if (SDL_IsTextInputActive()) {SDL_StopTextInput();}
 
-	keyState = SDL_GetKeyboardState(&keyNum);
-}
-
-
-void inputClean(void){
-
-	if (SDL_IsTextInputActive()) {SDL_StopTextInput();}
+	if (keyState == 0) {
+		keyState = SDL_GetKeyboardState(&keyNum);
+	}
 }
 
 
 void inputRepeat(void){
+
 	memcpy(keyRepeat,keyState,keyNum*sizeof(unsigned char));
 }
 

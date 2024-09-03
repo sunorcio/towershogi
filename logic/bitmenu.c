@@ -12,7 +12,6 @@
 #include <isola/isola.h>
 #include <isola/misc.h>
 
-
 #include <input.h>
 
 #include <render/bitfont_logic.h>
@@ -21,7 +20,8 @@
 
 
 struct BITMENU_object{
-	char objectName[BITFONT_STRINGSIZE];
+	char name[BITFONT_STRINGSIZE];
+	void (*function)(void);
 	struct BITMENU_group* groupLink;
 	struct BITMENU_object* objectNext;
 };
@@ -98,7 +98,7 @@ void bitmenuGrouptreeStep(struct BITMENU_group* group){
 		bitfontCounter->pixelSize = 
 				bitmenuCounter->groupCurrent->screenParent->fontScaleGlobal;
 		bitfontCounter->charWrap = BITFONT_STRINGSIZE;
-		strcpy(bitfontCounter->string,object->objectName);
+		strcpy(bitfontCounter->string,object->name);
 		bitfontCounter->x = group->x;
 		bitfontCounter->y = group->y
 				-isolaInfoWindow.pixelHeight*16
@@ -141,6 +141,7 @@ void bitmenuMoveBack(void){
 
 	struct BITMENU_object* object;
 
+
 	object = bitmenuCurrent->groupCurrent->objectHead;
 
 	if (object == bitmenuCurrent->objectCurrent) {return;}
@@ -154,6 +155,10 @@ void bitmenuMoveBack(void){
 
 void bitmenuActivateObject(void){
 
+	if (bitmenuCurrent->objectCurrent->function != 0) {
+		bitmenuCurrent->objectCurrent->function();
+	}
+
 	if (bitmenuCurrent->objectCurrent->groupLink != 0) {
 		bitmenuCurrent->groupCurrent = bitmenuCurrent->objectCurrent->groupLink;
 		bitmenuCurrent->objectCurrent =
@@ -162,7 +167,7 @@ void bitmenuActivateObject(void){
 }
 
 void bitmenuLeaveGroup(void){
-	
+
 	if (bitmenuCurrent->groupCurrent->groupPrevious == 0) { return; }
 
 	bitmenuCurrent->groupCurrent = bitmenuCurrent->groupCurrent->groupPrevious;
@@ -184,12 +189,20 @@ void bitmenuBuildMenu(void){
 
 void bitmenuBuildScreen(unsigned char fontScaleGlobal){
 
-	screenPointer = calloc(1,sizeof(struct BITMENU_screen));
-	menuPointer->screenHead = screenPointer;
-	groupPointer->screenParent = screenPointer;
-	screenPointer->groupTransition = groupPointer;
-	screenPointer->fontScaleGlobal = 1;
-
+	if (menuPointer->screenHead != 0) {
+		screenPointer->screenNext = calloc(1,sizeof(struct BITMENU_screen));
+		screenPointer = screenPointer->screenNext;
+		groupPointer->screenParent = screenPointer;
+		screenPointer->groupTransition = groupPointer;
+		screenPointer->fontScaleGlobal = fontScaleGlobal;
+	
+	}else {
+		screenPointer = calloc(1,sizeof(struct BITMENU_screen));
+		menuPointer->screenHead = screenPointer;
+		groupPointer->screenParent = screenPointer;
+		screenPointer->groupTransition = groupPointer;
+		screenPointer->fontScaleGlobal = fontScaleGlobal;
+	}
 }
 
 void bitmenuBuildGroup(float x, float y, float w, float h){
@@ -215,12 +228,59 @@ void bitmenuBuildGroup(float x, float y, float w, float h){
 	}
 }
 
-void bitmenuBuildObject(const char* name){
+void bitmenuBuildObject(const char* name, void (*function)(void)){
 
+	if (groupPointer->objectHead != 0) {
+		objectPointer->objectNext = calloc(1,sizeof(struct BITMENU_object));
+		objectPointer = objectPointer->objectNext;
+
+		strcpy(objectPointer->name,name);
+		objectPointer->function = function;
+	}else {
+		objectPointer = calloc(1,sizeof(struct BITMENU_object));
+		strcpy(objectPointer->name,name);
+		objectPointer->function = function;
+
+		groupPointer->objectHead = objectPointer;
+		if (menuPointer->objectCurrent == 0) {
+			menuPointer->objectCurrent = menuPointer->groupHead->objectHead;
+		}
+	}
 }
 
 void bitmenuBuildGroupLeave(void){
 
+	groupPointer = groupPointer->groupPrevious;
+	objectPointer = groupPointer->objectHead;
+	while (objectPointer->objectNext!=0) {
+		objectPointer=objectPointer->objectNext;
+	}
+}
+
+void bitmenuBuildExample(void){
+
+	bitmenuBuildMenu();
+	bitmenuBuildGroup(-1,1,1,1);
+	bitmenuBuildScreen(2);
+	bitmenuBuildObject("menu 1, screen 1, group 1",0);
+	bitmenuBuildObject("go to group 2",0);
+	bitmenuBuildGroup(-1,0,1,1);
+		bitmenuBuildObject("menu 1, screen 1, group 2",0);
+	bitmenuBuildGroupLeave();
+	bitmenuBuildObject("go to screen 2",0);
+	bitmenuBuildGroup(-1,1,1,1);
+		bitmenuBuildScreen(3);
+		bitmenuBuildObject("menu 1, screen 2, group 3",0);
+		bitmenuBuildObject("go to group 4",0);
+		bitmenuBuildGroup(-1,0,1,1);
+			bitmenuBuildObject("menu 1, screen 2, group 4",0);
+		bitmenuBuildGroupLeave();
+	bitmenuBuildGroupLeave();
+
+	bitmenuBuildMenu();
+	bitmenuBuildGroup(0,1,1,1);
+	bitmenuBuildScreen(1);
+	bitmenuBuildObject("menu 2, screen 1, group 1",0);
 }
 
 
@@ -233,119 +293,6 @@ void updateBitmenu(void){
 
 void createBitmenu(void){
 
-	bitmenuBuildMenu();
-
-	bitmenuBuildGroup(-1,1,1,1);
-
-	screenPointer = calloc(1,sizeof(struct BITMENU_screen));
-	menuPointer->screenHead = screenPointer;
-	groupPointer->screenParent = screenPointer;
-	screenPointer->groupTransition = groupPointer;
-	screenPointer->fontScaleGlobal = 2;
-
-	objectPointer = calloc(1,sizeof(struct BITMENU_object));
-	strcpy(objectPointer->objectName,"menu 1, screen 1, group 1");
-	groupPointer->objectHead = objectPointer;
-	menuPointer->objectCurrent = menuPointer->groupHead->objectHead;
-
-	objectPointer->objectNext = calloc(1,sizeof(struct BITMENU_object));
-	objectPointer = objectPointer->objectNext;
-	strcpy(objectPointer->objectName,"play");
-
-	objectPointer->objectNext = calloc(1,sizeof(struct BITMENU_object));
-	objectPointer = objectPointer->objectNext;
-	strcpy(objectPointer->objectName,"go to group 2");
-
-	objectPointer->groupLink = calloc(1,sizeof(struct BITMENU_group));
-	objectPointer->groupLink->groupPrevious = groupPointer;
-	groupPointer = objectPointer->groupLink;
-	groupPointer->screenParent = screenPointer;
-	groupPointer->x = -1.;
-	groupPointer->y =  0.;
-	groupPointer->w = 1.;
-	groupPointer->h = 1.;
-
-	objectPointer = calloc(1,sizeof(struct BITMENU_object));
-	strcpy(objectPointer->objectName,"menu 1, screen 1, group 2");
-	groupPointer->objectHead = objectPointer;
-
-	groupPointer = groupPointer->groupPrevious;
-	objectPointer = groupPointer->objectHead;
-	while (objectPointer->objectNext!=0) {
-		objectPointer=objectPointer->objectNext;
-	}
-	objectPointer->objectNext = calloc(1,sizeof(struct BITMENU_object));
-	objectPointer = objectPointer->objectNext;
-	strcpy(objectPointer->objectName,"go to screen 2");
-
-	screenPointer->screenNext = calloc(1,sizeof(struct BITMENU_screen));
-	screenPointer = screenPointer->screenNext;
-	screenPointer->fontScaleGlobal = 3;
-
-	objectPointer->groupLink = calloc(1,sizeof(struct BITMENU_group));
-	objectPointer->groupLink->groupPrevious = groupPointer;
-	groupPointer = objectPointer->groupLink;
-	groupPointer->screenParent = screenPointer;
-	groupPointer->x = -1.;
-	groupPointer->y =  1.;
-	groupPointer->w = 1.;
-	groupPointer->h = 1.;
-	screenPointer->groupTransition = groupPointer;
-
-	objectPointer = calloc(1,sizeof(struct BITMENU_object));
-	strcpy(objectPointer->objectName,"menu 1, screen 2, group 3");
-	groupPointer->objectHead = objectPointer;
-	menuPointer->objectCurrent = menuPointer->groupHead->objectHead;
-
-	objectPointer->objectNext = calloc(1,sizeof(struct BITMENU_object));
-	objectPointer = objectPointer->objectNext;
-	strcpy(objectPointer->objectName,"go to group 4");
-
-	objectPointer->groupLink = calloc(1,sizeof(struct BITMENU_group));
-	objectPointer->groupLink->groupPrevious = groupPointer;
-	groupPointer = objectPointer->groupLink;
-	groupPointer->screenParent = screenPointer;
-	groupPointer->x = -1.;
-	groupPointer->y =  0.;
-	groupPointer->w = 1.;
-	groupPointer->h = 1.;
-
-	objectPointer = calloc(1,sizeof(struct BITMENU_object));
-	strcpy(objectPointer->objectName,"menu 1, screen 2, group 4");
-	groupPointer->objectHead = objectPointer;
-	menuPointer->objectCurrent = menuPointer->groupHead->objectHead;
-
-	groupPointer = groupPointer->groupPrevious;
-	groupPointer = groupPointer->groupPrevious;
-	objectPointer = groupPointer->objectHead;
-	while (objectPointer->objectNext!=0) {
-		objectPointer=objectPointer->objectNext;
-	}
-	objectPointer->objectNext = calloc(1,sizeof(struct BITMENU_object));
-	objectPointer = objectPointer->objectNext;
-	strcpy(objectPointer->objectName,"quit");
-
-	bitmenuBuildMenu();
-
-	groupPointer = calloc(1,sizeof(struct BITMENU_group));
-	groupPointer->screenParent = screenPointer;
-	groupPointer->x = 0.;
-	groupPointer->y = 1.;
-	groupPointer->w = 1.;
-	groupPointer->h = 1.;
-	menuPointer->groupHead = groupPointer;
-	menuPointer->groupCurrent = menuPointer->groupHead;
-
-	screenPointer = calloc(1,sizeof(struct BITMENU_screen));
-	menuPointer->screenHead = screenPointer;
-	groupPointer->screenParent = screenPointer;
-	screenPointer->groupTransition = groupPointer;
-	screenPointer->fontScaleGlobal = 1;
-
-	objectPointer = calloc(1,sizeof(struct BITMENU_object));
-	strcpy(objectPointer->objectName,"menu 2, screen 1, group 1");
-	groupPointer->objectHead = objectPointer;
-	menuPointer->objectCurrent = menuPointer->groupHead->objectHead;
 }
 
 
@@ -355,7 +302,7 @@ void destroyBitmenu(void){
 	struct BITMENU_menu* menu;
 	struct BITMENU_screen* screen;
 
-	
+
 	menu = bitmenuHead;
 	while (menu != 0) {
 

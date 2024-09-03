@@ -7,6 +7,7 @@
 
 #include <isola/isola.h>
 
+#include <scene/scene.h>
 
 #include <render/digitfps_logic.h>
 #include <logic/bitmenu.h>
@@ -14,7 +15,21 @@
 
 
 
-extern struct MAINMENU_state mainmenuState;
+extern struct SCENE_state mainmenuState;
+
+
+
+
+void quitMainmenu(void){
+
+	mainmenuState.run = 0;
+}
+
+void playMainmenu(void){
+
+	mainmenuState.returnControlValue = 1;
+	mainmenuState.run = 0;
+}
 
 
 
@@ -30,30 +45,17 @@ void mainmenuLogicCreate(void){
 	createBitmenu();
 
 
-/* 	bitmenuBuildMenu();
+	bitmenuBuildMenu();
 	bitmenuBuildGroup(-1,1,1,1);
 	bitmenuBuildScreen(2);
-	bitmenuBuildObject("menu 1, screen 1, group 1");
-	bitmenuBuildObject("play");
-	bitmenuBuildObject("go to group 2");
-	bitmenuBuildGroup(-1,0,1,1);
-		bitmenuBuildObject("menu 1, screen 1, group 2");
-	bitmenuBuildGroupLeave();
-	bitmenuBuildObject("go to screen 2");
+	bitmenuBuildObject("play",playMainmenu);
+	bitmenuBuildObject("options",0);
 	bitmenuBuildGroup(-1,1,1,1);
-		bitmenuBuildScreen(3);
-		bitmenuBuildObject("menu 1, screen 2, group 3");
-		bitmenuBuildObject("go to group 4");
-		bitmenuBuildGroup(-1,0,1,1);
-			bitmenuBuildObject("menu 1, screen 2, group 4");
-		bitmenuBuildGroupLeave();
+		bitmenuBuildScreen(2);
+		bitmenuBuildObject("these are options :)",0);
+		bitmenuBuildObject("press q to go back to last menu",0);
 	bitmenuBuildGroupLeave();
-	bitmenuBuildObject("quit");
-
-	bitmenuBuildMenu();
-	bitmenuBuildGroup(0,1,1,1);
-	bitmenuBuildScreen(1);
-	bitmenuBuildObject("menu 2, screen 1, group 1"); */
+	bitmenuBuildObject("quit",quitMainmenu);
 }
 
 

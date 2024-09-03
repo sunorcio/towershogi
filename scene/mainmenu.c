@@ -8,10 +8,9 @@
 #include <isola/isola.h>
 #include <isola/misc.h>
 
-
+#include <scene/scene.h>
 #include <timing.h>
 #include <input.h>
-
 
 #include <render/digitfps_logic.h>
 
@@ -22,15 +21,7 @@
 
 
 
-struct MAINMENU_window {
-	unsigned char windowFullscreen;
-	unsigned char windowBorder;
-	unsigned char windowResizable;
-	int windowPos[2];
-	int windowRes[2];
-	int windowMinRes[2];
-	float clearColor[4];
-}static mainmenuWindow = {
+struct SCENE_window mainmenuWindow = {
 		.windowFullscreen = 0,
 		.windowBorder = 1,
 		.windowResizable = 1,
@@ -41,14 +32,10 @@ struct MAINMENU_window {
 		};
 
 
-struct MAINMENU_state {
-	unsigned char run;
-	unsigned char pause;
-	unsigned char path_return;
-}mainmenuState = {
+struct SCENE_state mainmenuState = {
 		.run = 1,
 		.pause = 0,
-		.path_return = 0,
+		.returnControlValue = 0,
 		};
 
 
@@ -59,9 +46,6 @@ struct TIMING_counter frameCounter;
 
 
 void mainmenuUpdate(void){
-
-	inputSetup();
-
 
 	if (isolaInfoWindow.height > 720 && isolaInfoWindow.width > 1280) {
 		digitfps.pixelSize = 8*2;
@@ -90,6 +74,9 @@ void mainmenuUpdate(void){
 
 void mainmenuCreate(void){
 
+	inputClear();
+
+
 	SDL_SetWindowSize(isolaWindow,mainmenuWindow.windowRes[0],
 			mainmenuWindow.windowRes[1]);
 	SDL_SetWindowPosition(isolaWindow,mainmenuWindow.windowPos[0],
@@ -116,7 +103,7 @@ void mainmenuCreate(void){
 
 void mainmenuDestroy(void){
 
-	inputClean();
+	inputClear();
 
 
 	mainmenuRenderDestroy();
@@ -198,7 +185,7 @@ unsigned char mainmenuLoop(void){
 
 
 	mainmenuDestroy();
-	return mainmenuState.path_return;
+	return mainmenuState.returnControlValue;
 }
 
 

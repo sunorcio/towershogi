@@ -13,8 +13,7 @@ extern const unsigned char* keyState;
 extern unsigned char keyRepeat[SDL_NUM_SCANCODES];
 
 
-extern void inputSetup(void);
-extern void inputClean(void);
+extern void inputClear(void);
 extern void inputRepeat(void);
 
 
