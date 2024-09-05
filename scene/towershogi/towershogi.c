@@ -6,17 +6,14 @@
 
 
 #include <isola/isola.h>
-#include <isola/misc.h>
 
 #include <scene/scene.h>
 #include <timing.h>
 #include <input.h>
 
-#include <render/digitfps_logic.h>
 
-
-/* #include "towershogi_logic.h"
-#include "towershogi_render.h" */
+#include "towershogi_logic.h"
+#include "towershogi_render.h"
 
 
 
@@ -26,7 +23,7 @@ struct SCENE_window towershogiWindow = {
 		.windowBorder = 1,
 		.windowResizable = 1,
 		.windowPos = {SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED},
-		.windowRes = {480,360},
+		.windowRes = {800,600},
 		.windowMinRes = {480,360},
 		.clearColor = {0.0625,0.0625,0.0625,1.}, 
 		};
@@ -39,20 +36,13 @@ struct SCENE_state towershogiState = {
 		};
 
 
-extern struct TIMING_timer logicTimer;
-extern struct TIMING_counter frameCounter;
+struct TIMING_timer towershogiLogicTimer;
+struct TIMING_counter towershogiFrameCounter;
 
 
 
 
 void towershogiUpdate(void){
-
-	if (isolaInfoWindow.height > 720 && isolaInfoWindow.width > 1280) {
-		digitfps.pixelSize = 8*2;
-	}else {
-		digitfps.pixelSize = 8*1;
-	}
-
 
 	isolaGetWindow();
 	if (isolaInfoWindow.width < towershogiWindow.windowMinRes[0]) {
@@ -67,8 +57,8 @@ void towershogiUpdate(void){
 	glViewport(0,0,isolaInfoWindow.width, isolaInfoWindow.height);
 
 
-/* 	towershogiRenderUpdate();
-	towershogiLogicUpdate(); */
+	towershogiRenderUpdate();
+	towershogiLogicUpdate();
 }
 
 
@@ -90,8 +80,12 @@ void towershogiCreate(void){
 			towershogiWindow.clearColor[2],towershogiWindow.clearColor[3]);
 
 
-/* 	towershogiLogicCreate();
-	towershogiRenderCreate(); */
+	timerSetup(&towershogiLogicTimer, 60);
+	counterSetup(&towershogiFrameCounter, 60);
+
+
+	towershogiLogicCreate();
+	towershogiRenderCreate();
 
 	towershogiUpdate();
 }
@@ -102,8 +96,8 @@ void towershogiDestroy(void){
 	inputClear();
 
 
-/* 	towershogiRenderDestroy();
-	towershogiLogicDestroy(); */
+	towershogiRenderDestroy();
+	towershogiLogicDestroy();
 }
 
 
@@ -138,9 +132,6 @@ unsigned char towershogiLoop(void){
 						case SDLK_ESCAPE:
 							towershogiState.run = 0;
 						break;
-						case SDLK_p:
-							towershogiState.pause = !towershogiState.pause;
-						break;
 						case SDLK_RETURN:
 						break;
 						case SDLK_SPACE:
@@ -160,20 +151,17 @@ unsigned char towershogiLoop(void){
 
 
 		if (!towershogiState.pause) {
-			if(timerStep(&logicTimer)){
+			if(timerStep(&towershogiLogicTimer)){
 
-/* 				towershogiLogicStep(); */
+				towershogiLogicStep();
 				inputRepeat();
 			}
 
-			if(counterStep(&frameCounter)){
+			if(counterStep(&towershogiFrameCounter)){
 
-				glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
-				SDL_GL_SwapWindow(isolaWindow);
-/* 				towershogiRenderDraw(); */
+				towershogiRenderDraw();
 			}
 		}
-
 
 #define RESOURCE_PADDING
 #ifdef RESOURCE_PADDING

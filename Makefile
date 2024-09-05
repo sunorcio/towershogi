@@ -45,11 +45,11 @@ endif
 
 
 
-HDR = ${wildcard ./*.h} ${wildcard isola/*.h} ${wildcard scene/*.h} ${wildcard render/*.h} ${wildcard logic/*.h}
-SRC = ${wildcard ./*.c} ${wildcard ./scene/*.c} ${wildcard ./isola/*.c} ${wildcard render/*.c} ${wildcard logic/*.c}
+HDR = ${shell find . -type f -name '*.h'} #${wildcard ./*.h} ${wildcard isola/*.h} ${wildcard scene/*/*.h} ${wildcard module/*/*.h}
+SRC = ${shell find . -type f -name '*.c'} #${wildcard ./*.c} ${wildcard ./isola/*.c} ${wildcard ./scene/*/*.c} ${wildcard module/*/*.c}
 OBJ = ${SRC:.c=.o}
 
-DEPS = bin Makefile ${HDR} #${SRC}
+GLOBALDEPS = bin Makefile ${HDR} #${SRC}
 
 
 
@@ -98,7 +98,7 @@ endif
 ${OBJ}:%.o : %.c
 	${CC} -c $< -o $@ ${CFLAGS}
 
-${OBJ}: ${DEPS}
+${OBJ}: ${GLOBALDEPS}
 
 
 

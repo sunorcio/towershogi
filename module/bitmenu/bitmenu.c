@@ -1,6 +1,6 @@
 
 
-#include "bitmenu.h"
+#include "bitmenu_logic.h"
 
 
 
@@ -14,7 +14,7 @@
 
 #include <input.h>
 
-#include <render/bitfont_logic.h>
+#include <module/bitfont/bitfont_logic.h>
 
 
 

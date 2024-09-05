@@ -4,12 +4,10 @@
 
 #include <time.h>
 
-
 #include <isola/isola.h>
 
-
-#include <scene/mainmenu.h>
-#include <scene/towershogi.h>
+#include <scene/towermenu/towermenu.h>
+#include <scene/towershogi/towershogi.h>
 
 
 
@@ -22,7 +20,7 @@ int main(int argc, char **argv){
 
 
 
-	if (mainmenuLoop()) {
+	if (towermenuLoop()) {
 		towershogiLoop();
 	}
 

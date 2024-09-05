@@ -4,8 +4,12 @@
 
 
 
-#define isolaLITSTR_(X) #X
-#define isolaVARSTR_(X) isolaLITSTR_(X)
+#define isolaLIT_TO_STR_(x) #x
+#define isolaDEF_TO_STR_(X) isolaLIT_TO_STR_(X)
+
+
+#define isolaCONCAT_STR_(x,y) x##y
+#define isolaCONCAT_DEF_(X,Y) isolaCONCAT_STR_(X,Y)
 
 
 #define isolaARRAYSIZE_(x) (sizeof(x)/sizeof(x[0]))

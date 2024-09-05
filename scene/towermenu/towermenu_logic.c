@@ -1,6 +1,6 @@
 
 
-#include "mainmenu_logic.h"
+#include "towermenu_logic.h"
 
 
 
@@ -9,38 +9,45 @@
 
 #include <scene/scene.h>
 
-#include <render/digitfps_logic.h>
-#include <logic/bitmenu.h>
+#include <module/digitfps/digitfps_logic.h>
+#include <module/bitmenu/bitmenu_logic.h>
 
 
 
 
-extern struct SCENE_state mainmenuState;
+extern struct SCENE_state towermenuState;
 
 
 
 
 void quitMainmenu(void){
 
-	mainmenuState.run = 0;
+	towermenuState.run = 0;
 }
 
 void playMainmenu(void){
 
-	mainmenuState.returnControlValue = 1;
-	mainmenuState.run = 0;
+	towermenuState.returnControlValue = 1;
+	towermenuState.run = 0;
 }
 
 
 
 
-void mainmenuLogicUpdate(void){
+void towermenuLogicUpdate(void){
 
 	updateBitmenu();
+
+
+	if (isolaInfoWindow.height > 720 && isolaInfoWindow.width > 1280) {
+		digitfps.pixelSize = 8*2;
+	}else {
+		digitfps.pixelSize = 8*1;
+	}
 }
 
 
-void mainmenuLogicCreate(void){
+void towermenuLogicCreate(void){
 
 	createBitmenu();
 
@@ -59,13 +66,13 @@ void mainmenuLogicCreate(void){
 }
 
 
-void mainmenuLogicDestroy(void){
+void towermenuLogicDestroy(void){
 
 	destroyBitmenu();
 }
 
 
-void mainmenuLogicStep(void){
+void towermenuLogicStep(void){
 
 	stepBitmenu();
 }
