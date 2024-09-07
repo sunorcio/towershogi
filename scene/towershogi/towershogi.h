@@ -4,7 +4,8 @@
 
 
 
-extern unsigned char towershogiLoop(void);
+#define TOWERSHOGI_BOARD_X 10
+#define TOWERSHOGI_BOARD_Y 10
 
 
 

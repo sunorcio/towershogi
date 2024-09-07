@@ -5,35 +5,36 @@
 
 
 
-#include <isola/isola.h>
-
-#include <module/digitfps/digitfps_logic.h>
-
+#include "towershogi.h"
+#include "towershogi_render_logic.h"
 
 
 
-void towershogiLogicUpdate(void){
 
-	if (isolaInfoWindow.height > 720 && isolaInfoWindow.width > 1280) {
-		digitfps.pixelSize = 8*2;
-	}else {
-		digitfps.pixelSize = 8*1;
-	}
+struct TOWERSHOGI_piece{
+	unsigned char player;
+	unsigned char movement[5*5];
+};
+
+struct TOWERSHOGI_board{
+	unsigned short currentTile;
+	unsigned short selectedTile;
+	struct TOWERSHOGI_piece tile[TOWERSHOGI_BOARD_X][TOWERSHOGI_BOARD_Y];
+}towershogiBoard;
+
+
+
+
+void updateTowershogiLogic(void){
 }
 
-
-void towershogiLogicCreate(void){
-
+void createTowershogiLogic(void){
 }
 
-
-void towershogiLogicDestroy(void){
-
+void destroyTowershogiLogic(void){
 }
 
-
-void towershogiLogicStep(void){
-
+void stepTowershogiLogic(void){
 }
 
 

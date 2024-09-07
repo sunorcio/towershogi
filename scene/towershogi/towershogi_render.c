@@ -1,53 +1,38 @@
 
 
 #include "towershogi_render.h"
+#include "towershogi_render_logic.h"
 
 
 
 
-#include <isola/isola.h>
-
-#include <module/digitfps/digitfps_render.h>
+#include "towershogi.h"
 
 
 
 
-extern struct TIMING_counter towershogiFrameCounter;
+struct TOWERSHOGI_boardstate towershogiBoardstate;
+
+static float colorTable[4][3] = {
+		{0.5,0.5,0.5},
+		{0.0,0.0,0.75},
+		{0.0,0.0,0.0},
+		{0.0,0.0,0.0},
+		};
 
 
 
 
-void towershogiRenderUpdate(void){
-
-	updateDigitfps();
+void updateTowershogiRender(void){
 }
 
-
-void towershogiRenderCreate(void){
-
-	createDigitfps(&towershogiFrameCounter);
+void createTowershogiRender(void){
 }
 
-
-void towershogiRenderDestroy(void){
-
-	destroyDigitfps();
-
-
-	glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
-	SDL_GL_SwapWindow(isolaWindow);
+void destroyTowershogiRender(void){
 }
 
-
-void towershogiRenderDraw(void){
-
-	glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
-
-
-	drawDigitfps();
-
-
-	SDL_GL_SwapWindow(isolaWindow);
+void drawTowershogiRender(void){
 }
 
 

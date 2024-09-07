@@ -6,8 +6,9 @@
 
 #include <isola/isola.h>
 
-#include <scene/towermenu/towermenu.h>
-#include <scene/towershogi/towershogi.h>
+
+#include <scene/towermenu/towermenu_scene.h>
+#include <scene/towershogi/towershogi_scene.h>
 
 
 
@@ -20,8 +21,11 @@ int main(int argc, char **argv){
 
 
 
+	start:
 	if (towermenuLoop()) {
-		towershogiLoop();
+		if (towershogiLoop()) {
+			goto start;
+		}
 	}
 
 

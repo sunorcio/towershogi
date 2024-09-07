@@ -1,16 +1,16 @@
 
 
-
-
 #include "digitfps_render.h"
 #include "digitfps_logic.h"
 
 
-#include <stdio.h>
 
+
+#include <stdio.h>
 
 #include <isola/isola.h>
 #include <isola/mutil.h>
+
 #include <timing.h>
 
 

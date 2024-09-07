@@ -1,6 +1,6 @@
 
 
-#include "towermenu_logic.h"
+#include "towermenu_scene_logic.h"
 
 
 
@@ -20,12 +20,12 @@ extern struct SCENE_state towermenuState;
 
 
 
-void quitMainmenu(void){
+static void quitTowermenu(void){
 
 	towermenuState.run = 0;
 }
 
-void playMainmenu(void){
+static void playTowermenu(void){
 
 	towermenuState.returnControlValue = 1;
 	towermenuState.run = 0;
@@ -55,14 +55,22 @@ void towermenuLogicCreate(void){
 	bitmenuBuildMenu();
 	bitmenuBuildGroup(-1,1,1,1);
 	bitmenuBuildScreen(2);
-	bitmenuBuildObject("play",playMainmenu);
+	bitmenuBuildObject("edit rules",0);
+	bitmenuBuildGroup(-1,1,1,1);
+		bitmenuBuildScreen(2);
+		bitmenuBuildObject("these are rules :)",0);
+		bitmenuBuildObject("press q to go back to last menu",0);
+	bitmenuBuildGroupLeave();
+	bitmenuBuildObject("play",playTowermenu);
+	bitmenuBuildObject("join",0);
+	bitmenuBuildObject("host",0);
 	bitmenuBuildObject("options",0);
 	bitmenuBuildGroup(-1,1,1,1);
 		bitmenuBuildScreen(2);
 		bitmenuBuildObject("these are options :)",0);
 		bitmenuBuildObject("press q to go back to last menu",0);
 	bitmenuBuildGroupLeave();
-	bitmenuBuildObject("quit",quitMainmenu);
+	bitmenuBuildObject("quit",quitTowermenu);
 }
 
 

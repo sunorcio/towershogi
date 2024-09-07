@@ -16,7 +16,7 @@ TARGET_OS = linux
 #(dynamic^static)
 TARGET_BUILD = dynamic
 #(on^off)
-TARGET_DEBUG = off
+TARGET_DEBUG = on
 TARGET_BIN = isola_example
 
 
@@ -67,7 +67,7 @@ ifeq (${TARGET_OS},linux)
 
  #CFLAGS = -DISOLA_DBG -DGLEW_STATIC -Weverything
  CFLAGS = ${DEBUG_CFLAGS} ${INCS} -Wall -Wextra -pedantic -std=c89 -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result \
-		  -Wno-sign-compare -MJ $@.json -Wno-c99-designator -Wno-unsafe-buffer-usage -Ofast3 -pipe -march=native -D_REENTRANT
+		  -Wno-sign-compare -MJ $@.json -Wno-c99-designator -Wno-unsafe-buffer-usage -O0 -pipe -march=native -D_REENTRANT
  #LDFLAGS = -v
  LDFLAGS = ${LIBS} -flto=full
 

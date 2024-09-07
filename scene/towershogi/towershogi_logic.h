@@ -4,10 +4,10 @@
 
 
 
-extern void towershogiLogicUpdate(void);
-extern void towershogiLogicCreate(void);
-extern void towershogiLogicDestroy(void);
-extern void towershogiLogicStep(void);
+extern void updateTowershogiLogic(void);
+extern void createTowershogiLogic(void);
+extern void destroyTowershogiLogic(void);
+extern void stepTowershogiLogic(void);
 
 
 

@@ -14,11 +14,13 @@ unsigned char keyRepeat[SDL_NUM_SCANCODES];
 
 void inputClear(void){
 
-	if (SDL_IsTextInputActive()) {SDL_StopTextInput();}
-
 	if (keyState == 0) {
 		keyState = SDL_GetKeyboardState(&keyNum);
 	}
+
+	if (SDL_IsTextInputActive()) {SDL_StopTextInput();}
+
+/* 	memset(keyRepeat,0,keyNum*sizeof(unsigned char)); */
 }
 
 

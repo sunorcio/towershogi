@@ -293,6 +293,13 @@ void updateBitmenu(void){
 
 void createBitmenu(void){
 
+	bitmenuCurrent = 0;
+	bitmenuHead = 0;
+
+	menuPointer = 0;
+	screenPointer = 0;
+	groupPointer = 0;
+	objectPointer = 0;
 }
 
 

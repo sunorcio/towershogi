@@ -1,6 +1,6 @@
 
 
-#include "towermenu.h"
+#include "towermenu_scene.h"
 
 
 
@@ -12,8 +12,8 @@
 #include <input.h>
 
 
-#include "towermenu_logic.h"
-#include "towermenu_render.h"
+#include "towermenu_scene_logic.h"
+#include "towermenu_scene_render.h"
 
 
 
@@ -64,6 +64,11 @@ void towermenuUpdate(void){
 
 void towermenuCreate(void){
 
+	towermenuState.run = 1;
+	towermenuState.returnControlValue = 0;
+	towermenuState.pause = 0;
+
+
 	inputClear();
 
 
@@ -110,7 +115,6 @@ unsigned char towermenuLoop(void){
 
 	towermenuCreate();
 
-
 	while(towermenuState.run){
 		while (SDL_PollEvent(&event)){
 			if(event.type == SDL_QUIT){towermenuState.run = 0;}
@@ -122,6 +126,7 @@ unsigned char towermenuLoop(void){
 						towermenuUpdate();
 					break;
 					case SDL_WINDOWEVENT_CLOSE:
+						towermenuState.returnControlValue = 0;
 						towermenuState.run = 0;
 					break;
 				}
@@ -129,13 +134,6 @@ unsigned char towermenuLoop(void){
 			if(event.type == SDL_KEYDOWN){
 				if (!event.key.repeat) {
 					switch (event.key.keysym.sym){
-						case SDLK_ESCAPE:
-							towermenuState.run = 0;
-						break;
-						case SDLK_RETURN:
-						break;
-						case SDLK_SPACE:
-						break;
 					}
 				}
 				switch (event.key.keysym.sym){

@@ -1,5 +1,5 @@
-#ifndef TOWERMENU_H
-#define TOWERMENU_H
+#ifndef TOWERMENU_SCENE_H
+#define TOWERMENU_SCENE_H
 
 
 

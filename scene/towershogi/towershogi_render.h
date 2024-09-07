@@ -4,10 +4,10 @@
 
 
 
-extern void towershogiRenderUpdate(void);
-extern void towershogiRenderCreate(void);
-extern void towershogiRenderDestroy(void);
-extern void towershogiRenderDraw(void);
+extern void updateTowershogiRender(void);
+extern void createTowershogiRender(void);
+extern void destroyTowershogiRender(void);
+extern void drawTowershogiRender(void);
 
 
 

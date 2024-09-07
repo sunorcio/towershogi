@@ -2,3 +2,4 @@
 *.o
 *.json
 isola_example
+compile_commands.json

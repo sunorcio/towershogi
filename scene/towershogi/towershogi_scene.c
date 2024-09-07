@@ -1,6 +1,6 @@
 
 
-#include "towershogi.h"
+#include "towershogi_scene.h"
 
 
 
@@ -12,8 +12,8 @@
 #include <input.h>
 
 
-#include "towershogi_logic.h"
-#include "towershogi_render.h"
+#include "towershogi_scene_logic.h"
+#include "towershogi_scene_render.h"
 
 
 
@@ -34,6 +34,7 @@ struct SCENE_state towershogiState = {
 		.pause = 0,
 		.returnControlValue = 0,
 		};
+
 
 
 struct TIMING_timer towershogiLogicTimer;
@@ -63,6 +64,11 @@ void towershogiUpdate(void){
 
 
 void towershogiCreate(void){
+
+	towershogiState.run = 1;
+	towershogiState.returnControlValue = 0;
+	towershogiState.pause = 0;
+
 
 	inputClear();
 
@@ -122,6 +128,7 @@ unsigned char towershogiLoop(void){
 						towershogiUpdate();
 					break;
 					case SDL_WINDOWEVENT_CLOSE:
+						towershogiState.returnControlValue = 0;
 						towershogiState.run = 0;
 					break;
 				}
@@ -129,12 +136,9 @@ unsigned char towershogiLoop(void){
 			if(event.type == SDL_KEYDOWN){
 				if (!event.key.repeat) {
 					switch (event.key.keysym.sym){
-						case SDLK_ESCAPE:
+						case SDLK_q:
+							towershogiState.returnControlValue = 1;
 							towershogiState.run = 0;
-						break;
-						case SDLK_RETURN:
-						break;
-						case SDLK_SPACE:
 						break;
 					}
 				}
