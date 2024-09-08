@@ -18,27 +18,7 @@
 
 
 
-struct SCENE_window towershogiWindow = {
-		.windowFullscreen = 0,
-		.windowBorder = 1,
-		.windowResizable = 1,
-		.windowPos = {SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED},
-		.windowRes = {800,600},
-		.windowMinRes = {480,360},
-		.clearColor = {0.0625,0.0625,0.0625,1.}, 
-		};
-
-
-struct SCENE_state towershogiState = {
-		.run = 1,
-		.pause = 0,
-		.returnControlValue = 0,
-		};
-
-
-
-struct TIMING_timer towershogiLogicTimer;
-struct TIMING_counter towershogiFrameCounter;
+struct SCENE_scene towershogiScene = {0};
 
 
 
@@ -46,11 +26,11 @@ struct TIMING_counter towershogiFrameCounter;
 void towershogiUpdate(void){
 
 	isolaGetWindow();
-	if (isolaInfoWindow.width < towershogiWindow.windowMinRes[0]) {
-		isolaInfoWindow.width = towershogiWindow.windowMinRes[0];
+	if (isolaInfoWindow.width < towershogiScene.window.windowMinRes[0]) {
+		isolaInfoWindow.width = towershogiScene.window.windowMinRes[0];
 	}
-	if (isolaInfoWindow.height < towershogiWindow.windowMinRes[1]) {
-		isolaInfoWindow.height = towershogiWindow.windowMinRes[1];
+	if (isolaInfoWindow.height < towershogiScene.window.windowMinRes[1]) {
+		isolaInfoWindow.height = towershogiScene.window.windowMinRes[1];
 	}
 	SDL_SetWindowSize(isolaWindow,isolaInfoWindow.width,isolaInfoWindow.height);
 
@@ -65,29 +45,46 @@ void towershogiUpdate(void){
 
 void towershogiCreate(void){
 
-	towershogiState.run = 1;
-	towershogiState.returnControlValue = 0;
-	towershogiState.pause = 0;
+	currentScene = &towershogiScene;
+
+	towershogiScene.window.windowFullscreen = 0;
+	towershogiScene.window.windowBorder = 1;
+	towershogiScene.window.windowResizable = 1;
+	towershogiScene.window.windowPos[0] = SDL_WINDOWPOS_CENTERED;
+	towershogiScene.window.windowPos[1] = SDL_WINDOWPOS_CENTERED;
+	towershogiScene.window.windowRes[0] = 800;
+	towershogiScene.window.windowRes[1] = 600;
+	towershogiScene.window.windowMinRes[0] = 480;
+	towershogiScene.window.windowMinRes[1] = 360;
+	towershogiScene.window.clearColor[0] = 0.0625;
+	towershogiScene.window.clearColor[1] = 0.0625;
+	towershogiScene.window.clearColor[2] = 0.0625;
+	towershogiScene.window.clearColor[3] = 1.;
+
+	towershogiScene.state.run = 1;
+	towershogiScene.state.returnControlValue = 0;
+	towershogiScene.state.pause = 0;
+
+	timerSetup(&towershogiScene.timing.logicTimer, 60);
+	counterSetup(&towershogiScene.timing.frameCounter, 60);
 
 
 	inputClear();
 
 
-	SDL_SetWindowSize(isolaWindow,towershogiWindow.windowRes[0],
-			towershogiWindow.windowRes[1]);
-	SDL_SetWindowPosition(isolaWindow,towershogiWindow.windowPos[0],
-			towershogiWindow.windowPos[1]);
-	SDL_SetWindowBordered(isolaWindow,towershogiWindow.windowBorder);
-	SDL_SetWindowResizable(isolaWindow,towershogiWindow.windowResizable);
-	if(towershogiWindow.windowFullscreen){
+	SDL_SetWindowSize(isolaWindow,towershogiScene.window.windowRes[0],
+			towershogiScene.window.windowRes[1]);
+	SDL_SetWindowPosition(isolaWindow,towershogiScene.window.windowPos[0],
+			towershogiScene.window.windowPos[1]);
+	SDL_SetWindowBordered(isolaWindow,towershogiScene.window.windowBorder);
+	SDL_SetWindowResizable(isolaWindow,towershogiScene.window.windowResizable);
+	if(towershogiScene.window.windowFullscreen){
 		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
 	}
-	glClearColor(towershogiWindow.clearColor[0],towershogiWindow.clearColor[1],
-			towershogiWindow.clearColor[2],towershogiWindow.clearColor[3]);
-
-
-	timerSetup(&towershogiLogicTimer, 60);
-	counterSetup(&towershogiFrameCounter, 60);
+	glClearColor(towershogiScene.window.clearColor[0],
+			towershogiScene.window.clearColor[1],
+			towershogiScene.window.clearColor[2],
+			towershogiScene.window.clearColor[3]);
 
 
 	towershogiLogicCreate();
@@ -117,9 +114,9 @@ unsigned char towershogiLoop(void){
 	towershogiCreate();
 
 
-	while(towershogiState.run){
+	while(towershogiScene.state.run){
 		while (SDL_PollEvent(&event)){
-			if(event.type == SDL_QUIT){towershogiState.run = 0;}
+			if(event.type == SDL_QUIT){towershogiScene.state.run = 0;}
 			if(event.type == SDL_WINDOWEVENT){
 				switch(event.window.event){
 					case SDL_WINDOWEVENT_SIZE_CHANGED:
@@ -128,8 +125,8 @@ unsigned char towershogiLoop(void){
 						towershogiUpdate();
 					break;
 					case SDL_WINDOWEVENT_CLOSE:
-						towershogiState.returnControlValue = 0;
-						towershogiState.run = 0;
+						towershogiScene.state.returnControlValue = 0;
+						towershogiScene.state.run = 0;
 					break;
 				}
 			}
@@ -137,8 +134,8 @@ unsigned char towershogiLoop(void){
 				if (!event.key.repeat) {
 					switch (event.key.keysym.sym){
 						case SDLK_q:
-							towershogiState.returnControlValue = 1;
-							towershogiState.run = 0;
+							towershogiScene.state.returnControlValue = 1;
+							towershogiScene.state.run = 0;
 						break;
 					}
 				}
@@ -154,14 +151,14 @@ unsigned char towershogiLoop(void){
 		}
 
 
-		if (!towershogiState.pause) {
-			if(timerStep(&towershogiLogicTimer)){
+		if (!towershogiScene.state.pause) {
+			if(timerStep(&currentScene->timing.logicTimer)){
 
 				towershogiLogicStep();
 				inputRepeat();
 			}
 
-			if(counterStep(&towershogiFrameCounter)){
+			if(counterStep(&currentScene->timing.frameCounter)){
 
 				towershogiRenderDraw();
 			}
@@ -175,7 +172,7 @@ unsigned char towershogiLoop(void){
 
 
 	towershogiDestroy();
-	return towershogiState.returnControlValue;
+	return towershogiScene.state.returnControlValue;
 }
 
 

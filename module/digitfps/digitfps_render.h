@@ -4,13 +4,8 @@
 
 
 
-#include <timing.h>
-
-
-
-
 extern void updateDigitfps(void);
-extern void createDigitfps(struct TIMING_counter* counter);
+extern void createDigitfps(void);
 extern void destroyDigitfps(void);
 extern void drawDigitfps(void);
 

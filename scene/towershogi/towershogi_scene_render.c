@@ -14,11 +14,6 @@
 
 
 
-extern struct TIMING_counter towershogiFrameCounter;
-
-
-
-
 void towershogiRenderUpdate(void){
 
 	updateDigitfps();
@@ -29,7 +24,7 @@ void towershogiRenderUpdate(void){
 
 void towershogiRenderCreate(void){
 
-	createDigitfps(&towershogiFrameCounter);
+	createDigitfps();
 
 	createTowershogiRender();
 }

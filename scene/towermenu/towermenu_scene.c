@@ -18,26 +18,7 @@
 
 
 
-struct SCENE_window towermenuWindow = {
-		.windowFullscreen = 0,
-		.windowBorder = 1,
-		.windowResizable = 1,
-		.windowPos = {SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED},
-		.windowRes = {800,600},
-		.windowMinRes = {480,360},
-		.clearColor = {0.0625,0.0625,0.0625,1.},
-		};
-
-
-struct SCENE_state towermenuState = {
-		.run = 1,
-		.pause = 0,
-		.returnControlValue = 0,
-		};
-
-
-struct TIMING_timer towermenuLogicTimer;
-struct TIMING_counter towermenuFrameCounter;
+struct SCENE_scene towermenuScene = {0};
 
 
 
@@ -45,11 +26,11 @@ struct TIMING_counter towermenuFrameCounter;
 void towermenuUpdate(void){
 
 	isolaGetWindow();
-	if (isolaInfoWindow.width < towermenuWindow.windowMinRes[0]) {
-		isolaInfoWindow.width = towermenuWindow.windowMinRes[0];
+	if (isolaInfoWindow.width < towermenuScene.window.windowMinRes[0]) {
+		isolaInfoWindow.width = towermenuScene.window.windowMinRes[0];
 	}
-	if (isolaInfoWindow.height < towermenuWindow.windowMinRes[1]) {
-		isolaInfoWindow.height = towermenuWindow.windowMinRes[1];
+	if (isolaInfoWindow.height < towermenuScene.window.windowMinRes[1]) {
+		isolaInfoWindow.height = towermenuScene.window.windowMinRes[1];
 	}
 	SDL_SetWindowSize(isolaWindow,isolaInfoWindow.width,isolaInfoWindow.height);
 
@@ -64,29 +45,46 @@ void towermenuUpdate(void){
 
 void towermenuCreate(void){
 
-	towermenuState.run = 1;
-	towermenuState.returnControlValue = 0;
-	towermenuState.pause = 0;
+	currentScene = &towermenuScene;
+
+	towermenuScene.window.windowFullscreen = 0;
+	towermenuScene.window.windowBorder = 1;
+	towermenuScene.window.windowResizable = 1;
+	towermenuScene.window.windowPos[0] = SDL_WINDOWPOS_CENTERED;
+	towermenuScene.window.windowPos[1] = SDL_WINDOWPOS_CENTERED;
+	towermenuScene.window.windowRes[0] = 800;
+	towermenuScene.window.windowRes[1] = 600;
+	towermenuScene.window.windowMinRes[0] = 480;
+	towermenuScene.window.windowMinRes[1] = 360;
+	towermenuScene.window.clearColor[0] = 0.0625;
+	towermenuScene.window.clearColor[1] = 0.0625;
+	towermenuScene.window.clearColor[2] = 0.0625;
+	towermenuScene.window.clearColor[3] = 1.;
+
+	towermenuScene.state.run = 1;
+	towermenuScene.state.returnControlValue = 0;
+	towermenuScene.state.pause = 0;
+
+	timerSetup(&towermenuScene.timing.logicTimer, 60);
+	counterSetup(&towermenuScene.timing.frameCounter, 60);
 
 
 	inputClear();
 
 
-	SDL_SetWindowSize(isolaWindow,towermenuWindow.windowRes[0],
-			towermenuWindow.windowRes[1]);
-	SDL_SetWindowPosition(isolaWindow,towermenuWindow.windowPos[0],
-			towermenuWindow.windowPos[1]);
-	SDL_SetWindowBordered(isolaWindow,towermenuWindow.windowBorder);
-	SDL_SetWindowResizable(isolaWindow,towermenuWindow.windowResizable);
-	if(towermenuWindow.windowFullscreen){
+	SDL_SetWindowSize(isolaWindow,towermenuScene.window.windowRes[0],
+			towermenuScene.window.windowRes[1]);
+	SDL_SetWindowPosition(isolaWindow,towermenuScene.window.windowPos[0],
+			towermenuScene.window.windowPos[1]);
+	SDL_SetWindowBordered(isolaWindow,towermenuScene.window.windowBorder);
+	SDL_SetWindowResizable(isolaWindow,towermenuScene.window.windowResizable);
+	if(towermenuScene.window.windowFullscreen){
 		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
 	}
-	glClearColor(towermenuWindow.clearColor[0],towermenuWindow.clearColor[1],
-			towermenuWindow.clearColor[2],towermenuWindow.clearColor[3]);
-
-
-	timerSetup(&towermenuLogicTimer, 60);
-	counterSetup(&towermenuFrameCounter, 60);
+	glClearColor(towermenuScene.window.clearColor[0],
+			towermenuScene.window.clearColor[1],
+			towermenuScene.window.clearColor[2],
+			towermenuScene.window.clearColor[3]);
 
 
 	towermenuLogicCreate();
@@ -115,9 +113,9 @@ unsigned char towermenuLoop(void){
 
 	towermenuCreate();
 
-	while(towermenuState.run){
+	while(towermenuScene.state.run){
 		while (SDL_PollEvent(&event)){
-			if(event.type == SDL_QUIT){towermenuState.run = 0;}
+			if(event.type == SDL_QUIT){towermenuScene.state.run = 0;}
 			if(event.type == SDL_WINDOWEVENT){
 				switch(event.window.event){
 					case SDL_WINDOWEVENT_SIZE_CHANGED:
@@ -126,8 +124,8 @@ unsigned char towermenuLoop(void){
 						towermenuUpdate();
 					break;
 					case SDL_WINDOWEVENT_CLOSE:
-						towermenuState.returnControlValue = 0;
-						towermenuState.run = 0;
+						towermenuScene.state.returnControlValue = 0;
+						towermenuScene.state.run = 0;
 					break;
 				}
 			}
@@ -148,14 +146,14 @@ unsigned char towermenuLoop(void){
 		}
 
 
-		if (!towermenuState.pause) {
-			if(timerStep(&towermenuLogicTimer)){
+		if (!towermenuScene.state.pause) {
+			if(timerStep(&currentScene->timing.logicTimer)){
 
 				towermenuLogicStep();
 				inputRepeat();
 			}
 
-			if(counterStep(&towermenuFrameCounter)){
+			if(counterStep(&currentScene->timing.frameCounter)){
 
 				towermenuRenderDraw();
 			}
@@ -170,7 +168,7 @@ unsigned char towermenuLoop(void){
 
 
 	towermenuDestroy();
-	return towermenuState.returnControlValue;
+	return towermenuScene.state.returnControlValue;
 }
 
 

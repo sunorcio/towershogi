@@ -60,7 +60,7 @@ static struct BITMENU_object* objectPointer = 0;
 
 
 
-void bitmenuGrouptreeDelete(struct BITMENU_group* group){
+static void bitmenuGrouptreeDelete(struct BITMENU_group* group){
 
 	void* last;
 	struct BITMENU_object* object;
@@ -81,7 +81,7 @@ void bitmenuGrouptreeDelete(struct BITMENU_group* group){
 	free(group);
 }
 
-void bitmenuGrouptreeStep(struct BITMENU_group* group){
+static void bitmenuGrouptreeStep(struct BITMENU_group* group){
 
 	struct BITMENU_object* object;
 	unsigned int o = 0;
@@ -115,7 +115,7 @@ void bitmenuGrouptreeStep(struct BITMENU_group* group){
 		bitfontCounter->backColor[3] = 0.5
 				+0.5*(bitmenuCounter->groupCurrent==group);
 
-		if (bitfontCounter != &bitfontData[isolaARRAYSIZE_(bitfontData)-1]) {
+		if (bitfontCounter != &bitfontData[isolaARRAY_COUNT_(bitfontData)-1]) {
 			bitfontCounter += 1;
 		}else {
 			SDL_Log("%s","REACHED BITFONT OBJECT LIMIT");
@@ -129,7 +129,7 @@ void bitmenuGrouptreeStep(struct BITMENU_group* group){
 }
 
 
-void bitmenuMoveForward(void){
+static void bitmenuMoveForward(void){
 
 	if (bitmenuCurrent->objectCurrent->objectNext != 0) {
 		bitmenuCurrent->objectCurrent = 
@@ -137,7 +137,7 @@ void bitmenuMoveForward(void){
 	}
 }
 
-void bitmenuMoveBack(void){
+static void bitmenuMoveBack(void){
 
 	struct BITMENU_object* object;
 
@@ -153,7 +153,7 @@ void bitmenuMoveBack(void){
 	bitmenuCurrent->objectCurrent = object;
 }
 
-void bitmenuActivateObject(void){
+static void bitmenuActivateObject(void){
 
 	if (bitmenuCurrent->objectCurrent->function != 0) {
 		bitmenuCurrent->objectCurrent->function();
@@ -166,7 +166,7 @@ void bitmenuActivateObject(void){
 	}
 }
 
-void bitmenuLeaveGroup(void){
+static void bitmenuLeaveGroup(void){
 
 	if (bitmenuCurrent->groupCurrent->groupPrevious == 0) { return; }
 

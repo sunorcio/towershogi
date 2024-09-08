@@ -12,7 +12,7 @@
 #define isolaCONCAT_DEF_(X,Y) isolaCONCAT_STR_(X,Y)
 
 
-#define isolaARRAYSIZE_(x) (sizeof(x)/sizeof(x[0]))
+#define isolaARRAY_COUNT_(x) (sizeof(x)/sizeof(x[0]))
 
 
 /* linux only */

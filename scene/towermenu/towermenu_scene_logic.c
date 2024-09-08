@@ -15,20 +15,15 @@
 
 
 
-extern struct SCENE_state towermenuState;
-
-
-
-
 static void quitTowermenu(void){
 
-	towermenuState.run = 0;
+	currentScene->state.run = 0;
 }
 
 static void playTowermenu(void){
 
-	towermenuState.returnControlValue = 1;
-	towermenuState.run = 0;
+	currentScene->state.returnControlValue = 1;
+	currentScene->state.run = 0;
 }
 
 

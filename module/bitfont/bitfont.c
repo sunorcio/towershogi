@@ -146,7 +146,7 @@ void drawBitfont(void){
 
 
 	{unsigned int o;
-	for(o = 0;o<isolaARRAYSIZE_(bitfontData);o++){
+	for(o = 0;o<isolaARRAY_COUNT_(bitfontData);o++){
 
 		{int c;
 		for(c = 0;c<strlen(bitfontData[o].string);c++){

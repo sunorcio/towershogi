@@ -9,9 +9,8 @@
 
 
 
-struct TOWERSHOGI_boardstate{
-	unsigned char tile[TOWERSHOGI_BOARD_X][TOWERSHOGI_BOARD_Y];
-}extern towershogiBoardstate;
+extern unsigned char towershogiBoardstate[TOWERSHOGI_BOARD_X]
+		[TOWERSHOGI_BOARD_Y];
 
 
 

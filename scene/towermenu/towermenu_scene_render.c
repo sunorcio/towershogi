@@ -29,7 +29,7 @@ void towermenuRenderUpdate(void){
 void towermenuRenderCreate(void){
 
 	createBitfont();
-	createDigitfps(&towermenuFrameCounter);
+	createDigitfps();
 }
 
 

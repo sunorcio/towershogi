@@ -12,6 +12,7 @@
 #include <isola/mutil.h>
 
 #include <timing.h>
+#include <scene/scene.h>
 
 
 
@@ -98,11 +99,9 @@ void updateDigitfps(void){
 }
 
 
-void createDigitfps(struct TIMING_counter* counter){
+void createDigitfps(void){
 
-	if (counter != 0) {
-		digitfpsCounter = counter;
-	}
+	digitfpsCounter = &currentScene->timing.frameCounter;
 
 
 	glGenVertexArrays(1,&digitfpsVAO);
