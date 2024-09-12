@@ -45,8 +45,8 @@ endif
 
 
 
-HDR = ${shell find . -path ./bin -prune -type f -name '*.h'} #${wildcard ./*.h} ${wildcard isola/*.h} ${wildcard scene/*/*.h} ${wildcard module/*/*.h}
-SRC = ${shell find . -path ./bin -prune  -type f -name '*.c'} #${wildcard ./*.c} ${wildcard ./isola/*.c} ${wildcard ./scene/*/*.c} ${wildcard module/*/*.c}
+HDR = ${shell find . -type f -name '*.h' ! -path '*/bin/*'} #${wildcard ./*.h} ${wildcard isola/*.h} ${wildcard scene/*/*.h} ${wildcard module/*/*.h}
+SRC = ${shell find . -type f -name '*.c' ! -path '*/bin/*'} #${wildcard ./*.c} ${wildcard ./isola/*.c} ${wildcard ./scene/*/*.c} ${wildcard module/*/*.c}
 OBJ = ${SRC:.c=.o}
 
 GLOBALDEPS = bin Makefile ${HDR} #${SRC}
