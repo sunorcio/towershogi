@@ -90,7 +90,7 @@ void createBitfont(void){
 
 	{void* imagedata;
 	long filesize;
-	FILE* imagefile = fopen("glsl/128p_8x16_IBM_VGA_ASCII.data","rb");
+	FILE* imagefile = fopen("module/bitfont/128p_8x16_IBM_VGA_ASCII.data","rb");
 	fseek(imagefile,0,SEEK_END);
 	filesize = ftell(imagefile);
 	fseek(imagefile,0,SEEK_SET);
@@ -103,7 +103,8 @@ void createBitfont(void){
 	}
 
 
-	bitfontSP[0] = isolaShaderProgram("glsl/bitfont.vert","glsl/bitfont.frag");
+	bitfontSP[0] = isolaShaderProgram("module/bitfont/bitfont.vert",
+			"module/bitfont/bitfont.frag");
 
 	glUseProgram(bitfontSP[0]);
 
@@ -141,8 +142,6 @@ void drawBitfont(void){
 	glBindTexture(GL_TEXTURE_2D,bitfontTO[0]);
 	
 	glBindBuffer(GL_ARRAY_BUFFER,bitfontVBO[0]);
-
-
 
 
 	{unsigned int o;

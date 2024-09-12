@@ -65,6 +65,13 @@ static unsigned short digitfpsED[18]
 
 void updateDigitfps(void){
 
+	if (isolaInfoWindow.height > 720 && isolaInfoWindow.width > 1280) {
+		digitfps.pixelSize = 8*2;
+	}else {
+		digitfps.pixelSize = 8*1;
+	}
+
+
 	glUseProgram(digitfpsSP);
 
 	{int locProj;
@@ -117,7 +124,7 @@ void createDigitfps(void){
 			sizeof(digitfpsED),digitfpsED);
 
 
-	digitfpsSP = isolaShaderProgram("glsl/digitfps.vert","glsl/digitfps.frag");
+	digitfpsSP = isolaShaderProgram("module/digitfps/digitfps.vert","module/digitfps/digitfps.frag");
 
 
 	updateDigitfps();

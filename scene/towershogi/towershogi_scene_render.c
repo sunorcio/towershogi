@@ -8,7 +8,6 @@
 #include <isola/isola.h>
 
 #include <module/digitfps/digitfps_render.h>
-
 #include "towershogi_render.h"
 
 

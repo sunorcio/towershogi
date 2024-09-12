@@ -32,13 +32,6 @@ static void playTowermenu(void){
 void towermenuLogicUpdate(void){
 
 	updateBitmenu();
-
-
-	if (isolaInfoWindow.height > 720 && isolaInfoWindow.width > 1280) {
-		digitfps.pixelSize = 8*2;
-	}else {
-		digitfps.pixelSize = 8*1;
-	}
 }
 
 
