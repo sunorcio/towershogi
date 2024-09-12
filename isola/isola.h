@@ -15,8 +15,8 @@
 /* init parameters for SDL context creation ________________________________ */
 
 #define ISOLA_WINDOWTITLE		"isola_example"
-#define ISOLA_WINDOWWIDTH		480
-#define ISOLA_WINDOWHEIGHT		360
+#define ISOLA_WINDOWWIDTH		0
+#define ISOLA_WINDOWHEIGHT		0
 #define ISOLA_GAMEPAD			0  /* [1^0] */
 #define ISOLA_DEPTH				1  /* [1^0] */
 #define ISOLA_STENCIL			0  /* [1^0] */
