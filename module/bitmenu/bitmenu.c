@@ -99,10 +99,11 @@ static void bitmenuGrouptreeStep(struct BITMENU_group* group){
 				bitmenuCounter->groupCurrent->screenParent->fontScaleGlobal;
 		bitfontCounter->charWrap = BITFONT_STRINGSIZE;
 		strcpy(bitfontCounter->string,object->name);
-		bitfontCounter->x = group->x;
+		bitfontCounter->x = group->x + isolaInfoWindow.pixelWidth;
 		bitfontCounter->y = group->y
 				-isolaInfoWindow.pixelHeight*16
-				*bitfontCounter->pixelSize*o;
+				*bitfontCounter->pixelSize*o
+				-isolaInfoWindow.pixelHeight;
 		bitfontCounter->foreColor[0] = 0.;
 		bitfontCounter->foreColor[1] = 0.;
 		bitfontCounter->foreColor[2] = 0.;

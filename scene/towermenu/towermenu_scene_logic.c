@@ -43,6 +43,8 @@ void towermenuLogicCreate(void){
 	bitmenuBuildMenu();
 	bitmenuBuildGroup(-1,1,1,1);
 	bitmenuBuildScreen(2);
+	bitmenuBuildObject("MENU - 'j'/'k' - up/down",0);
+	bitmenuBuildObject("MENU - 'return' - activate option",0);
 	bitmenuBuildObject("edit rules",0);
 	bitmenuBuildGroup(-1,1,1,1);
 		bitmenuBuildScreen(2);
