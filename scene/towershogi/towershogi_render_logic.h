@@ -9,8 +9,7 @@
 
 
 
-extern unsigned char towershogiBoardstate[TOWERSHOGI_BOARD_X]
-		[TOWERSHOGI_BOARD_Y];
+extern unsigned char * towershogiBoardstate;
 
 
 

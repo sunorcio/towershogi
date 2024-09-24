@@ -16,7 +16,6 @@
 void towershogiRenderUpdate(void){
 
 	updateDigitfps();
-
 	updateTowershogiRender();
 }
 
@@ -24,7 +23,6 @@ void towershogiRenderUpdate(void){
 void towershogiRenderCreate(void){
 
 	createDigitfps();
-
 	createTowershogiRender();
 }
 
@@ -32,7 +30,6 @@ void towershogiRenderCreate(void){
 void towershogiRenderDestroy(void){
 
 	destroyDigitfps();
-
 	destroyTowershogiRender();
 
 
@@ -46,9 +43,8 @@ void towershogiRenderDraw(void){
 	glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 
 
-	drawDigitfps();
-
 	drawTowershogiRender();
+	drawDigitfps();
 
 
 	SDL_GL_SwapWindow(isolaWindow);

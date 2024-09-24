@@ -31,11 +31,12 @@ const vec2 digitVertex[15] = vec2[](
 void main(){
 
 
-	gl_Position = matProj * (
-			vec4( (digitVertex[gl_VertexID%15]
-			+vec2((gl_VertexID/15)*1.25,0.))*pixelScale,
-			-1.,1. )
-			+ vec4(scaledOffset,0.,0.) 
+	gl_Position = matProj * (vec4(
+					(digitVertex[gl_VertexID%15]
+						+vec2((gl_VertexID/15)*1.25,0.))
+						*pixelScale,
+					-1.,1. )
+			+ vec4(scaledOffset,0.,0.)
 			)
 			+ vec4(screenPos,0.,0.);
 }

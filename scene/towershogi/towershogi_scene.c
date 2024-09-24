@@ -12,6 +12,7 @@
 #include <input.h>
 
 
+#include "towershogi.h"
 #include "towershogi_scene_logic.h"
 #include "towershogi_scene_render.h"
 
@@ -38,8 +39,8 @@ void towershogiUpdate(void){
 	glViewport(0,0,isolaInfoWindow.width, isolaInfoWindow.height);
 
 
-	towershogiRenderUpdate();
 	towershogiLogicUpdate();
+	towershogiRenderUpdate();
 }
 
 
@@ -68,7 +69,6 @@ void towershogiCreate(void){
 	timerSetup(&towershogiScene.timing.logicTimer, 60);
 	counterSetup(&towershogiScene.timing.frameCounter, 60);
 
-
 	inputClear();
 
 
@@ -85,6 +85,10 @@ void towershogiCreate(void){
 			towershogiScene.window.clearColor[1],
 			towershogiScene.window.clearColor[2],
 			towershogiScene.window.clearColor[3]);
+
+
+	towershogiBoardSize[0] = 8;
+	towershogiBoardSize[1] = 8;
 
 
 	towershogiLogicCreate();

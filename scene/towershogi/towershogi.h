@@ -4,9 +4,10 @@
 
 
 
-#define TOWERSHOGI_BOARD_X 10
-#define TOWERSHOGI_BOARD_Y 10
-#define TOWERSHOGI_BOARD_SIZE TOWERSHOGI_BOARD_X*TOWERSHOGI_BOARD_Y
+#define TOWERSHOGI_BOARD_SIZE (towershogiBoardSize[0]*towershogiBoardSize[1])
+
+
+extern unsigned short towershogiBoardSize[2];
 
 
 
