@@ -35,6 +35,7 @@ void updateTowershogiLogic(void){
 
 }
 
+
 void createTowershogiLogic(void){
 
 	memset(&towershogiBoard,0,sizeof(struct TOWERSHOGI_board));
@@ -57,9 +58,11 @@ void createTowershogiLogic(void){
 	}}
 }
 
+
 void destroyTowershogiLogic(void){
 
 }
+
 
 void stepTowershogiLogic(void){
 

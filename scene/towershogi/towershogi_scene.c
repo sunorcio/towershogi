@@ -11,7 +11,6 @@
 #include <timing.h>
 #include <input.h>
 
-
 #include "towershogi.h"
 #include "towershogi_scene_logic.h"
 #include "towershogi_scene_render.h"
@@ -24,7 +23,7 @@ struct SCENE_scene towershogiScene = {0};
 
 
 
-void towershogiUpdate(void){
+static void towershogiUpdate(void){
 
 	isolaGetWindow();
 	if (isolaInfoWindow.width < towershogiScene.window.windowMinRes[0]) {
@@ -44,7 +43,7 @@ void towershogiUpdate(void){
 }
 
 
-void towershogiCreate(void){
+static void towershogiCreate(void){
 
 	currentScene = &towershogiScene;
 
@@ -98,7 +97,7 @@ void towershogiCreate(void){
 }
 
 
-void towershogiDestroy(void){
+static void towershogiDestroy(void){
 
 	inputClear();
 

@@ -53,6 +53,7 @@ void updateTowershogiRender(void){
 	}
 }
 
+
 void createTowershogiRender(void){
 
 	towershogiBoardstate = calloc(sizeof(unsigned char),TOWERSHOGI_BOARD_SIZE);
@@ -97,6 +98,7 @@ void createTowershogiRender(void){
 	updateTowershogiRender();
 }
 
+
 void destroyTowershogiRender(void){
 
 	glUseProgram(0);
@@ -106,6 +108,7 @@ void destroyTowershogiRender(void){
 	glDeleteBuffers(1,towershogiVBO);
 	glDeleteVertexArrays(1,towershogiVAO);
 }
+
 
 void drawTowershogiRender(void){
 

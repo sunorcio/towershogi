@@ -11,12 +11,12 @@ default_rule: test
 
 
 
-#(windows^linux)
+#(linux^windows)
 TARGET_OS = linux
 #(dynamic^static)
 TARGET_BUILD = dynamic
-#(on^off)
-TARGET_DEBUG = on
+#(off^on)
+TARGET_DEBUG = off
 TARGET_BIN = isola_example
 
 
@@ -58,21 +58,22 @@ ifeq (${TARGET_OS},linux)
 
  INCS = -I./
 
- ifeq (${TARGET_BUILD},static)
-  LIBS = -Wl,-Bstatic -lSDL2 -lGLEW -Wl,-Bdynamic -lGLU -lGL ${shell sdl2-config --static-libs}
- else ifeq (${TARGET_BUILD},dynamic)
+ ifeq (${TARGET_BUILD},dynamic)
   LIBS = -lSDL2 -lGLEW -lGLU -lGL -lm
+ else ifeq (${TARGET_BUILD},static)
+  LIBS = -Wl,-Bstatic -lSDL2 -lGLEW -Wl,-Bdynamic -lGLU -lGL ${shell sdl2-config --static-libs}
  endif
 
 
  #CFLAGS = -DISOLA_DBG -DGLEW_STATIC -Weverything
- CFLAGS = ${DEBUG_CFLAGS} ${INCS} -Wall -Wextra -pedantic -std=c89 -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result \
+ CFLAGS = ${INCS} -Wall -Wextra -pedantic -std=c89 -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result \
 		  -Wno-sign-compare -MJ $@.json -Wno-c99-designator -Wno-unsafe-buffer-usage -O0 -pipe -march=native -D_REENTRANT
  #LDFLAGS = -v
  LDFLAGS = ${LIBS} -flto=full
 
  ifeq (${TARGET_DEBUG},on)
-	CFLAGS += -g
+  #CFLAGS += -Weverything
+  CFLAGS += -g
  endif
 
 
@@ -85,9 +86,13 @@ else ifeq (${TARGET_OS},windows)
 
 
  #CFLAGS = -DISOLA_DBG #-g
- CFLAGS = ${INCS} -std=c89 -O3 -pipe -DGLEW_STATIC -D_REENTRANT -DWIN32_LEAN_AND_MEAN
- #LDFLAGS = #-v
- LDFLAGS = ${LIBS} -mwindows
+ CFLAGS = ${INCS} -Wall -Wextra -Wpedantic -std=c89 -O3 -pipe -DGLEW_STATIC -D_REENTRANT -DWIN32_LEAN_AND_MEAN \
+		  #-Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare
+ #LDFLAGS = #-v #-mwindows
+ LDFLAGS = ${LIBS}
+
+ ifeq (${TARGET_DEBUG},on)
+ endif
 
 
 endif
@@ -109,7 +114,6 @@ test: ${TARGET_BIN} compdb
 	./${TARGET_BIN}
 #	make clean
 
-
 bin:
 	mkdir bin
 
@@ -118,7 +122,6 @@ else ifeq (${TARGET_OS},windows)
 
 test: ${TARGET_BIN}
 #	make clean
-
 
 bin:
 	mkdir bin
@@ -154,7 +157,7 @@ isola:
 	cp ${ISOLA_DIR} . -r
 
 windows:
-	make TARGET_OS=windows
+	make TARGET_OS=windows TARGET_BUILD=static
 
 
 

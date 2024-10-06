@@ -4,8 +4,8 @@
 
 #include <time.h>
 
-#include <isola/isola.h>
 
+#include <isola/isola.h>
 
 #include <scene/towermenu/towermenu_scene.h>
 #include <scene/towershogi/towershogi_scene.h>
