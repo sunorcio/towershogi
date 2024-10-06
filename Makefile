@@ -87,7 +87,7 @@ else ifeq (${TARGET_OS},windows)
 
  #CFLAGS = -DISOLA_DBG #-g
  CFLAGS = ${INCS} -Wall -Wextra -Wpedantic -std=c89 -O3 -pipe -DGLEW_STATIC -D_REENTRANT -DWIN32_LEAN_AND_MEAN \
-		  #-Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare
+		  -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-old-style-declaration
  #LDFLAGS = #-v #-mwindows
  LDFLAGS = ${LIBS}
 
