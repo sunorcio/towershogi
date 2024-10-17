@@ -1,5 +1,9 @@
-*.idx
+.cache
 *.o
-*.json
+*.o.json
 isola_example
+bin
+isola
+compile_commands.json
+isola
 compile_commands.json

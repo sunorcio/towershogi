@@ -44,12 +44,13 @@ endif
 
 
 
-
-HDR = ${shell find . -type f -name '*.h' ! -path '*/bin/*'} #${wildcard ./*.h} ${wildcard isola/*.h} ${wildcard scene/*/*.h} ${wildcard module/*/*.h}
-SRC = ${shell find . -type f -name '*.c' ! -path '*/bin/*'} #${wildcard ./*.c} ${wildcard ./isola/*.c} ${wildcard ./scene/*/*.c} ${wildcard module/*/*.c}
+#HDR = ${wildcard ./*.h} ${wildcard scene/*/*.h} ${wildcard module/*/*.h}
+HDR = ${shell find . -type f -name '*.h' ! -path '*/bin/*' ! -path '*/isola/*'}
+#SRC = ${wildcard ./*.c} ${wildcard ./isola/*.c} ${wildcard ./scene/*/*.c} ${wildcard module/*/*.c}
+SRC = ${shell find . -type f -name '*.c' ! -path '*/bin/*'}
 OBJ = ${SRC:.c=.o}
 
-GLOBALDEPS = bin Makefile ${HDR} #${SRC}
+GLOBALDEPS = isola_config.h bin Makefile ${HDR} #${SRC}
 
 
 
@@ -66,8 +67,9 @@ ifeq (${TARGET_OS},linux)
 
 
  #CFLAGS = -DISOLA_DBG -DGLEW_STATIC -Weverything
- CFLAGS = ${INCS} -Wall -Wextra -pedantic -std=c89 -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result \
-		  -Wno-sign-compare -MJ $@.json -Wno-c99-designator -Wno-unsafe-buffer-usage -O0 -pipe -march=native -D_REENTRANT
+ CFLAGS = ${INCS} -Wall -Wextra -pedantic \
+		   -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage \
+		    -std=c89 -O0 -pipe -march=native -D_REENTRANT -MJ $@.json
  #LDFLAGS = -v
  LDFLAGS = ${LIBS} -flto=full
 
@@ -114,6 +116,7 @@ test: ${TARGET_BIN} compdb
 	./${TARGET_BIN}
 #	make clean
 
+
 bin:
 	mkdir bin
 
@@ -122,6 +125,7 @@ else ifeq (${TARGET_OS},windows)
 
 test: ${TARGET_BIN}
 #	make clean
+
 
 bin:
 	mkdir bin
@@ -133,6 +137,20 @@ bin:
 
 
 endif
+
+
+
+
+isola:
+	git clone https://github.com/sunorcio/isola --depth 1
+	cp isola/isola_config.h isola_config.h -n
+	cp isola_config.h isola/isola_config.h
+	@echo '!!! isola has been updated, run make again !!!'
+	@exit 1
+
+
+isola_config.h: isola
+	cp isola_config.h isola/isola_config.h
 
 
 
@@ -151,10 +169,7 @@ clean:
 
 update: clean
 	rm bin -rf
-
-ISOLA_DIR = ~/main/isola/isola
-isola:
-	cp ${ISOLA_DIR} . -r
+	rm isola -rf
 
 windows:
 	make TARGET_OS=windows TARGET_BUILD=static
@@ -162,4 +177,4 @@ windows:
 
 
 
-.PHONY: default_rule test all clean compdb update isola windows
+.PHONY: default_rule test all clean compdb update windows
