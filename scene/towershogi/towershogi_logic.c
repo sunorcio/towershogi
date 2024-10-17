@@ -9,7 +9,7 @@
 #include <string.h>
 
 
-#include <input.h>
+#include <isola/input.h>
 
 #include "towershogi.h"
 #include "towershogi_render_logic.h"

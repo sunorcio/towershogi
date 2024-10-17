@@ -11,7 +11,7 @@
 #include <isola/isola.h>
 #include <isola/mutil.h>
 
-#include <timing.h>
+#include <isola/timing.h>
 #include <scene/scene.h>
 
 
@@ -76,7 +76,7 @@ void updateDigitfps(void){
 
 	{int locProj;
 	float matProj[4*4] = {0};
-	mut_proj_glortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
+	mut_projGLortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
 			-isolaInfoWindow.yratio,isolaInfoWindow.yratio, 0.25,8.,matProj);
 	locProj = glGetUniformLocation(digitfpsSP,"matProj");
 	if(locProj == -1){SDL_Log("matProj not found in shader %d",0);}

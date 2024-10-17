@@ -8,8 +8,8 @@
 #include <isola/isola.h>
 
 #include <scene/scene.h>
-#include <timing.h>
-#include <input.h>
+#include <isola/timing.h>
+#include <isola/input.h>
 
 
 #include "towermenu_scene_logic.h"

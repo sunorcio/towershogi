@@ -38,7 +38,7 @@ void updateBitfont(void){
 
 	{int locProj;
 	float matProj[4*4] = {0};
-	mut_proj_glortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
+	mut_projGLortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
 			-isolaInfoWindow.yratio,isolaInfoWindow.yratio,
 			0.25,8.,matProj);
 	locProj = glGetUniformLocation(bitfontSP[0],"matProj");

@@ -44,7 +44,7 @@ void updateTowershogiRender(void){
 	{int locProj;
 	const char* strProj = "matProj";
 	float matProj[4*4] = {0};
-	mut_proj_glortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
+	mut_projGLortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
 			-isolaInfoWindow.yratio,isolaInfoWindow.yratio,
 			0.25,8.,matProj);
 	locProj = glGetUniformLocation(towershogiSP[0],"matProj");

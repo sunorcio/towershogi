@@ -12,7 +12,7 @@
 #include <isola/isola.h>
 #include <isola/misc.h>
 
-#include <input.h>
+#include <isola/input.h>
 
 #include <module/bitfont/bitfont_logic.h>
 
