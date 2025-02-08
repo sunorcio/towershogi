@@ -39,7 +39,7 @@ endif
 ifeq (${TARGET_DEBUG},on)
 else ifeq (${TARGET_DEBUG},off)
 else
- $(error wrong TARGET_BUILD value)
+ $(error wrong TARGET_DEBUG value)
 endif
 
 

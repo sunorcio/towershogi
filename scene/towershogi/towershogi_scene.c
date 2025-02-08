@@ -136,7 +136,7 @@ unsigned char towershogiLoop(void){
 			if(event.type == SDL_KEYDOWN){
 				if (!event.key.repeat) {
 					switch (event.key.keysym.sym){
-						case SDLK_q:
+						case SDLK_ESCAPE:
 							towershogiScene.state.returnControlValue = 1;
 							towershogiScene.state.run = 0;
 						break;

@@ -1,7 +1,6 @@
 
 
 #include "towershogi_render.h"
-#include "towershogi_render_logic.h"
 
 
 
@@ -15,18 +14,16 @@
 
 
 
-#define TOWERSHOGI_VB_SIZE (TOWERSHOGI_BOARD_SIZE*6)
+#define TOWERSHOGI_VB_SIZE (TOWERSHOGI_BOARD_SIZE*6*2)
 
 
-
-
-unsigned char * towershogiBoardstate;
 
 
 static ISOLA_State towershogiState = 0x0000000d;
 static unsigned int towershogiSP[1] = {0};
 static unsigned int towershogiVAO[1] = {0};
 static unsigned int towershogiVBO[1] = {0};
+static unsigned int towershogiTO[1] = {0};
 static unsigned char * towershogiVD = {0};
 
 
@@ -56,8 +53,7 @@ void updateTowershogiRender(void){
 
 void createTowershogiRender(void){
 
-	towershogiBoardstate = calloc(sizeof(unsigned char),TOWERSHOGI_BOARD_SIZE);
-	towershogiVD = calloc(sizeof(unsigned char),TOWERSHOGI_BOARD_SIZE*6);
+	towershogiVD = calloc(sizeof(unsigned char),TOWERSHOGI_VB_SIZE);
 
 
 	glGenVertexArrays(1,&towershogiVAO[0]);
@@ -72,7 +68,35 @@ void createTowershogiRender(void){
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribIPointer(0,1,GL_UNSIGNED_BYTE,
-			sizeof(towershogiVD[0]),(void*)0);
+			sizeof(towershogiVD[0])*2,(void*)(sizeof(towershogiVD[0])*0));
+	glEnableVertexAttribArray(1);
+	glVertexAttribIPointer(1,1,GL_UNSIGNED_BYTE,
+			sizeof(towershogiVD[0])*2,(void*)(sizeof(towershogiVD[0])*1));
+
+
+	glGenTextures(1,towershogiTO);
+	glActiveTexture(GL_TEXTURE0+0);
+	glBindTexture(GL_TEXTURE_2D,towershogiTO[0]);
+
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAX_LEVEL,0);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+
+	{void* imagedata;
+	long filesize;
+	FILE* imagefile = fopen("scene/towershogi/16x16p_4x4_chess.data","rb");
+	fseek(imagefile,0,SEEK_END);
+	filesize = ftell(imagefile);
+	fseek(imagefile,0,SEEK_SET);
+	imagedata = malloc(filesize+1);
+	fread(imagedata,filesize,1,imagefile);
+	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,16*4,16*4,
+			0,GL_RGBA,GL_UNSIGNED_BYTE,(char*)imagedata);
+	fclose(imagefile);
+	free(imagedata);
+	}
 
 
 	towershogiSP[0] = isolaShaderProgram("scene/towershogi/towershogi.vert",
@@ -82,16 +106,29 @@ void createTowershogiRender(void){
 
 	{int locBrdWdth;
 	const char* strBrdWdth = "boardWidth";
-	locBrdWdth = glGetUniformLocation(towershogiSP[0],"boardWidth");
-	if(locBrdWdth == -1){SDL_Log("%s not found in shader %d",strBrdWdth,0);}
+	locBrdWdth = glGetUniformLocation(towershogiSP[0],strBrdWdth);
+	if(locBrdWdth == -1){
+		SDL_Log("%s not found : %s", strBrdWdth, __FUNCTION__);
+	}
 	glUniform1i(locBrdWdth,towershogiBoardSize[0]);
 	}
 
 	{int locBrdHght;
 	const char* strBrdHght = "boardHeight";
-	locBrdHght = glGetUniformLocation(towershogiSP[0],"boardHeight");
-	if(locBrdHght == -1){SDL_Log("%s not found in shader %d",strBrdHght,0);}
+	locBrdHght = glGetUniformLocation(towershogiSP[0],strBrdHght);
+	if(locBrdHght == -1){
+		SDL_Log("%s not found : %s", strBrdHght, __FUNCTION__);
+	}
 	glUniform1i(locBrdHght,towershogiBoardSize[1]);
+	}
+
+	{int locPatl;
+	const char* strPatl = "pieceAtlas";
+	locPatl = glGetUniformLocation(towershogiSP[0],strPatl);
+	if(locPatl == -1){
+		SDL_Log("%s not found : %s", strPatl, __FUNCTION__);
+	}
+	glUniform1i(locPatl,0);
 	}
 
 
@@ -125,12 +162,23 @@ void drawTowershogiRender(void){
 	for(i = 0;i<TOWERSHOGI_BOARD_SIZE;i++){
 		{unsigned int v;
 		for(v = 0;v<6;v++){
-			towershogiVD[i*6+v] = towershogiBoardstate[i];
+			towershogiVD[i*6*2+v*2] = towershogiBoard.tile[i].piece;
+			towershogiVD[i*6*2+v*2+1] = towershogiBoard.tile[i].state;
 		}}
 	}}
 
 	glBufferSubData(GL_ARRAY_BUFFER,sizeof(towershogiVD[0])*0,
 			TOWERSHOGI_VB_SIZE*sizeof(towershogiVD[0]),towershogiVD);
+
+
+	{int locCpz;
+	const char* strCpz = "currentPiece";
+	locCpz = glGetUniformLocation(towershogiSP[0],strCpz);
+	if(locCpz == -1){
+		SDL_Log("%s not found : %s", strCpz, __FUNCTION__);
+	}
+	glUniform1i(locCpz,towershogiBoard.currentTile);
+	}
 
 
 	glDrawArrays(GL_TRIANGLES,0,TOWERSHOGI_VB_SIZE);

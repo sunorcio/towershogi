@@ -23,7 +23,7 @@ struct SCENE_scene towermenuScene = {0};
 
 
 
-void towermenuUpdate(void){
+static void towermenuUpdate(void){
 
 	isolaGetWindow();
 	if (isolaInfoWindow.width < towermenuScene.window.windowMinRes[0]) {
@@ -43,7 +43,7 @@ void towermenuUpdate(void){
 }
 
 
-void towermenuCreate(void){
+static void towermenuCreate(void){
 
 	currentScene = &towermenuScene;
 
@@ -94,7 +94,7 @@ void towermenuCreate(void){
 }
 
 
-void towermenuDestroy(void){
+static void towermenuDestroy(void){
 
 	inputClear();
 
@@ -132,6 +132,10 @@ unsigned char towermenuLoop(void){
 			if(event.type == SDL_KEYDOWN){
 				if (!event.key.repeat) {
 					switch (event.key.keysym.sym){
+						case SDLK_ESCAPE:
+							towermenuScene.state.returnControlValue = 0;
+							towermenuScene.state.run = 0;
+						break;
 					}
 				}
 				switch (event.key.keysym.sym){

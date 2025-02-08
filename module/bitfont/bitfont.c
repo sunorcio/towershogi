@@ -16,7 +16,42 @@
 
 
 
-struct BITFONT_object bitfontData[256] = {0};
+#define BITFONT_MAXDATAPOINTERS 256
+
+
+
+
+static struct BITFONT_data bitfontData[BITFONT_MAXDATAPOINTERS] = {0};
+
+
+struct BITFONT_data* bitfontRequestPtr(unsigned int size){
+
+	if (size == 0) {
+/* 		SDL_Log("%s : requested size equals zero",__FUNCTION__); */
+		return 0;
+	}
+
+	{unsigned int i;
+	for(i = 0;i<BITFONT_MAXDATAPOINTERS;i++){
+		if (bitfontData[i].size == 0) {
+			bitfontData[i].size = size;
+			bitfontData[i].data = calloc(size,sizeof(struct BITFONT_object));
+			return bitfontData;
+		}
+	}}
+
+/* 	SDL_Log("%s : no data pointers left",__FUNCTION__); */
+	return 0;
+}
+
+
+void bitfontFreePtr(struct BITFONT_data* ptr){
+	
+	free(ptr->data);
+	ptr->size = 0;
+}
+
+
 
 
 static ISOLA_State bitfontState = 0x00000001;
@@ -42,7 +77,7 @@ void updateBitfont(void){
 			-isolaInfoWindow.yratio,isolaInfoWindow.yratio,
 			0.25,8.,matProj);
 	locProj = glGetUniformLocation(bitfontSP[0],"matProj");
-	if(locProj == -1){SDL_Log("matProj not found in shader %d",0);}
+	if(locProj == -1){SDL_Log("matProj not found in shader, %s",__FUNCTION__);}
 	glUniformMatrix4fv(locProj,1,GL_FALSE,matProj);
 	}
 
@@ -51,7 +86,8 @@ void updateBitfont(void){
 	if (isolaInfoWindow.xratio == 1) { lowRes = isolaInfoWindow.width;
 	}else{ lowRes = isolaInfoWindow.height; }
 	locLowRes = glGetUniformLocation(bitfontSP[0],"lowResolution");
-	if(locLowRes == -1){SDL_Log("lowResolution not found in shader %d",0);}
+	if(locLowRes == -1){SDL_Log("lowResolution not found in shader, %s",
+			__FUNCTION__);}
 	glUniform1f(locLowRes,lowRes);
 	}
 }
@@ -90,7 +126,8 @@ void createBitfont(void){
 
 	{void* imagedata;
 	long filesize;
-	FILE* imagefile = fopen("module/bitfont/128p_8x16_IBM_VGA_ASCII.data","rb");
+	FILE* imagefile = fopen("module/bitfont/128x128p_8x16_IBM_VGA_ASCII.data",
+			"rb");
 	fseek(imagefile,0,SEEK_END);
 	filesize = ftell(imagefile);
 	fseek(imagefile,0,SEEK_SET);
@@ -110,7 +147,9 @@ void createBitfont(void){
 
 	{int locBatl;
 	locBatl = glGetUniformLocation(bitfontSP[0],"bitfontAtlas");
-	if(locBatl == -1){SDL_Log("bitfontAtlas not found in shader %d",0);}
+	if(locBatl == -1){
+		SDL_Log("bitfontAtlas not found : %s", __FUNCTION__);
+	}
 	glUniform1i(locBatl,0);
 	}
 
@@ -144,59 +183,73 @@ void drawBitfont(void){
 	glBindBuffer(GL_ARRAY_BUFFER,bitfontVBO[0]);
 
 
-	{unsigned int o;
-	for(o = 0;o<isolaARRAY_COUNT_(bitfontData);o++){
+	{unsigned int d;
+	for(d = 0;d<BITFONT_MAXDATAPOINTERS;d++){
 
-		{int c;
-		for(c = 0;c<strlen(bitfontData[o].string);c++){
+		{unsigned int o;
+		for(o = 0;o<bitfontData[d].size;o++){
 
-			{unsigned int v;
-			for(v = 0;v<6;v++){
+			{int c;
+			for(c = 0;c<strlen(bitfontData[d].data[o].string);c++){
 
-				bitfontVD[c*6+v] = bitfontData[o].string[c]-32;
+				{unsigned int v;
+				for(v = 0;v<6;v++){
+
+					bitfontVD[c*6+v] = bitfontData[d].data[o].string[c]-32;
+				}}
 			}}
+
+			glBufferSubData(GL_ARRAY_BUFFER,sizeof(bitfontVD[0])*0,
+					sizeof(bitfontVD)/sizeof(bitfontVD[0]),bitfontVD);
+
+			{int c;
+			for(c = 0;c<strlen(bitfontData[d].data[o].string)*
+					sizeof(bitfontVD[0])*6;c++){
+				bitfontVD[c] = 127-32;
+			}}
+
+			{int locBitPos;
+			locBitPos = glGetUniformLocation(bitfontSP[0],"screenPos");
+			if(locBitPos == -1){
+				SDL_Log("screenPos not found : %s", __FUNCTION__);
+			}
+			glUniform2f(locBitPos, bitfontData[d].data[o].x,
+					bitfontData[d].data[o].y);
+			}
+
+			{int locPixSize;
+			locPixSize = glGetUniformLocation(bitfontSP[0],"pixelSize");
+			if(locPixSize == -1){
+				SDL_Log("pixelSize not found : %s", __FUNCTION__);
+			}
+			glUniform1i(locPixSize, bitfontData[d].data[o].pixelSize);
+			}
+
+			{int locCharWrap;
+			locCharWrap = glGetUniformLocation(bitfontSP[0],"charWrap");
+			if(locCharWrap == -1){
+				SDL_Log("charWrap not found : %s", __FUNCTION__);
+			}
+			glUniform1i(locCharWrap, bitfontData[d].data[o].charWrap);
+			}
+
+			{int locBitCol;
+			locBitCol = glGetUniformLocation(bitfontSP[0],"fontColor");
+			if(locBitCol == -1){SDL_Log("fontColor not found in shader, %s",
+					__FUNCTION__);}
+			glUniform4fv(locBitCol,1, bitfontData[d].data[o].foreColor);
+			}
+
+			{int locBackCol;
+			locBackCol = glGetUniformLocation(bitfontSP[0],"backColor");
+			if(locBackCol == -1){
+				SDL_Log("backColor not found : %s", __FUNCTION__);
+			}
+			glUniform4fv(locBackCol,1, bitfontData[d].data[o].backColor);
+			}
+
+			glDrawArrays(GL_TRIANGLES,0,BITFONT_STRINGSIZE*6);
 		}}
-
-		glBufferSubData(GL_ARRAY_BUFFER,sizeof(bitfontVD[0])*0,
-				sizeof(bitfontVD)/sizeof(bitfontVD[0]),bitfontVD);
-
-		{int c;
-		for(c = 0;c<strlen(bitfontData[o].string)*
-				sizeof(bitfontVD[0])*6;c++){
-			bitfontVD[c] = 127-32;
-		}}
-
-		{int locBitPos;
-		locBitPos = glGetUniformLocation(bitfontSP[0],"screenPos");
-		if(locBitPos == -1){SDL_Log("screenPos not found in shader %d",0);}
-		glUniform2f(locBitPos, bitfontData[o].x, bitfontData[o].y);
-		}
-
-		{int locPixSize;
-		locPixSize = glGetUniformLocation(bitfontSP[0],"pixelSize");
-		if(locPixSize == -1){SDL_Log("pixelSize not found in shader %d",0);}
-		glUniform1i(locPixSize, bitfontData[o].pixelSize);
-		}
-
-		{int locCharWrap;
-		locCharWrap = glGetUniformLocation(bitfontSP[0],"charWrap");
-		if(locCharWrap == -1){SDL_Log("charWrap not found in shader %d",0);}
-		glUniform1i(locCharWrap, bitfontData[o].charWrap);
-		}
-
-		{int locBitCol;
-		locBitCol = glGetUniformLocation(bitfontSP[0],"fontColor");
-		if(locBitCol == -1){SDL_Log("fontColor not found in shader %d",0);}
-		glUniform4fv(locBitCol,1, bitfontData[o].foreColor);
-		}
-
-		{int locBackCol;
-		locBackCol = glGetUniformLocation(bitfontSP[0],"backColor");
-		if(locBackCol == -1){SDL_Log("backColor not found in shader %d",0);}
-		glUniform4fv(locBackCol,1, bitfontData[o].backColor);
-		}
-
-		glDrawArrays(GL_TRIANGLES,0,BITFONT_STRINGSIZE*6);
 	}}
 }
 

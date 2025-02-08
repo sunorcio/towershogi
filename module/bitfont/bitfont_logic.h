@@ -19,7 +19,17 @@ struct BITFONT_object{
 	float x, y;
 	float foreColor[4];
 	float backColor[4];
-}extern bitfontData[256];
+};
+
+
+struct BITFONT_data{
+	unsigned int size;
+	struct BITFONT_object* data;
+};
+
+
+extern struct BITFONT_data* bitfontRequestPtr(unsigned int size);
+extern void bitfontFreePtr(struct BITFONT_data* ptr);
 
 
 

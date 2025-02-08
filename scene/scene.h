@@ -34,8 +34,8 @@ struct SCENE_timing {
 
 
 struct SCENE_scene {
-	struct SCENE_state state;
 	struct SCENE_window window;
+	struct SCENE_state state;
 	struct SCENE_timing timing;
 }extern * currentScene;
 

@@ -3,10 +3,13 @@
 
 
 
+in int vertTilePiece;
 in int vertTileState;
 
 
-flat out vec3 vfTileColor;
+out vec2 vfTexCoord;
+flat out int vfTileState;
+flat out int vfTileCurrent;
 
 
 uniform mat4 matProj;
@@ -14,6 +17,7 @@ uniform mat4 matProj;
 
 uniform int boardWidth;
 uniform int boardHeight;
+uniform int currentPiece;
 
 
 
@@ -28,20 +32,36 @@ const vec2 towershogiVertPos[6] = vec2[](
 	);
 
 
-const vec3 towershogiStateColor[5] = vec3[](
-	vec3(0.25,0.25,0.25),	/* void */
-	vec3(0.0,0.0,0.75),	/* player 1 piece */
-	vec3(0.5,0.0,0.5),	/* selected player 1 piece */
-	vec3(0.0,0.75,0.0),	/* possible moves */
-	vec3(0.75,0.0,0.0)	/* possible move that eats piece */
+#define pieceOffsetX 1./4
+#define pieceOffsetY 1./4
+
+const vec2 towershogiTexCoord[6] = vec2[](
+	vec2(0*pieceOffsetX ,1*pieceOffsetY ),
+	vec2(1*pieceOffsetX ,1*pieceOffsetY ),
+	vec2(1*pieceOffsetX ,0*pieceOffsetY ),
+	vec2(0*pieceOffsetX ,1*pieceOffsetY ),
+	vec2(1*pieceOffsetX ,0*pieceOffsetY ),
+	vec2(0*pieceOffsetX ,0*pieceOffsetY )
 	);
+
+
+#define tileGap 0.125
 
 
 
 
 void main(){
 
-	vfTileColor = towershogiStateColor[vertTileState];
+	vfTileState = vertTileState;
+
+	vfTexCoord = towershogiTexCoord[gl_VertexID%6] +
+			vec2(vertTilePiece%4*pieceOffsetX,
+			vertTilePiece/4*pieceOffsetY);
+
+	vfTileCurrent = 0;
+	if(gl_VertexID/6 == currentPiece){
+		vfTileCurrent = 1;
+	}
 
 
 	float tileScale;
@@ -50,14 +70,14 @@ void main(){
 	}else{
 		tileScale = boardHeight;
 	}
-	tileScale = 2./(tileScale*1.25);
+	tileScale = 2./(tileScale*(1.+tileGap));
 
 
 	gl_Position = matProj * vec4(
 			(towershogiVertPos[gl_VertexID%6]
 					+ivec2( (gl_VertexID/6)%boardWidth,
-							(gl_VertexID/6)/boardWidth )*1.25
-					+vec2(0.25/2.,0.25/2.)
+							(gl_VertexID/6)/boardWidth )*(1.+tileGap)
+					+vec2(tileGap/2.,tileGap/2.)
 					)*tileScale
 					+vec2(-1,-1),
 			-4.,1.);

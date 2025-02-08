@@ -49,6 +49,7 @@ struct BITMENU_menu{
 }static * bitmenuHead = 0, * bitmenuCurrent = 0, * bitmenuCounter;
 
 
+static struct BITFONT_data* bitfontData;
 static struct BITFONT_object* bitfontCounter;
 
 
@@ -116,10 +117,10 @@ static void bitmenuGrouptreeStep(struct BITMENU_group* group){
 		bitfontCounter->backColor[3] = 0.5
 				+0.5*(bitmenuCounter->groupCurrent==group);
 
-		if (bitfontCounter != &bitfontData[isolaARRAY_COUNT_(bitfontData)-1]) {
+		if (bitfontCounter != &bitfontData->data[bitfontData->size-1]) {
 			bitfontCounter += 1;
 		}else {
-			SDL_Log("%s","REACHED BITFONT OBJECT LIMIT");
+			SDL_Log("%s : reached bitfont object limit",__FUNCTION__);
 		}
 
 		bitmenuGrouptreeStep(object->groupLink);
@@ -294,6 +295,8 @@ void updateBitmenu(void){
 
 void createBitmenu(void){
 
+	bitfontData = bitfontRequestPtr(0xff);
+
 	bitmenuCurrent = 0;
 	bitmenuHead = 0;
 
@@ -328,6 +331,9 @@ void destroyBitmenu(void){
 		menu = menu->menuNext;
 		free(menu);
 	}
+
+
+	bitfontFreePtr(bitfontData);
 }
 
 
@@ -347,8 +353,8 @@ void stepBitmenu(void){
 	}
 
 
-	memset(bitfontData,0,sizeof(bitfontData));
-	bitfontCounter=&bitfontData[0];
+	memset(bitfontData->data,0,sizeof(struct BITFONT_object)*bitfontData->size);
+	bitfontCounter = bitfontData->data;
 	bitmenuCounter = bitmenuHead;
 	while (bitmenuCounter != 0) {
 
