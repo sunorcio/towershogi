@@ -44,13 +44,19 @@ endif
 
 
 
-#HDR = ${wildcard ./*.h} ${wildcard scene/*/*.h} ${wildcard module/*/*.h}
-HDR = ${shell find . -type f -name '*.h' ! -path '*/bin/*' ! -path '*/isola/*'}
-#SRC = ${wildcard ./*.c} ${wildcard ./isola/*.c} ${wildcard ./scene/*/*.c} ${wildcard module/*/*.c}
-SRC = ${shell find . -type f -name '*.c' ! -path '*/bin/*'}
-OBJ = ${SRC:.c=.o}
 
-GLOBALDEPS = isola_config.h bin Makefile ${HDR} #${SRC}
+#GLOBALDEP = Makefile
+GLOBALDEP =
+#AUTORULE =
+AUTORULE = isola bin compdb
+
+# #HDR = ${shell find . -type f -name '*.h' ! -path '*/bin/*'}
+#HDR =
+#SRC =
+SRC = ${shell find . -type f -name '*.c' ! -path '*/bin/*'}
+#DEP =
+DEP = ${shell find . -type f -name '*.d' ! -path '*/bin/*'}
+OBJ = ${SRC:.c=.o}
 
 
 
@@ -67,9 +73,7 @@ ifeq (${TARGET_OS},linux)
 
 
  #CFLAGS = -DISOLA_DBG -DGLEW_STATIC -Weverything
- CFLAGS = ${INCS} -Wall -Wextra -pedantic \
-		   -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage \
-		    -std=c89 -O0 -pipe -march=native -D_REENTRANT -MJ $@.json
+ CFLAGS = ${INCS} -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage -std=c89 -O0 -pipe -march=native -D_REENTRANT -MMD -MF ${@:.o=.d} -MJ $@.json
  #LDFLAGS = -v
  LDFLAGS = ${LIBS} -flto=full
 
@@ -82,14 +86,11 @@ ifeq (${TARGET_OS},linux)
 else ifeq (${TARGET_OS},windows)
 
  INCS = -I./ -I./bin/glew-2.2.0/include -I./bin/SDL2-2.30.3/x86_64-w64-mingw32/include
- LIBS = -L./bin/glew-2.2.0/lib/Release/x64 -L./bin/SDL2-2.30.3/x86_64-w64-mingw32/lib \
-		-Wl,-Bstatic -static-libgcc -lmingw32 -lSDL2main -lSDL2 -lglew32s -lglu32 -lopengl32 -lm \
-		-ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid
+ LIBS = -L./bin/glew-2.2.0/lib/Release/x64 -L./bin/SDL2-2.30.3/x86_64-w64-mingw32/lib -Wl,-Bstatic -static-libgcc -lmingw32 -lSDL2main -lSDL2 -lglew32s -lglu32 -lopengl32 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid
 
 
  #CFLAGS = -DISOLA_DBG #-g
- CFLAGS = ${INCS} -Wall -Wextra -Wpedantic -std=c89 -O3 -pipe -DGLEW_STATIC -D_REENTRANT -DWIN32_LEAN_AND_MEAN \
-		  -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-old-style-declaration
+ CFLAGS = ${INCS} -Wall -Wextra -Wpedantic -std=c89 -O3 -pipe -DGLEW_STATIC -D_REENTRANT -DWIN32_LEAN_AND_MEAN -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-old-style-declaration
  #LDFLAGS = #-v #-mwindows
  LDFLAGS = ${LIBS}
 
@@ -102,10 +103,12 @@ endif
 
 
 
-${OBJ}:%.o : %.c
-	${CC} -c $< -o $@ ${CFLAGS}
+include ${DEP}
 
-${OBJ}: ${GLOBALDEPS}
+${OBJ}: ${GLOBALDEP}
+
+${OBJ}: %.o : %.c
+	${CC} -c $< -o $@ ${CFLAGS}
 
 
 
@@ -114,7 +117,6 @@ ifeq (${TARGET_OS},linux)
 
 test: ${TARGET_BIN} compdb
 	./${TARGET_BIN}
-#	make clean
 
 
 bin:
@@ -124,7 +126,6 @@ bin:
 else ifeq (${TARGET_OS},windows)
 
 test: ${TARGET_BIN}
-#	make clean
 
 
 bin:
@@ -141,31 +142,23 @@ endif
 
 
 
-isola:
-	git clone https://github.com/sunorcio/isola --depth 1
-	cp isola/isola_config.h isola_config.h -n
-	cp isola_config.h isola/isola_config.h
-	@echo '!!! isola has been updated, run make again !!!'
-	@exit 1
-
-
-isola_config.h: isola
-	cp isola_config.h isola/isola_config.h
-
-
-
-
 all: ${TARGET_BIN}
 
-${TARGET_BIN}: ${OBJ}
-	${CC} -o $@ ${OBJ} ${LDFLAGS}
+${TARGET_BIN}: ${AUTORULE} ${OBJ}
+	${CC} -o $@.out ${OBJ} ${LDFLAGS}
 
 compdb: ${OBJ}
 	./compdb.sh
 
 clean:
 	rm ${OBJ} -f
+	rm ${DEP} -f
 	rm ${OBJ:.o=.o.json} -f
+
+deepclean:
+	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
+	rm ${shell find . -type f -name '*.d' ! -path '*/bin/*'} -f
+	rm ${shell find . -type f -name '*.o.json' ! -path '*/bin/*'} -f
 
 update: clean
 	rm bin -rf
@@ -174,7 +167,18 @@ update: clean
 windows:
 	make TARGET_OS=windows TARGET_BUILD=static
 
+isola:
+	git clone https://github.com/sunorcio/isola --depth 1
+	cp isola/isola_config.h isola_config.h -n
+	cp isola_config.h isola/isola_config.h
+	@echo -e '\033[0;31m''!!! isola has been updated, run make again !!!'
+	@echo -e '\033[0;31m''!!! isola has been updated, run make again !!!'
+	@exit 1
+
+isola_config.h: isola
+	cp isola_config.h isola/isola_config.h
 
 
 
-.PHONY: default_rule test all clean compdb update windows
+
+.PHONY: default_rule test all clean deepclean compdb update windows

@@ -38,8 +38,8 @@ static void towermenuUpdate(void){
 	glViewport(0,0,isolaInfoWindow.width, isolaInfoWindow.height);
 
 
-	towermenuRenderUpdate();
 	towermenuLogicUpdate();
+	towermenuRenderUpdate();
 }
 
 
@@ -99,8 +99,8 @@ static void towermenuDestroy(void){
 	inputClear();
 
 
-	towermenuRenderDestroy();
 	towermenuLogicDestroy();
+	towermenuRenderDestroy();
 }
 
 

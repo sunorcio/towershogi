@@ -1,7 +1,9 @@
 .cache
 *.o
+*.d
 *.o.json
 *.out
+*.exe
 isola_example
 bin
 isola
