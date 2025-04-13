@@ -116,7 +116,7 @@ ${OBJ}: %.o : %.c
 ifeq (${TARGET_OS},linux)
 
 test: ${TARGET_BIN} compdb
-	./${TARGET_BIN}
+	./${TARGET_BIN}.out
 
 
 bin:
@@ -151,6 +151,7 @@ compdb: ${OBJ}
 	./compdb.sh
 
 clean:
+	rm $(TARGET_BIN).out $(TARGET_BIN).exe -f
 	rm ${OBJ} -f
 	rm ${DEP} -f
 	rm ${OBJ:.o=.o.json} -f

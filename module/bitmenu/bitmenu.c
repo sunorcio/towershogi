@@ -100,11 +100,11 @@ static void bitmenuGrouptreeStep(struct BITMENU_group* group){
 				bitmenuCounter->groupCurrent->screenParent->fontScaleGlobal;
 		bitfontCounter->charWrap = BITFONT_STRINGSIZE;
 		strcpy(bitfontCounter->string,object->name);
-		bitfontCounter->x = group->x + isolaInfoWindow.pixelWidth;
+		bitfontCounter->x = group->x + isola_info_window.pixelWidth;
 		bitfontCounter->y = group->y
-				-isolaInfoWindow.pixelHeight*16
+				-isola_info_window.pixelHeight*16
 				*bitfontCounter->pixelSize*o
-				-isolaInfoWindow.pixelHeight;
+				-isola_info_window.pixelHeight;
 		bitfontCounter->foreColor[0] = 0.;
 		bitfontCounter->foreColor[1] = 0.;
 		bitfontCounter->foreColor[2] = 0.;
@@ -339,16 +339,16 @@ void destroyBitmenu(void){
 
 void stepBitmenu(void){
 
-	if (keyState[SDL_SCANCODE_J] && !keyRepeat[SDL_SCANCODE_J]) {
+	if (isola_keyState[SDL_SCANCODE_J] && !isola_keyRepeat[SDL_SCANCODE_J]) {
 		bitmenuMoveForward();
 	}
-	if (keyState[SDL_SCANCODE_K] && !keyRepeat[SDL_SCANCODE_K]) {
+	if (isola_keyState[SDL_SCANCODE_K] && !isola_keyRepeat[SDL_SCANCODE_K]) {
 		bitmenuMoveBack();
 	}
 
-	if (keyState[SDL_SCANCODE_Q] && !keyRepeat[SDL_SCANCODE_Q]) {
+	if (isola_keyState[SDL_SCANCODE_Q] && !isola_keyRepeat[SDL_SCANCODE_Q]) {
 		bitmenuLeaveGroup();
-	}else if(keyState[SDL_SCANCODE_RETURN] && !keyRepeat[SDL_SCANCODE_RETURN]) {
+	}else if(isola_keyState[SDL_SCANCODE_RETURN] && !isola_keyRepeat[SDL_SCANCODE_RETURN]) {
 		bitmenuActivateObject();
 	}
 

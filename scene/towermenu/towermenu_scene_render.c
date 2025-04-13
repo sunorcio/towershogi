@@ -14,7 +14,7 @@
 
 
 
-extern struct TIMING_counter towermenuFrameCounter;
+extern struct ISOLA_counter towermenuFrameCounter;
 
 
 
@@ -40,7 +40,7 @@ void towermenuRenderDestroy(void){
 
 
 	glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
-	SDL_GL_SwapWindow(isolaWindow);
+	SDL_GL_SwapWindow(isola_window);
 }
 
 
@@ -53,7 +53,7 @@ void towermenuRenderDraw(void){
 	drawDigitfps();
 
 
-	SDL_GL_SwapWindow(isolaWindow);
+	SDL_GL_SwapWindow(isola_window);
 }
 
 

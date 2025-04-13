@@ -25,17 +25,17 @@ struct SCENE_scene towermenuScene = {0};
 
 static void towermenuUpdate(void){
 
-	isolaGetWindow();
-	if (isolaInfoWindow.width < towermenuScene.window.windowMinRes[0]) {
-		isolaInfoWindow.width = towermenuScene.window.windowMinRes[0];
+	isola_get_window();
+	if (isola_info_window.width < towermenuScene.window.windowMinRes[0]) {
+		isola_info_window.width = towermenuScene.window.windowMinRes[0];
 	}
-	if (isolaInfoWindow.height < towermenuScene.window.windowMinRes[1]) {
-		isolaInfoWindow.height = towermenuScene.window.windowMinRes[1];
+	if (isola_info_window.height < towermenuScene.window.windowMinRes[1]) {
+		isola_info_window.height = towermenuScene.window.windowMinRes[1];
 	}
-	SDL_SetWindowSize(isolaWindow,isolaInfoWindow.width,isolaInfoWindow.height);
+	SDL_SetWindowSize(isola_window,isola_info_window.width,isola_info_window.height);
 
-	isolaGetWindow();
-	glViewport(0,0,isolaInfoWindow.width, isolaInfoWindow.height);
+	isola_get_window();
+	glViewport(0,0,isola_info_window.width, isola_info_window.height);
 
 
 	towermenuLogicUpdate();
@@ -65,21 +65,21 @@ static void towermenuCreate(void){
 	towermenuScene.state.returnControlValue = 0;
 	towermenuScene.state.pause = 0;
 
-	timerSetup(&towermenuScene.timing.logicTimer, 60);
-	counterSetup(&towermenuScene.timing.frameCounter, 60);
+	isola_timerSetup(&towermenuScene.timing.logicTimer, 60);
+	isola_counterSetup(&towermenuScene.timing.frameCounter, 60);
 
 
-	inputClear();
+	isola_inputClear();
 
 
-	SDL_SetWindowSize(isolaWindow,towermenuScene.window.windowRes[0],
+	SDL_SetWindowSize(isola_window,towermenuScene.window.windowRes[0],
 			towermenuScene.window.windowRes[1]);
-	SDL_SetWindowPosition(isolaWindow,towermenuScene.window.windowPos[0],
+	SDL_SetWindowPosition(isola_window,towermenuScene.window.windowPos[0],
 			towermenuScene.window.windowPos[1]);
-	SDL_SetWindowBordered(isolaWindow,towermenuScene.window.windowBorder);
-	SDL_SetWindowResizable(isolaWindow,towermenuScene.window.windowResizable);
+	SDL_SetWindowBordered(isola_window,towermenuScene.window.windowBorder);
+	SDL_SetWindowResizable(isola_window,towermenuScene.window.windowResizable);
 	if(towermenuScene.window.windowFullscreen){
-		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_SetWindowFullscreen(isola_window,SDL_WINDOW_FULLSCREEN_DESKTOP);
 	}
 	glClearColor(towermenuScene.window.clearColor[0],
 			towermenuScene.window.clearColor[1],
@@ -96,7 +96,7 @@ static void towermenuCreate(void){
 
 static void towermenuDestroy(void){
 
-	inputClear();
+	isola_inputClear();
 
 
 	towermenuLogicDestroy();
@@ -140,24 +140,24 @@ unsigned char towermenuLoop(void){
 				}
 				switch (event.key.keysym.sym){
 					case SDLK_BACKSPACE:
-						inputTextEditingPop();
+						isola_textEditPop();
 					break;
 				}
 			}
 			if(event.type == SDL_TEXTINPUT){
-				inputTextEditingPush(&event.text.text);
+				isola_textEditPush(&event.text.text);
 			}
 		}
 
 
 		if (!towermenuScene.state.pause) {
-			if(timerStep(&currentScene->timing.logicTimer)){
+			if(isola_timerStep(&currentScene->timing.logicTimer)){
 
 				towermenuLogicStep();
-				inputRepeat();
+				isola_inputRepeat();
 			}
 
-			if(counterStep(&currentScene->timing.frameCounter)){
+			if(isola_counterStep(&currentScene->timing.frameCounter)){
 
 				towermenuRenderDraw();
 			}

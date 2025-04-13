@@ -19,7 +19,7 @@
 
 
 
-static ISOLA_State towershogiState = 0x0000000d;
+static ISOLA_state towershogiState = 0x0000000d;
 static unsigned int towershogiSP[1] = {0};
 static unsigned int towershogiVAO[1] = {0};
 static unsigned int towershogiVBO[1] = {0};
@@ -41,8 +41,8 @@ void updateTowershogiRender(void){
 	{int locProj;
 	const char* strProj = "matProj";
 	float matProj[4*4] = {0};
-	mut_projGLortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
-			-isolaInfoWindow.yratio,isolaInfoWindow.yratio,
+	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
+			-isola_info_window.yRatio,isola_info_window.yRatio,
 			0.25,8.,matProj);
 	locProj = glGetUniformLocation(towershogiSP[0],"matProj");
 	if(locProj == -1){SDL_Log("matProj not found in shader %d",0);}
@@ -99,7 +99,7 @@ void createTowershogiRender(void){
 	}
 
 
-	towershogiSP[0] = isolaShaderProgram("scene/towershogi/towershogi.vert",
+	towershogiSP[0] = isola_shader_buildProgram("scene/towershogi/towershogi.vert",
 			"scene/towershogi/towershogi.frag");
 
 	glUseProgram(towershogiSP[0]);
@@ -151,7 +151,7 @@ void drawTowershogiRender(void){
 
 	glBindVertexArray(towershogiVAO[0]);
 
-	isolaSetState(towershogiState);
+	isola_set_state(towershogiState);
 	glUseProgram(towershogiSP[0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER,towershogiVBO[0]);

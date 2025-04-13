@@ -54,7 +54,7 @@ void bitfontFreePtr(struct BITFONT_data* ptr){
 
 
 
-static ISOLA_State bitfontState = 0x00000001;
+static ISOLA_state bitfontState = 0x00000001;
 static unsigned int bitfontSP[1] = {0};
 static unsigned int bitfontVAO[1] = {0};
 static unsigned int bitfontVBO[1] = {0};
@@ -73,8 +73,8 @@ void updateBitfont(void){
 
 	{int locProj;
 	float matProj[4*4] = {0};
-	mut_projGLortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
-			-isolaInfoWindow.yratio,isolaInfoWindow.yratio,
+	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
+			-isola_info_window.yRatio,isola_info_window.yRatio,
 			0.25,8.,matProj);
 	locProj = glGetUniformLocation(bitfontSP[0],"matProj");
 	if(locProj == -1){SDL_Log("matProj not found in shader, %s",__FUNCTION__);}
@@ -83,8 +83,8 @@ void updateBitfont(void){
 
 	{int locLowRes;
 	float lowRes;
-	if (isolaInfoWindow.xratio == 1) { lowRes = isolaInfoWindow.width;
-	}else{ lowRes = isolaInfoWindow.height; }
+	if (isola_info_window.xRatio == 1) { lowRes = isola_info_window.width;
+	}else{ lowRes = isola_info_window.height; }
 	locLowRes = glGetUniformLocation(bitfontSP[0],"lowResolution");
 	if(locLowRes == -1){SDL_Log("lowResolution not found in shader, %s",
 			__FUNCTION__);}
@@ -140,7 +140,7 @@ void createBitfont(void){
 	}
 
 
-	bitfontSP[0] = isolaShaderProgram("module/bitfont/bitfont.vert",
+	bitfontSP[0] = isola_shader_buildProgram("module/bitfont/bitfont.vert",
 			"module/bitfont/bitfont.frag");
 
 	glUseProgram(bitfontSP[0]);
@@ -174,7 +174,7 @@ void drawBitfont(void){
 
 	glBindVertexArray(bitfontVAO[0]);
 
-	isolaSetState(bitfontState);
+	isola_set_state(bitfontState);
 	glUseProgram(bitfontSP[0]);
 
 	glActiveTexture(GL_TEXTURE0+0);

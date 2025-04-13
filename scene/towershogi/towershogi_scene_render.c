@@ -34,7 +34,7 @@ void towershogiRenderDestroy(void){
 
 
 	glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
-	SDL_GL_SwapWindow(isolaWindow);
+	SDL_GL_SwapWindow(isola_window);
 }
 
 
@@ -47,7 +47,7 @@ void towershogiRenderDraw(void){
 	drawDigitfps();
 
 
-	SDL_GL_SwapWindow(isolaWindow);
+	SDL_GL_SwapWindow(isola_window);
 }
 
 

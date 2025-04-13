@@ -25,17 +25,17 @@ struct SCENE_scene towershogiScene = {0};
 
 static void towershogiUpdate(void){
 
-	isolaGetWindow();
-	if (isolaInfoWindow.width < towershogiScene.window.windowMinRes[0]) {
-		isolaInfoWindow.width = towershogiScene.window.windowMinRes[0];
+	isola_get_window();
+	if (isola_info_window.width < towershogiScene.window.windowMinRes[0]) {
+		isola_info_window.width = towershogiScene.window.windowMinRes[0];
 	}
-	if (isolaInfoWindow.height < towershogiScene.window.windowMinRes[1]) {
-		isolaInfoWindow.height = towershogiScene.window.windowMinRes[1];
+	if (isola_info_window.height < towershogiScene.window.windowMinRes[1]) {
+		isola_info_window.height = towershogiScene.window.windowMinRes[1];
 	}
-	SDL_SetWindowSize(isolaWindow,isolaInfoWindow.width,isolaInfoWindow.height);
+	SDL_SetWindowSize(isola_window,isola_info_window.width,isola_info_window.height);
 
-	isolaGetWindow();
-	glViewport(0,0,isolaInfoWindow.width, isolaInfoWindow.height);
+	isola_get_window();
+	glViewport(0,0,isola_info_window.width, isola_info_window.height);
 
 
 	towershogiLogicUpdate();
@@ -65,20 +65,20 @@ static void towershogiCreate(void){
 	towershogiScene.state.returnControlValue = 0;
 	towershogiScene.state.pause = 0;
 
-	timerSetup(&towershogiScene.timing.logicTimer, 60);
-	counterSetup(&towershogiScene.timing.frameCounter, 60);
+	isola_timerSetup(&towershogiScene.timing.logicTimer, 60);
+	isola_counterSetup(&towershogiScene.timing.frameCounter, 60);
 
-	inputClear();
+	isola_inputClear();
 
 
-	SDL_SetWindowSize(isolaWindow,towershogiScene.window.windowRes[0],
+	SDL_SetWindowSize(isola_window,towershogiScene.window.windowRes[0],
 			towershogiScene.window.windowRes[1]);
-	SDL_SetWindowPosition(isolaWindow,towershogiScene.window.windowPos[0],
+	SDL_SetWindowPosition(isola_window,towershogiScene.window.windowPos[0],
 			towershogiScene.window.windowPos[1]);
-	SDL_SetWindowBordered(isolaWindow,towershogiScene.window.windowBorder);
-	SDL_SetWindowResizable(isolaWindow,towershogiScene.window.windowResizable);
+	SDL_SetWindowBordered(isola_window,towershogiScene.window.windowBorder);
+	SDL_SetWindowResizable(isola_window,towershogiScene.window.windowResizable);
 	if(towershogiScene.window.windowFullscreen){
-		SDL_SetWindowFullscreen(isolaWindow,SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_SetWindowFullscreen(isola_window,SDL_WINDOW_FULLSCREEN_DESKTOP);
 	}
 	glClearColor(towershogiScene.window.clearColor[0],
 			towershogiScene.window.clearColor[1],
@@ -99,7 +99,7 @@ static void towershogiCreate(void){
 
 static void towershogiDestroy(void){
 
-	inputClear();
+	isola_inputClear();
 
 
 	towershogiRenderDestroy();
@@ -144,24 +144,24 @@ unsigned char towershogiLoop(void){
 				}
 				switch (event.key.keysym.sym){
 					case SDLK_BACKSPACE:
-						inputTextEditingPop();
+						isola_textEditPop();
 					break;
 				}
 			}
 			if(event.type == SDL_TEXTINPUT){
-				inputTextEditingPush(&event.text.text);
+				isola_textEditPush(&event.text.text);
 			}
 		}
 
 
 		if (!towershogiScene.state.pause) {
-			if(timerStep(&currentScene->timing.logicTimer)){
+			if(isola_timerStep(&currentScene->timing.logicTimer)){
 
 				towershogiLogicStep();
-				inputRepeat();
+				isola_inputRepeat();
 			}
 
-			if(counterStep(&currentScene->timing.frameCounter)){
+			if(isola_counterStep(&currentScene->timing.frameCounter)){
 
 				towershogiRenderDraw();
 			}

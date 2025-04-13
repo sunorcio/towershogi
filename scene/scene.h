@@ -28,8 +28,8 @@ struct SCENE_state {
 
 
 struct SCENE_timing {
-	struct TIMING_timer logicTimer;
-	struct TIMING_counter frameCounter;
+	struct ISOLA_timer logicTimer;
+	struct ISOLA_counter frameCounter;
 };
 
 

@@ -80,35 +80,35 @@ void destroyTowershogiLogic(void){
 
 void stepTowershogiLogic(void){
 
-	if (keyState[SDL_SCANCODE_J] && !keyRepeat[SDL_SCANCODE_J]) {
+	if (isola_keyState[SDL_SCANCODE_J] && !isola_keyRepeat[SDL_SCANCODE_J]) {
 		if (towershogiBoard.currentTile >= towershogiBoardSize[0]) {
 			towershogiBoard.currentTile -= towershogiBoardSize[0];
 		}
 	}
-	if (keyState[SDL_SCANCODE_K] && !keyRepeat[SDL_SCANCODE_K]) {
+	if (isola_keyState[SDL_SCANCODE_K] && !isola_keyRepeat[SDL_SCANCODE_K]) {
 		if (towershogiBoard.currentTile < TOWERSHOGI_BOARD_SIZE 
 				-towershogiBoardSize[0]) {
 			towershogiBoard.currentTile += towershogiBoardSize[0];
 		}
 	}
-	if (keyState[SDL_SCANCODE_L] && !keyRepeat[SDL_SCANCODE_L]) {
+	if (isola_keyState[SDL_SCANCODE_L] && !isola_keyRepeat[SDL_SCANCODE_L]) {
 		if ((towershogiBoard.currentTile+1)%towershogiBoardSize[0]) {
 			towershogiBoard.currentTile += 1;
 		}
 	}
-	if (keyState[SDL_SCANCODE_H] && !keyRepeat[SDL_SCANCODE_H]) {
+	if (isola_keyState[SDL_SCANCODE_H] && !isola_keyRepeat[SDL_SCANCODE_H]) {
 		if (towershogiBoard.currentTile%towershogiBoardSize[0]) {
 			towershogiBoard.currentTile -= 1;
 		}
 	}
-	if (keyState[SDL_SCANCODE_SPACE] && !keyRepeat[SDL_SCANCODE_SPACE]) {
+	if (isola_keyState[SDL_SCANCODE_SPACE] && !isola_keyRepeat[SDL_SCANCODE_SPACE]) {
 		if(towershogiBoard.selectedTile == SELECTED_NONE){
 			towershogiBoard.tile[towershogiBoard.currentTile].state =
 					STATE_SELECTED;
 			towershogiBoard.selectedTile = towershogiBoard.currentTile;
 		}
 	}
-	if (keyState[SDL_SCANCODE_Q] && !keyRepeat[SDL_SCANCODE_Q]) {
+	if (isola_keyState[SDL_SCANCODE_Q] && !isola_keyRepeat[SDL_SCANCODE_Q]) {
 		if(towershogiBoard.selectedTile != SELECTED_NONE){
 			towershogiBoard.currentTile = towershogiBoard.selectedTile;
 			towershogiBoard.tile[towershogiBoard.selectedTile].state =

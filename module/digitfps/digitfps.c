@@ -51,10 +51,10 @@ struct DIGITFPS_font digitfps = {
 		8*2 };
 
 
-static struct TIMING_counter* digitfpsCounter = {0};
+static struct ISOLA_counter* digitfpsCounter = {0};
 
 
-static ISOLA_State digitfpsState = 0x00000001;
+static ISOLA_state digitfpsState = 0x00000001;
 static unsigned int digitfpsSP;
 static unsigned int digitfpsVAO;
 static unsigned int digitfpsEBO;
@@ -65,7 +65,7 @@ static unsigned short digitfpsED[18]
 
 void updateDigitfps(void){
 
-	if (isolaInfoWindow.height > 720 && isolaInfoWindow.width > 1280) {
+	if (isola_info_window.height > 720 && isola_info_window.width > 1280) {
 		digitfps.pixelSize = 8*2;
 	}else {
 		digitfps.pixelSize = 8*1;
@@ -76,8 +76,8 @@ void updateDigitfps(void){
 
 	{int locProj;
 	float matProj[4*4] = {0};
-	mut_projGLortho(-isolaInfoWindow.xratio,isolaInfoWindow.xratio,
-			-isolaInfoWindow.yratio,isolaInfoWindow.yratio, 0.25,8.,matProj);
+	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
+			-isola_info_window.yRatio,isola_info_window.yRatio, 0.25,8.,matProj);
 	locProj = glGetUniformLocation(digitfpsSP,"matProj");
 	if(locProj == -1){SDL_Log("matProj not found in shader %d",0);}
 	glUniformMatrix4fv(locProj,1,GL_FALSE,matProj);
@@ -97,8 +97,8 @@ void updateDigitfps(void){
 
 	{int locLowRes;
 	float lowRes;
-	if (isolaInfoWindow.xratio == 1) { lowRes = isolaInfoWindow.width;
-	}else{ lowRes = isolaInfoWindow.height; }
+	if (isola_info_window.xRatio == 1) { lowRes = isola_info_window.width;
+	}else{ lowRes = isola_info_window.height; }
 	locLowRes = glGetUniformLocation(digitfpsSP,"lowResolution");
 	if(locLowRes == -1){SDL_Log("lowResolution not found in shader %d",0);}
 	glUniform1f(locLowRes,lowRes);
@@ -124,7 +124,7 @@ void createDigitfps(void){
 			sizeof(digitfpsED),digitfpsED);
 
 
-	digitfpsSP = isolaShaderProgram("module/digitfps/digitfps.vert","module/digitfps/digitfps.frag");
+	digitfpsSP = isola_shader_buildProgram("module/digitfps/digitfps.vert","module/digitfps/digitfps.frag");
 
 
 	updateDigitfps();
@@ -143,7 +143,7 @@ void destroyDigitfps(void){
 
 void drawDigitfps(void){
 
-	isolaSetState(digitfpsState);
+	isola_set_state(digitfpsState);
 
 
 	{unsigned long delaySum = 0;
@@ -157,7 +157,7 @@ void drawDigitfps(void){
 		digitfpsString[i] = 0;
 	}}
 	sprintf(digitfpsString,"%f",
-			1./((delaySum/256.)/(double)clockFreq) );
+			1./((delaySum/256.)/(double)isola_clockFreq) );
 	}
 
 	{unsigned int i;
