@@ -157,11 +157,13 @@ clean:
 	rm ${OBJ:.o=.o.json} -f
 
 deepclean:
+	rm $(TARGET_BIN).out $(TARGET_BIN).exe -f
+	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.d' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.o.json' ! -path '*/bin/*'} -f
 
-update: clean
+update: deepclean
 	rm bin -rf
 	rm isola -rf
 
@@ -172,11 +174,10 @@ isola:
 	git clone https://github.com/sunorcio/isola --depth 1
 	cp isola/isola_config.h isola_config.h -n
 	cp isola_config.h isola/isola_config.h
-	@echo -e '\033[0;31m''!!! isola has been updated, run make again !!!'
-	@echo -e '\033[0;31m''!!! isola has been updated, run make again !!!'
+	@echo -e '\033[0;31m''!!! ISOLA HAS BEEN UPDATED, RUN MAKE AGAIN !!!'
 	@exit 1
 
-isola_config.h: isola
+isola/isola_config.h: isola_config.h
 	cp isola_config.h isola/isola_config.h
 
 
