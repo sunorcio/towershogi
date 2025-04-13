@@ -159,7 +159,6 @@ clean:
 deepclean:
 	rm $(TARGET_BIN).out $(TARGET_BIN).exe -f
 	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
-	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.d' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.o.json' ! -path '*/bin/*'} -f
 
