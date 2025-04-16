@@ -1,13 +1,11 @@
-
-
 #include "towermenu_scene_logic.h"
 
 
 
 
 #include <isola/isola.h>
-
 #include <scene/scene.h>
+
 
 #include <module/digitfps/digitfps_logic.h>
 #include <module/bitmenu/bitmenu_logic.h>

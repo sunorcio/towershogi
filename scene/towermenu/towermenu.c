@@ -1,19 +1,23 @@
-
-
-#include "towermenu_scene.h"
+#include "towermenu.h"
 
 
 
 
 #include <isola/isola.h>
-
-#include <scene/scene.h>
 #include <isola/timing.h>
 #include <isola/input.h>
+#include <scene/scene.h>
 
 
 #include "towermenu_scene_logic.h"
 #include "towermenu_scene_render.h"
+
+
+
+
+static void towermenuUpdate(void);
+static void towermenuCreate(void);
+static void towermenuDestroy(void);
 
 
 
@@ -32,7 +36,8 @@ static void towermenuUpdate(void){
 	if (isola_info_window.height < towermenuScene.window.windowMinRes[1]) {
 		isola_info_window.height = towermenuScene.window.windowMinRes[1];
 	}
-	SDL_SetWindowSize(isola_window,isola_info_window.width,isola_info_window.height);
+	SDL_SetWindowSize(isola_window,isola_info_window.width,
+			isola_info_window.height);
 
 	isola_get_window();
 	glViewport(0,0,isola_info_window.width, isola_info_window.height);
@@ -106,7 +111,7 @@ static void towermenuDestroy(void){
 
 
 
-unsigned char towermenuLoop(void){
+unsigned char towermenu_loop(void){
 
 	SDL_Event event = {0};
 
