@@ -17,6 +17,8 @@ TARGET_OS = linux
 TARGET_BUILD = dynamic
 #(off^on)
 TARGET_DEBUG = off
+#(off^on)
+TARGET_PROFILE = off
 TARGET_BIN = isola_example
 
 
@@ -34,12 +36,6 @@ ifeq (${TARGET_BUILD},dynamic)
 else ifeq (${TARGET_BUILD},static)
 else
  $(error wrong TARGET_BUILD value)
-endif
-
-ifeq (${TARGET_DEBUG},on)
-else ifeq (${TARGET_DEBUG},off)
-else
- $(error wrong TARGET_DEBUG value)
 endif
 
 
@@ -80,6 +76,15 @@ ifeq (${TARGET_OS},linux)
  ifeq (${TARGET_DEBUG},on)
   #CFLAGS += -Weverything
   CFLAGS += -g
+  #LDFLAGS +=
+  LDFLAGS +=
+ endif
+
+ ifeq (${TARGET_PROFILE},on)
+  #CFLAGS +=
+  CFLAGS += -pg
+  #LDFLAGS +=
+  LDFLAGS += -pg
  endif
 
 
@@ -151,12 +156,13 @@ compdb: ${OBJ}
 	./compdb.sh
 
 clean:
+	rm gmon.out -f
 	rm ${OBJ} -f
 	rm ${DEP} -f
 	rm ${OBJ:.o=.o.json} -f
 
 deepclean:
-	rm $(TARGET_BIN).out $(TARGET_BIN).exe a.out -f
+	rm *.out *.exe -f
 	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.d' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.o.json' ! -path '*/bin/*'} -f
@@ -164,6 +170,14 @@ deepclean:
 update: deepclean
 	rm bin -rf
 	rm isola -rf
+
+debug: clean
+	make a TARGET_BIN=a TARGET_DEBUG=on
+
+profile: clean
+	make test TARGET_PROFILE=on
+	gprof ${TARGET_BIN}.out gmon.out | nvim
+	rm gmon.out
 
 windows:
 	make TARGET_OS=windows TARGET_BUILD=static
@@ -181,4 +195,4 @@ isola/isola_config.h: isola_config.h
 
 
 
-.PHONY: default_rule test all clean deepclean compdb update windows
+.PHONY: default_rule test all clean deepclean update debug profile compdb windows
