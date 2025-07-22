@@ -101,7 +101,8 @@ void stepTowershogiLogic(void){
 			towershogiBoard.currentTile -= 1;
 		}
 	}
-	if (isola_keyState[SDL_SCANCODE_SPACE] && !isola_keyRepeat[SDL_SCANCODE_SPACE]) {
+	if (isola_keyState[SDL_SCANCODE_SPACE] &&
+			!isola_keyRepeat[SDL_SCANCODE_SPACE]) {
 		if(towershogiBoard.selectedTile == SELECTED_NONE){
 			towershogiBoard.tile[towershogiBoard.currentTile].state =
 					STATE_SELECTED;

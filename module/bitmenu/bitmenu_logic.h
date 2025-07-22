@@ -1,5 +1,5 @@
-#ifndef BITMENU_H
-#define BITMENU_H
+#ifndef BITMENU_LOGIC_H
+#define BITMENU_LOGIC_H
 
 
 
@@ -10,14 +10,6 @@ extern void bitmenuBuildScreen(unsigned char fontScaleGlobal);
 extern void bitmenuBuildObject(const char* name, void (*function)(void));
 extern void bitmenuBuildGroupLeave(void);
 extern void bitmenuBuildExample(void);
-
-
-
-
-extern void updateBitmenu(void);
-extern void createBitmenu(void);
-extern void destroyBitmenu(void);
-extern void stepBitmenu(void);
 
 
 

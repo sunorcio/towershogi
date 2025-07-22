@@ -30,4 +30,12 @@ extern unsigned short towershogiBoardSize[2];
 
 
 
+extern void updateTowershogiRender(void);
+extern void createTowershogiRender(void);
+extern void destroyTowershogiRender(void);
+extern void drawTowershogiRender(void);
+
+
+
+
 #endif

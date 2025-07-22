@@ -1,19 +1,18 @@
-
-
 #include "towershogi_scene.h"
 
 
 
 
 #include <isola/isola.h>
-
 #include <scene/scene.h>
 #include <isola/timing.h>
 #include <isola/input.h>
 
+
 #include "towershogi.h"
-#include "towershogi_scene_logic.h"
-#include "towershogi_scene_render.h"
+#include "towershogi_logic.h"
+#include <module/digitfps/digitfps.h>
+#include <module/digitfps/digitfps_logic.h>
 
 
 
@@ -32,14 +31,18 @@ static void towershogiUpdate(void){
 	if (isola_info_window.height < towershogiScene.window.windowMinRes[1]) {
 		isola_info_window.height = towershogiScene.window.windowMinRes[1];
 	}
-	SDL_SetWindowSize(isola_window,isola_info_window.width,isola_info_window.height);
+	SDL_SetWindowSize(isola_window,isola_info_window.width,
+			isola_info_window.height);
 
 	isola_get_window();
 	glViewport(0,0,isola_info_window.width, isola_info_window.height);
 
 
-	towershogiLogicUpdate();
-	towershogiRenderUpdate();
+	updateTowershogiLogic();
+
+
+	updateDigitfps();
+	updateTowershogiRender();
 }
 
 
@@ -90,8 +93,12 @@ static void towershogiCreate(void){
 	towershogiBoardSize[1] = 8;
 
 
-	towershogiLogicCreate();
-	towershogiRenderCreate();
+	createTowershogiLogic();
+
+
+	createDigitfps();
+	createTowershogiRender();
+
 
 	towershogiUpdate();
 }
@@ -102,8 +109,15 @@ static void towershogiDestroy(void){
 	isola_inputClear();
 
 
-	towershogiRenderDestroy();
-	towershogiLogicDestroy();
+	destroyTowershogiLogic();
+
+
+	destroyDigitfps();
+	destroyTowershogiRender();
+
+
+	glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
+	SDL_GL_SwapWindow(isola_window);
 }
 
 
@@ -157,13 +171,21 @@ unsigned char towershogiLoop(void){
 		if (!towershogiScene.state.pause) {
 			if(isola_timerStep(&currentScene->timing.logicTimer)){
 
-				towershogiLogicStep();
+				stepTowershogiLogic();
+
 				isola_inputRepeat();
 			}
 
 			if(isola_counterStep(&currentScene->timing.frameCounter)){
 
-				towershogiRenderDraw();
+				glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
+
+
+				drawTowershogiRender();
+				drawDigitfps();
+
+
+				SDL_GL_SwapWindow(isola_window);
 			}
 		}
 

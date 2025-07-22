@@ -1,5 +1,5 @@
-#ifndef BITFONT_RENDER_H
-#define BITFONT_RENDER_H
+#ifndef BITFONT_H
+#define BITFONT_H
 
 
 

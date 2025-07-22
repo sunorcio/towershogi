@@ -17,6 +17,9 @@ TARGET_OS = linux
 TARGET_BUILD = dynamic
 #(off^on)
 TARGET_DEBUG = off
+#(off^on)
+TARGET_SANITIZE = off
+#(binary name string)
 TARGET_BIN = isola_example
 
 
@@ -66,16 +69,23 @@ ifeq (${TARGET_OS},linux)
  endif
 
 
- #CFLAGS = -DISOLA_DBG -DGLEW_STATIC -Weverything
- CFLAGS = ${INCS} -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage -std=c89 -O0 -pipe -march=native -D_REENTRANT -MMD -MF ${@:.o=.d} -MJ $@.json
+ #CFLAGS = -O3 -ffast-math -pipe -march=native
+ CFLAGS = ${INCS} -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage -std=c99 -D_REENTRANT -MMD -MF ${@:.o=.d} -MJ $@.json
  #LDFLAGS = -v
  LDFLAGS = ${LIBS} -flto=full
 
  ifeq (${TARGET_DEBUG},on)
-  #CFLAGS += -Weverything
+  #CFLAGS += -DISOLA_DBG
   CFLAGS += -g
   #LDFLAGS +=
   LDFLAGS +=
+ endif
+
+ ifeq (${TARGET_SANITIZE},on)
+  #CFLAGS += -Weverything -Werror -std=c89
+  CFLAGS += -fsanitize=undefined -fsanitize=address
+  #LDFLAGS +=
+  LDFLAGS += -fsanitize=undefined -fsanitize=address
  endif
 
 
@@ -86,7 +96,7 @@ else ifeq (${TARGET_OS},windows)
 
 
  #CFLAGS = -DISOLA_DBG #-g
- CFLAGS = ${INCS} -Wall -Wextra -Wpedantic -std=c89 -O3 -pipe -DGLEW_STATIC -D_REENTRANT -DWIN32_LEAN_AND_MEAN -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-old-style-declaration
+ CFLAGS = ${INCS} -Wall -Wextra -Wpedantic -std=c99 -O3 -ffast-math -pipe -DGLEW_STATIC -D_REENTRANT -DWIN32_LEAN_AND_MEAN -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-old-style-declaration
  #LDFLAGS = #-v #-mwindows
  LDFLAGS = ${LIBS}
 
@@ -148,6 +158,7 @@ compdb: ${OBJ}
 
 clean:
 	rm perf.data* -f
+	rm ${TARGET_BIN}.out ${TARGET_BIN}.exe a.out -f
 	rm ${OBJ} -f
 	rm ${DEP} -f
 	rm ${OBJ:.o=.o.json} -f
@@ -166,6 +177,9 @@ update: deepclean
 debug: clean
 	make a TARGET_BIN=a TARGET_DEBUG=on
 
+sanitize: clean
+	make ${TARGET_BIN} TARGET_SANITIZE=on
+
 windows:
 	make TARGET_OS=windows TARGET_BUILD=static
 
@@ -182,4 +196,4 @@ isola/isola_config.h: isola_config.h
 
 
 
-.PHONY: default_rule test all clean deepclean update debug compdb windows
+.PHONY: default_rule test all clean deepclean update debug sanitize compdb windows

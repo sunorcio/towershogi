@@ -1,6 +1,4 @@
-
-
-#include "bitfont_render.h"
+#include "bitfont.h"
 #include "bitfont_logic.h"
 
 
@@ -126,7 +124,7 @@ void createBitfont(void){
 
 	{void* imagedata;
 	long filesize;
-	FILE* imagefile = fopen("module/bitfont/128x128p_8x16_IBM_VGA_ASCII.data",
+	FILE* imagefile = fopen("module/bitfont/data/128x128p_8x16_IBM_VGA_ASCII.data",
 			"rb");
 	fseek(imagefile,0,SEEK_END);
 	filesize = ftell(imagefile);

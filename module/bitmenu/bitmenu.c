@@ -1,5 +1,4 @@
-
-
+#include "bitmenu.h"
 #include "bitmenu_logic.h"
 
 
@@ -11,8 +10,8 @@
 
 #include <isola/isola.h>
 #include <isola/misc.h>
-
 #include <isola/input.h>
+
 
 #include <module/bitfont/bitfont_logic.h>
 

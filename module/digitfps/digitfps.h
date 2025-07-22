@@ -1,5 +1,5 @@
-#ifndef DIGITFPS_RENDER_H
-#define DIGITFPS_RENDER_H
+#ifndef DIGITFPS_H
+#define DIGITFPS_H
 
 
 
