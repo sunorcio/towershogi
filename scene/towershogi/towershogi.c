@@ -3,11 +3,36 @@
 
 
 
+#include <stdlib.h>
+#include <string.h>
+
+
 #include <isola/isola.h>
 #include <isola/mutil.h>
 #include <isola/misc.h>
+#include <isola/input.h>
 
 
+
+
+#define PIECE_KING 0
+#define PIECE_PAWN 1
+#define PIECE_KNIGHT 2
+#define PIECE_BISHOP 3
+#define PIECE_ROOK 4
+#define PIECE_QUEEN 5
+#define PIECE_NONE 6
+
+#define PLAYER_WHITE 0
+#define PLAYER_BLACK 1
+#define towershogiPIECE(piece,player) (piece+8*player)
+
+#define STATE_NONE 0
+#define STATE_SELECTED 1
+#define STATE_MOVE 2
+#define STATE_EAT 3
+
+#define SELECTED_NONE 0xffff
 
 
 #define TOWERSHOGI_VB_SIZE (TOWERSHOGI_BOARD_SIZE*6*2)
@@ -35,7 +60,7 @@ static unsigned char * towershogiVD = {0};
 
 
 
-void updateTowershogiRender(void){
+void updateTowershogi(void){
 
 	glBindVertexArray(towershogiVAO[0]);
 	glBindBuffer(GL_ARRAY_BUFFER,towershogiVBO[0]);
@@ -57,16 +82,39 @@ void updateTowershogiRender(void){
 }
 
 
-void createTowershogiRender(void){
+void createTowershogi(void){
+
+	memset(&towershogiBoard,0,sizeof(struct TOWERSHOGI_board));
+	towershogiBoard.tile = calloc(sizeof(struct TOWERSHOGI_piece),
+			TOWERSHOGI_BOARD_SIZE);
+	towershogiBoard.selectedTile = SELECTED_NONE;
+	memset(towershogiBoard.tile,0,
+			sizeof(struct TOWERSHOGI_piece)*TOWERSHOGI_BOARD_SIZE);
+
+	{unsigned int i;
+	for(i = 0;i<TOWERSHOGI_BOARD_SIZE;i++){
+		towershogiBoard.tile[i].piece = PIECE_NONE;
+		towershogiBoard.tile[i].state = STATE_NONE;
+	}}
+
+	towershogiBoard.tile[0].piece = towershogiPIECE(PIECE_KING,PLAYER_WHITE);
+	{unsigned int i;
+	for(i = 0;i<5;i++){
+		{unsigned int j;
+		for(j = 0;j<5;j++){
+			if ((i!=2 || j!=2) && i!=4 && j!=4 && i!=0 && j!=0) {
+				towershogiBoard.tile[0].movement[i][j] = 1;
+			}
+		}}
+	}}
+
 
 	towershogiVD = calloc(sizeof(unsigned char),TOWERSHOGI_VB_SIZE);
-
 
 	glGenVertexArrays(1,&towershogiVAO[0]);
 	glGenBuffers(1,&towershogiVBO[0]);
 
 	glBindVertexArray(towershogiVAO[0]);
-
 
 	glBindBuffer(GL_ARRAY_BUFFER,towershogiVBO[0]);
 	glBufferData(GL_ARRAY_BUFFER,TOWERSHOGI_VB_SIZE*sizeof(towershogiVD[0]),
@@ -136,13 +184,13 @@ void createTowershogiRender(void){
 	}
 	glUniform1i(locPatl,0);
 	}
-
-
-	updateTowershogiRender();
 }
 
 
-void destroyTowershogiRender(void){
+void destroyTowershogi(void){
+
+	free(towershogiBoard.tile);
+
 
 	glUseProgram(0);
 	glBindVertexArray(0);
@@ -153,7 +201,49 @@ void destroyTowershogiRender(void){
 }
 
 
-void drawTowershogiRender(void){
+void stepTowershogi(void){
+
+	if (isola_keyState[SDL_SCANCODE_J] && !isola_keyRepeat[SDL_SCANCODE_J]) {
+		if (towershogiBoard.currentTile >= towershogiBoardSize[0]) {
+			towershogiBoard.currentTile -= towershogiBoardSize[0];
+		}
+	}
+	if (isola_keyState[SDL_SCANCODE_K] && !isola_keyRepeat[SDL_SCANCODE_K]) {
+		if (towershogiBoard.currentTile < TOWERSHOGI_BOARD_SIZE 
+				-towershogiBoardSize[0]) {
+			towershogiBoard.currentTile += towershogiBoardSize[0];
+		}
+	}
+	if (isola_keyState[SDL_SCANCODE_L] && !isola_keyRepeat[SDL_SCANCODE_L]) {
+		if ((towershogiBoard.currentTile+1)%towershogiBoardSize[0]) {
+			towershogiBoard.currentTile += 1;
+		}
+	}
+	if (isola_keyState[SDL_SCANCODE_H] && !isola_keyRepeat[SDL_SCANCODE_H]) {
+		if (towershogiBoard.currentTile%towershogiBoardSize[0]) {
+			towershogiBoard.currentTile -= 1;
+		}
+	}
+	if (isola_keyState[SDL_SCANCODE_SPACE] &&
+			!isola_keyRepeat[SDL_SCANCODE_SPACE]) {
+		if(towershogiBoard.selectedTile == SELECTED_NONE){
+			towershogiBoard.tile[towershogiBoard.currentTile].state =
+					STATE_SELECTED;
+			towershogiBoard.selectedTile = towershogiBoard.currentTile;
+		}
+	}
+	if (isola_keyState[SDL_SCANCODE_Q] && !isola_keyRepeat[SDL_SCANCODE_Q]) {
+		if(towershogiBoard.selectedTile != SELECTED_NONE){
+			towershogiBoard.currentTile = towershogiBoard.selectedTile;
+			towershogiBoard.tile[towershogiBoard.selectedTile].state =
+					STATE_NONE;
+			towershogiBoard.selectedTile = SELECTED_NONE;
+		}
+	}
+}
+
+
+void drawTowershogi(void){
 
 	glBindVertexArray(towershogiVAO[0]);
 
@@ -161,7 +251,6 @@ void drawTowershogiRender(void){
 	glUseProgram(towershogiSP[0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER,towershogiVBO[0]);
-
 
 	memset(towershogiVD,0,TOWERSHOGI_VB_SIZE*sizeof(towershogiVD[0]));
 	{unsigned int i;

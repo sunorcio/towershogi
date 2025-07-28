@@ -39,6 +39,18 @@ else
  $(error wrong TARGET_BUILD value)
 endif
 
+ifeq (${TARGET_DEBUG},on)
+else ifeq (${TARGET_DEBUG},off)
+else
+ $(error wrong TARGET_DEBUG value)
+endif
+
+ifeq (${TARGET_SANITIZE},on)
+else ifeq (${TARGET_SANITIZE},off)
+else
+ $(error wrong TARGET_SANITIZE value)
+endif
+
 
 
 
@@ -65,18 +77,18 @@ ifeq (${TARGET_OS},linux)
  ifeq (${TARGET_BUILD},dynamic)
   LIBS = -lSDL2 -lGLEW -lGLU -lGL -lm
  else ifeq (${TARGET_BUILD},static)
-  LIBS = -Wl,-Bstatic -lSDL2 -lGLEW -Wl,-Bdynamic -lGLU -lGL ${shell sdl2-config --static-libs}
+  LIBS = -Wl,-Bstatic -lGLEW -pthread -lm -Wl,-Bdynamic -lGLU -lGL
  endif
 
 
- #CFLAGS = -O3 -ffast-math -pipe -march=native
- CFLAGS = ${INCS} -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage -std=c99 -D_REENTRANT -MMD -MF ${@:.o=.d} -MJ $@.json
+ #CFLAGS =
+ CFLAGS = ${INCS} -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage -std=c99 -D_REENTRANT -MMD -MF ${@:.o=.d} -MJ $@.json -O3 -ffast-math -pipe -march=native
  #LDFLAGS = -v
  LDFLAGS = ${LIBS} -flto=full
 
  ifeq (${TARGET_DEBUG},on)
   #CFLAGS += -DISOLA_DBG
-  CFLAGS += -g
+  CFLAGS += -g -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer
   #LDFLAGS +=
   LDFLAGS +=
  endif
@@ -153,18 +165,11 @@ all: ${TARGET_BIN}
 ${TARGET_BIN}: ${AUTORULE} ${OBJ}
 	${CC} -o $@.out ${OBJ} ${LDFLAGS}
 
-compdb: ${OBJ}
-	./compdb.sh
-
 clean:
-	rm perf.data* -f
-	rm ${TARGET_BIN}.out ${TARGET_BIN}.exe a.out -f
 	rm ${OBJ} -f
-	rm ${DEP} -f
-	rm ${OBJ:.o=.o.json} -f
 
 deepclean:
-	rm perf.data* -f
+	rm perf.* -f
 	rm ${TARGET_BIN}.out ${TARGET_BIN}.exe a.out -f
 	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.d' ! -path '*/bin/*'} -f
@@ -174,11 +179,14 @@ update: deepclean
 	rm bin -rf
 	rm isola -rf
 
+compdb: ${OBJ}
+	sed -e '1s/^/[\n/' -e '$$s/,$$/\n]/' ${shell find . -type f -name "*.o.json" ! -path '*/bin/*'} > compile_commands.json
+
 debug: clean
-	make a TARGET_BIN=a TARGET_DEBUG=on
+	make a TARGET_BIN=a TARGET_DEBUG=on clean
 
 sanitize: clean
-	make ${TARGET_BIN} TARGET_SANITIZE=on
+	make ${TARGET_BIN} TARGET_SANITIZE=on clean
 
 windows:
 	make TARGET_OS=windows TARGET_BUILD=static

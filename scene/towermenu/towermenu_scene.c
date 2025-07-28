@@ -25,12 +25,12 @@ static void towermenu_destroy(void);
 
 
 
-static void quitTowermenu(void){
+static void towermenu_function_quit(void){
 
 	currentScene->state.run = 0;
 }
 
-static void playTowermenu(void){
+static void towermenu_function_play(void){
 
 	currentScene->state.returnControlValue = 1;
 	currentScene->state.run = 0;
@@ -125,7 +125,7 @@ static void towermenu_create(void){
 		bitmenuBuildObject("these are rules :)",0);
 		bitmenuBuildObject("press q to go back to last menu",0);
 	bitmenuBuildGroupLeave();
-	bitmenuBuildObject("play",playTowermenu);
+	bitmenuBuildObject("play",towermenu_function_play);
 	bitmenuBuildObject("join",0);
 	bitmenuBuildObject("host",0);
 	bitmenuBuildObject("options",0);
@@ -134,7 +134,7 @@ static void towermenu_create(void){
 		bitmenuBuildObject("these are options :)",0);
 		bitmenuBuildObject("press q to go back to last menu",0);
 	bitmenuBuildGroupLeave();
-	bitmenuBuildObject("quit",quitTowermenu);
+	bitmenuBuildObject("quit",towermenu_function_quit);
 
 
 	createBitfont();

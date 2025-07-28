@@ -10,7 +10,6 @@
 
 
 #include "towershogi.h"
-#include "towershogi_logic.h"
 #include <module/digitfps/digitfps.h>
 #include <module/digitfps/digitfps_logic.h>
 
@@ -38,11 +37,8 @@ static void towershogiUpdate(void){
 	glViewport(0,0,isola_info_window.width, isola_info_window.height);
 
 
-	updateTowershogiLogic();
-
-
+	updateTowershogi();
 	updateDigitfps();
-	updateTowershogiRender();
 }
 
 
@@ -93,11 +89,8 @@ static void towershogiCreate(void){
 	towershogiBoardSize[1] = 8;
 
 
-	createTowershogiLogic();
-
-
+	createTowershogi();
 	createDigitfps();
-	createTowershogiRender();
 
 
 	towershogiUpdate();
@@ -109,11 +102,8 @@ static void towershogiDestroy(void){
 	isola_inputClear();
 
 
-	destroyTowershogiLogic();
-
-
+	destroyTowershogi();
 	destroyDigitfps();
-	destroyTowershogiRender();
 
 
 	glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
@@ -123,7 +113,7 @@ static void towershogiDestroy(void){
 
 
 
-unsigned char towershogiLoop(void){
+unsigned char towershogi_loop(void){
 
 	SDL_Event event = {0};
 
@@ -171,7 +161,7 @@ unsigned char towershogiLoop(void){
 		if (!towershogiScene.state.pause) {
 			if(isola_timerStep(&currentScene->timing.logicTimer)){
 
-				stepTowershogiLogic();
+				stepTowershogi();
 
 				isola_inputRepeat();
 			}
@@ -181,7 +171,7 @@ unsigned char towershogiLoop(void){
 				glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 
 
-				drawTowershogiRender();
+				drawTowershogi();
 				drawDigitfps();
 
 

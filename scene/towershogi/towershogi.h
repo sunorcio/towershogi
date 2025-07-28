@@ -15,6 +15,7 @@ struct TOWERSHOGI_piece{
 	unsigned char movement[5][5];
 };
 
+
 struct TOWERSHOGI_board{
 	unsigned short currentPlayer;
 	unsigned short currentTile;
@@ -30,10 +31,11 @@ extern unsigned short towershogiBoardSize[2];
 
 
 
-extern void updateTowershogiRender(void);
-extern void createTowershogiRender(void);
-extern void destroyTowershogiRender(void);
-extern void drawTowershogiRender(void);
+extern void updateTowershogi(void);
+extern void createTowershogi(void);
+extern void destroyTowershogi(void);
+extern void stepTowershogi(void);
+extern void drawTowershogi(void);
 
 
 

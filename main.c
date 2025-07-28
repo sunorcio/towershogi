@@ -24,7 +24,7 @@ int main(int argc, char **argv){
 
 	start:
 	if (towermenu_loop()) {
-		if (towershogiLoop()) {
+		if (towershogi_loop()) {
 			goto start;
 		}
 	}

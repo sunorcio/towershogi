@@ -8,3 +8,4 @@ isola_example
 bin
 isola
 compile_commands.json
+perf.*

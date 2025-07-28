@@ -4,7 +4,7 @@
 
 
 
-extern unsigned char towershogiLoop(void);
+extern unsigned char towershogi_loop(void);
 
 
 
