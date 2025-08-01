@@ -6,47 +6,66 @@
 
 
 
-default_rule: test
+default: test
 
 
-
-
-#(linux^windows)
+#[linux^windows]
 TARGET_OS = linux
-#(dynamic^static)
-TARGET_BUILD = dynamic
-#(off^on)
+#[dynamic^static]
+TARGET_LINK = dynamic
+#[incremental^unified]
+TARGET_BUILD = incremental
+
+#[off^on]
+TARGET_RELEASE = off
+#[off^on]
 TARGET_DEBUG = off
-#(off^on)
+#[off^on]
 TARGET_SANITIZE = off
-#(binary name string)
+
+#[string], binary name
 TARGET_BIN = isola_example
 
 
+# /\ /\ MAKEFILE CONFIGURATION /\ /\
+# || ||                        || ||
+# rules are at the bottom of this file
 
 
-ifeq (${TARGET_OS},linux)
- CC = clang
-else ifeq (${TARGET_OS},windows)
- CC = x86_64-w64-mingw32-gcc
+
+
+ifeq (${TARGET_OS}, linux)
+else ifeq (${TARGET_OS}, windows)
 else
  $(error wrong TARGET_OS value)
 endif
 
-ifeq (${TARGET_BUILD},dynamic)
-else ifeq (${TARGET_BUILD},static)
+ifeq (${TARGET_LINK}, dynamic)
+else ifeq (${TARGET_LINK}, static)
+else
+ $(error wrong TARGET_LINK value)
+endif
+
+ifeq (${TARGET_BUILD}, incremental)
+else ifeq (${TARGET_BUILD}, unified)
 else
  $(error wrong TARGET_BUILD value)
 endif
 
-ifeq (${TARGET_DEBUG},on)
-else ifeq (${TARGET_DEBUG},off)
+ifeq (${TARGET_RELEASE}, on)
+else ifeq (${TARGET_RELEASE}, off)
+else
+ $(error wrong TARGET_RELEASE value)
+endif
+
+ifeq (${TARGET_DEBUG}, on)
+else ifeq (${TARGET_DEBUG}, off)
 else
  $(error wrong TARGET_DEBUG value)
 endif
 
-ifeq (${TARGET_SANITIZE},on)
-else ifeq (${TARGET_SANITIZE},off)
+ifeq (${TARGET_SANITIZE}, on)
+else ifeq (${TARGET_SANITIZE}, off)
 else
  $(error wrong TARGET_SANITIZE value)
 endif
@@ -59,41 +78,75 @@ GLOBALDEP =
 #AUTORULE =
 AUTORULE = isola bin compdb
 
+
+ifeq (${TARGET_BUILD}, incremental)
+
 # #HDR = ${shell find . -type f -name '*.h' ! -path '*/bin/*'}
 #HDR =
 #SRC =
-SRC = ${shell find . -type f -name '*.c' ! -path '*/bin/*'}
+SRC = ${shell find . -type f -name '*.c' ! -path '*/bin/*' ! -name 'all.c'}
 #DEP =
 DEP = ${shell find . -type f -name '*.d' ! -path '*/bin/*'}
 OBJ = ${SRC:.c=.o}
 
 
+else ifeq (${TARGET_BUILD}, unified)
+
+SRC = all.c
+OBJ = ${SRC:.c=.o}
+
+all.c:
+	find . -type f -name '*.c' ! -path '*/bin/*' > all.c.temp
+	sed -e 's/\.\///' all.c.temp > all.c1.temp
+	sed -e 's/.*/#include "&"/' all.c1.temp > all.c
+	rm *.temp -f
 
 
-ifeq (${TARGET_OS},linux)
+endif
+
+
+
+
+ifeq (${TARGET_OS}, linux)
+
+ CC = clang
 
  INCS = -I./
 
- ifeq (${TARGET_BUILD},dynamic)
+ ifeq (${TARGET_LINK}, dynamic)
   LIBS = -lSDL2 -lGLEW -lGLU -lGL -lm
- else ifeq (${TARGET_BUILD},static)
+ else ifeq (${TARGET_LINK}, static)
   LIBS = -Wl,-Bstatic -lGLEW -pthread -lm -Wl,-Bdynamic -lGLU -lGL
  endif
 
 
- #CFLAGS =
- CFLAGS = ${INCS} -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage -std=c99 -D_REENTRANT -MMD -MF ${@:.o=.d} -MJ $@.json -O3 -ffast-math -pipe -march=native
- #LDFLAGS = -v
- LDFLAGS = ${LIBS} -flto=full
+ #CFLAGS = -O3 -ffast-math -pipe -march=native
+ CFLAGS = ${INCS} -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage -std=c99 -D_REENTRANT
+ #LDFLAGS = -flto=full -v
+ LDFLAGS = ${LIBS}
 
- ifeq (${TARGET_DEBUG},on)
+ ifeq (${TARGET_BUILD}, incremental)
+  #CFLAGS +=
+  CFLAGS += -MMD -MF ${@:.o=.d} -MJ $@.json
+  #LDFLAGS +=
+  LDFLAGS +=
+ endif
+
+ ifeq (${TARGET_RELEASE}, on)
+  #CFLAGS +=
+  CFLAGS += -O3 -ffast-math -pipe -march=native -march=x86-64
+  #LDFLAGS +=
+  LDFLAGS += -flto=full
+ endif
+
+ ifeq (${TARGET_DEBUG}, on)
   #CFLAGS += -DISOLA_DBG
   CFLAGS += -g -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer
   #LDFLAGS +=
   LDFLAGS +=
  endif
 
- ifeq (${TARGET_SANITIZE},on)
+ ifeq (${TARGET_SANITIZE}, on)
   #CFLAGS += -Weverything -Werror -std=c89
   CFLAGS += -fsanitize=undefined -fsanitize=address
   #LDFLAGS +=
@@ -101,7 +154,9 @@ ifeq (${TARGET_OS},linux)
  endif
 
 
-else ifeq (${TARGET_OS},windows)
+else ifeq (${TARGET_OS}, windows)
+
+ CC = x86_64-w64-mingw32-gcc
 
  INCS = -I./ -I./bin/glew-2.2.0/include -I./bin/SDL2-2.30.3/x86_64-w64-mingw32/include
  LIBS = -L./bin/glew-2.2.0/lib/Release/x64 -L./bin/SDL2-2.30.3/x86_64-w64-mingw32/lib -Wl,-Bstatic -static-libgcc -lmingw32 -lSDL2main -lSDL2 -lglew32s -lglu32 -lopengl32 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid
@@ -112,7 +167,7 @@ else ifeq (${TARGET_OS},windows)
  #LDFLAGS = #-v #-mwindows
  LDFLAGS = ${LIBS}
 
- ifeq (${TARGET_DEBUG},on)
+ ifeq (${TARGET_DEBUG}, on)
  endif
 
 
@@ -131,20 +186,13 @@ ${OBJ}: %.o : %.c
 
 
 
-ifeq (${TARGET_OS},linux)
-
-test: ${TARGET_BIN} compdb
-	./${TARGET_BIN}.out
-
+ifeq (${TARGET_OS}, linux)
 
 bin:
 	mkdir bin
 
 
-else ifeq (${TARGET_OS},windows)
-
-test: ${TARGET_BIN}
-
+else ifeq (${TARGET_OS}, windows)
 
 bin:
 	mkdir bin
@@ -160,10 +208,9 @@ endif
 
 
 
-all: ${TARGET_BIN}
-
 ${TARGET_BIN}: ${AUTORULE} ${OBJ}
 	${CC} -o $@.out ${OBJ} ${LDFLAGS}
+
 
 clean:
 	rm ${OBJ} -f
@@ -182,14 +229,23 @@ update: deepclean
 compdb: ${OBJ}
 	sed -e '1s/^/[\n/' -e '$$s/,$$/\n]/' ${shell find . -type f -name "*.o.json" ! -path '*/bin/*'} > compile_commands.json
 
+flamegraph:
+	su -c "perf record -F 999 -g --call-graph dwarf ./a.out; perf script | /opt/FlameGraph/stackcollapse-perf.pl > perf.fold; /opt/FlameGraph/flamegraph.pl perf.fold > perf.svg"
+
+test: ${TARGET_BIN}
+	./${TARGET_BIN}.out
+
 debug: clean
 	make a TARGET_BIN=a TARGET_DEBUG=on clean
 
 sanitize: clean
-	make ${TARGET_BIN} TARGET_SANITIZE=on clean
+	make a TARGET_BIN=a TARGET_SANITIZE=on clean
+
+release:
+	make clean ${TARGET_BIN} TARGET_OS=linux TARGET_LINK=static TARGET_BUILD=unified TARGET_RELEASE=on
 
 windows:
-	make TARGET_OS=windows TARGET_BUILD=static
+	make clean ${TARGET_BIN} TARGET_OS=windows TARGET_LINK=static TARGET_BUILD=unified TARGET_RELEASE=on
 
 isola:
 	git clone https://github.com/sunorcio/isola --depth 1
@@ -204,4 +260,4 @@ isola/isola_config.h: isola_config.h
 
 
 
-.PHONY: default_rule test all clean deepclean update debug sanitize compdb windows
+.PHONY: default clean deepclean update compdb flamegraph test debug sanitize release windows
