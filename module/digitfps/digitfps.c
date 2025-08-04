@@ -124,7 +124,8 @@ void createDigitfps(void){
 			sizeof(digitfpsED),digitfpsED);
 
 
-	digitfpsSP = isola_shader_buildProgram("module/digitfps/digitfps.vert","module/digitfps/digitfps.frag");
+	digitfpsSP = isola_shader_buildProgram("module/digitfps/digitfps.vert",
+			"module/digitfps/digitfps.frag");
 
 
 	updateDigitfps();
@@ -146,7 +147,7 @@ void drawDigitfps(void){
 	isola_set_state(digitfpsState);
 
 
-	{unsigned long delaySum = 0;
+	{Uint64 delaySum = 0;
 	{unsigned int i;
 	for(i = 0;i<256;i++){
 		delaySum += digitfpsCounter->stepDelay[i];
@@ -156,8 +157,7 @@ void drawDigitfps(void){
 	for(i = 0;i<digitfpsPrintAmount;i++){
 		digitfpsString[i] = 0;
 	}}
-	sprintf(digitfpsString,"%f",
-			1./((delaySum/256.)/(double)isola_clockFreq) );
+	sprintf(digitfpsString,"%f", 1./((delaySum/256.)/(double)isola_clockFreq) );
 	}
 
 	{unsigned int i;

@@ -116,12 +116,12 @@ ifeq (${TARGET_OS}, linux)
  ifeq (${TARGET_LINK}, dynamic)
   LIBS = -lSDL2 -lGLEW -lGLU -lGL -lm
  else ifeq (${TARGET_LINK}, static)
-  LIBS = -Wl,-Bstatic -lGLEW -pthread -lm -Wl,-Bdynamic -lGLU -lGL
+	LIBS = -Wl,-Bstatic /home/santi/main/towershogi/bin/SDL3-3.2.18/build/libSDL3.a -lGLEW -pthread -lm -Wl,-Bdynamic -lGLU -lGL
  endif
 
 
  #CFLAGS = -O3 -ffast-math -pipe -march=native
- CFLAGS = ${INCS} -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage -std=c99 -D_REENTRANT
+ CFLAGS = ${INCS} -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage -std=c89 -D_REENTRANT
  #LDFLAGS = -flto=full -v
  LDFLAGS = ${LIBS}
 
@@ -133,8 +133,8 @@ ifeq (${TARGET_OS}, linux)
  endif
 
  ifeq (${TARGET_RELEASE}, on)
-  #CFLAGS +=
-  CFLAGS += -O3 -ffast-math -pipe -march=native -march=x86-64
+  #CFLAGS += -march=native
+  CFLAGS += -O3 -ffast-math -pipe -march=x86-64
   #LDFLAGS +=
   LDFLAGS += -flto=full
  endif
@@ -147,8 +147,8 @@ ifeq (${TARGET_OS}, linux)
  endif
 
  ifeq (${TARGET_SANITIZE}, on)
-  #CFLAGS += -Weverything -Werror -std=c89
-  CFLAGS += -fsanitize=undefined -fsanitize=address
+  #CFLAGS += -Werror
+  CFLAGS += -fsanitize=undefined -fsanitize=address -Weverything -std=c89
   #LDFLAGS +=
   LDFLAGS += -fsanitize=undefined -fsanitize=address
  endif
@@ -162,12 +162,30 @@ else ifeq (${TARGET_OS}, windows)
  LIBS = -L./bin/glew-2.2.0/lib/Release/x64 -L./bin/SDL2-2.30.3/x86_64-w64-mingw32/lib -Wl,-Bstatic -static-libgcc -lmingw32 -lSDL2main -lSDL2 -lglew32s -lglu32 -lopengl32 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid
 
 
- #CFLAGS = -DISOLA_DBG #-g
- CFLAGS = ${INCS} -Wall -Wextra -Wpedantic -std=c99 -O3 -ffast-math -pipe -DGLEW_STATIC -D_REENTRANT -DWIN32_LEAN_AND_MEAN -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-old-style-declaration
- #LDFLAGS = #-v #-mwindows
+ #CFLAGS =
+ CFLAGS = ${INCS} -D_REENTRANT -DWIN32_LEAN_AND_MEAN -Wall -Wextra -Wpedantic -std=c89 -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-old-style-declaration
+ #LDFLAGS = -v -mwindows
  LDFLAGS = ${LIBS}
 
+ ifeq (${TARGET_RELEASE}, on)
+  #CFLAGS +=
+  CFLAGS += -O3 -ffast-math -pipe -DGLEW_STATIC
+  #LDFLAGS +=
+  LDFLAGS +=
+ endif
+
  ifeq (${TARGET_DEBUG}, on)
+  #CFLAGS += -DISOLA_DBG
+  CFLAGS += -g -fno-omit-frame-pointer
+  #LDFLAGS +=
+  LDFLAGS +=
+ endif
+
+ ifeq (${TARGET_SANITIZE}, on)
+  #CFLAGS +=
+  CFLAGS += -Weverything -Werror -std=c89
+  #LDFLAGS +=
+  LDFLAGS +=
  endif
 
 

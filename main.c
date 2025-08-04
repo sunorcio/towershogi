@@ -22,10 +22,15 @@ int main(int argc, char **argv){
 
 
 
-	start:
-	if (towermenu_loop()) {
-		if (towershogi_loop()) {
-			goto start;
+	while (1) {
+		if (towermenu_loop()) {
+			if (towershogi_loop()) {
+				continue;
+			}else {
+				break;
+			}
+		}else {
+			break;
 		}
 	}
 

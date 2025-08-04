@@ -123,7 +123,7 @@ void createBitfont(void){
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 
 	{void* imagedata;
-	long filesize;
+	Uint64 filesize;
 	FILE* imagefile = fopen("module/bitfont/data/128x128p_8x16_IBM_VGA_ASCII.data",
 			"rb");
 	fseek(imagefile,0,SEEK_END);

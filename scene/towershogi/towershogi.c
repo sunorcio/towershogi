@@ -139,7 +139,7 @@ void createTowershogi(void){
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 
 	{void* imagedata;
-	long filesize;
+	Uint64 filesize;
 	FILE* imagefile = fopen("scene/towershogi/data/16x16p_4x4_chess.data","rb");
 	fseek(imagefile,0,SEEK_END);
 	filesize = ftell(imagefile);
