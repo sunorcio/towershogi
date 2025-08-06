@@ -75,8 +75,12 @@ endif
 
 #GLOBALDEP = Makefile
 GLOBALDEP =
-#AUTORULE =
-AUTORULE = isola bin compdb
+#PRERULE =
+PRERULE = isola bin
+#POSTRULE =
+POSTRULE = compdb
+
+
 
 
 ifeq (${TARGET_BUILD}, incremental)
@@ -196,7 +200,7 @@ endif
 
 include ${DEP}
 
-${OBJ}: ${GLOBALDEP}
+${OBJ}: ${GLOBALDEP} | ${PRERULE}
 
 ${OBJ}: %.o : %.c
 	${CC} -c $< -o $@ ${CFLAGS}
@@ -226,7 +230,7 @@ endif
 
 
 
-${TARGET_BIN}: ${AUTORULE} ${OBJ}
+${TARGET_BIN}: ${OBJ} | ${POSTRULE}
 	${CC} -o $@.out ${OBJ} ${LDFLAGS}
 
 
@@ -269,7 +273,7 @@ isola:
 	git clone https://github.com/sunorcio/isola --depth 1
 	cp isola/isola_config.h isola_config.h -n
 	cp isola_config.h isola/isola_config.h
-	@echo -e '\033[0;31m''!!! ISOLA HAS BEEN UPDATED, RUN MAKE AGAIN !!!'
+	@echo -e '\033[0;31m''!!! ISOLA HAS BEEN UPDATED, RUN MAKE AGAIN !!!''\033[0m'
 	@exit 1
 
 isola/isola_config.h: isola_config.h
