@@ -3,6 +3,7 @@
 
 
 #include <time.h>
+#include <stdlib.h>
 
 
 #include "isola/isola.h"

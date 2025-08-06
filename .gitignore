@@ -13,3 +13,4 @@ all.c
 bin
 
 isola
+*.log
