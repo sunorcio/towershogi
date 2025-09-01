@@ -72,9 +72,19 @@ endif
 #GLOBALDEP = Makefile
 GLOBALDEP =
 #PRERULE =
-PRERULE = bin isola
+PRERULE = isola
 #POSTRULE =
-POSTRULE = compdb
+POSTRULE =
+
+ifeq (${TARGET_RELEASE}, on)
+ PRERULE += bin
+else ifeq (${TARGET_RELEASE}, off)
+endif
+
+ifeq (${TARGET_BUILD}, incremental)
+ POSTRULE += compdb
+else ifeq (${TARGET_BUILD}, unified)
+endif
 
 
 
@@ -116,7 +126,7 @@ ifeq (${TARGET_OS}, linux)
  ifeq (${TARGET_LINK}, dynamic)
   LIBS = -lSDL3 -lGLEW -lGLU -lGL -lm
  else ifeq (${TARGET_LINK}, static)
-	LIBS = -Wl,-Bstatic /home/santi/main/towershogi/bin/linux/SDL3-3.2.20/build/libSDL3.a -lGLEW -lpthread -Wl,-Bdynamic -lm -lGLU -lGL
+  LIBS = -Wl,-Bstatic /home/santi/main/towershogi/bin/linux/SDL3-3.2.20/build/libSDL3.a -lGLEW -lpthread -Wl,-Bdynamic -lGLU -lGL -lm
  endif
 
 
@@ -216,8 +226,8 @@ bin/linux:
 	unzip bin/linux/glew-2.2.0.zip -d bin/linux/
 	rm bin/linux/*.zip -f
 	make -C ./bin/linux/glew-2.2.0/
-	cmake -S bin/linux/SDL3-3.2.20/ -B bin/linux/SDL3-3.2.20/build/ -DSDL_SHARED=OFF -DSDL_STATIC=ON
-	cmake --build bin/linux/SDL3-3.2.20/build/
+	cmake -S bin/linux/SDL3-3.2.20/ -B bin/linux/SDL3-3.2.20/build/ -DSDL_TEST_LIBRARY=OFF -DSDL_SHARED=OFF -DSDL_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-march=x86-64" -DCMAKE_CXX_FLAGS="-march=x86-64"
+	cmake --build bin/linux/SDL3-3.2.20/build/ --config Release
 
 
 else ifeq (${TARGET_OS}, windows)
