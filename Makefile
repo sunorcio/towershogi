@@ -124,7 +124,7 @@ ifeq (${TARGET_OS}, linux)
  ifeq (${TARGET_LINK}, dynamic)
   INCS = -I./
  else ifeq (${TARGET_LINK}, static)
-  INCS = -I./ -I./bin/linux/SDL3-3.2.20/include/SDL3
+  INCS = -I./ -I./bin/linux/SDL3-3.2.20/include/
  endif
 
  ifeq (${TARGET_LINK}, dynamic)
