@@ -5,7 +5,6 @@
 
 
 #include <stdio.h>
-#include <stdlib.h>
 
 
 #include <isola/isola.h>
@@ -34,7 +33,7 @@ struct BITFONT_data* bitfontRequestPtr(unsigned int size){
 	for(i = 0;i<BITFONT_MAXDATAPOINTERS;i++){
 		if (bitfontData[i].size == 0) {
 			bitfontData[i].size = size;
-			bitfontData[i].data = calloc(size,sizeof(struct BITFONT_object));
+			bitfontData[i].data = SDL_calloc(size,sizeof(struct BITFONT_object));
 			return bitfontData;
 		}
 	}}
@@ -46,7 +45,7 @@ struct BITFONT_data* bitfontRequestPtr(unsigned int size){
 
 void bitfontFreePtr(struct BITFONT_data* ptr){
 	
-	free(ptr->data);
+	SDL_free(ptr->data);
 	ptr->size = 0;
 }
 
@@ -130,12 +129,12 @@ void createBitfont(void){
 	fseek(imagefile,0,SEEK_END);
 	filesize = ftell(imagefile);
 	fseek(imagefile,0,SEEK_SET);
-	imagedata = malloc(filesize+1);
+	imagedata = SDL_malloc(filesize+1);
 	fread(imagedata,filesize,1,imagefile);
 	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,16*8,8*16,
 			0,GL_RGBA,GL_UNSIGNED_BYTE,(char*)imagedata);
 	fclose(imagefile);
-	free(imagedata);
+	SDL_free(imagedata);
 	}
 
 

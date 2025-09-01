@@ -3,7 +3,6 @@
 
 
 #include <time.h>
-#include <stdlib.h>
 
 
 #include "isola/isola.h"
@@ -17,7 +16,7 @@
 
 int main(int argc, char **argv){
 
-	srand(time(0));
+	SDL_srand(time(0));
 	isola_init();
 
 

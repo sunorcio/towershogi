@@ -4,7 +4,6 @@
 
 
 
-#include <stdlib.h>
 #include <string.h>
 
 
@@ -75,10 +74,10 @@ static void bitmenuGrouptreeDelete(struct BITMENU_group* group){
 	
 		last = object;
 		object = object->objectNext;
-		free(last);
+		SDL_free(last);
 	}
 
-	free(group);
+	SDL_free(group);
 }
 
 static void bitmenuGrouptreeStep(struct BITMENU_group* group){
@@ -179,10 +178,10 @@ static void bitmenuLeaveGroup(void){
 void bitmenuBuildMenu(void){
 
 	if (menuPointer != 0) {
-		menuPointer->menuNext = calloc(1,sizeof(struct BITMENU_menu));
+		menuPointer->menuNext = SDL_calloc(1,sizeof(struct BITMENU_menu));
 		menuPointer = menuPointer->menuNext;
 	}else {
-		menuPointer = calloc(1,sizeof(struct BITMENU_menu));
+		menuPointer = SDL_calloc(1,sizeof(struct BITMENU_menu));
 		bitmenuHead = menuPointer;
 		bitmenuCurrent = menuPointer;
 	}
@@ -191,14 +190,14 @@ void bitmenuBuildMenu(void){
 void bitmenuBuildScreen(unsigned char fontScaleGlobal){
 
 	if (menuPointer->screenHead != 0) {
-		screenPointer->screenNext = calloc(1,sizeof(struct BITMENU_screen));
+		screenPointer->screenNext = SDL_calloc(1,sizeof(struct BITMENU_screen));
 		screenPointer = screenPointer->screenNext;
 		groupPointer->screenParent = screenPointer;
 		screenPointer->groupTransition = groupPointer;
 		screenPointer->fontScaleGlobal = fontScaleGlobal;
 	
 	}else {
-		screenPointer = calloc(1,sizeof(struct BITMENU_screen));
+		screenPointer = SDL_calloc(1,sizeof(struct BITMENU_screen));
 		menuPointer->screenHead = screenPointer;
 		groupPointer->screenParent = screenPointer;
 		screenPointer->groupTransition = groupPointer;
@@ -209,7 +208,7 @@ void bitmenuBuildScreen(unsigned char fontScaleGlobal){
 void bitmenuBuildGroup(float x, float y, float w, float h){
 
 	if (menuPointer->groupHead != 0) {
-		objectPointer->groupLink = calloc(1,sizeof(struct BITMENU_group));
+		objectPointer->groupLink = SDL_calloc(1,sizeof(struct BITMENU_group));
 		objectPointer->groupLink->groupPrevious = groupPointer;
 		groupPointer = objectPointer->groupLink;
 		groupPointer->screenParent = screenPointer;
@@ -218,7 +217,7 @@ void bitmenuBuildGroup(float x, float y, float w, float h){
 		groupPointer->w = w;
 		groupPointer->h = h;
 	}else {
-		groupPointer = calloc(1,sizeof(struct BITMENU_group));
+		groupPointer = SDL_calloc(1,sizeof(struct BITMENU_group));
 		groupPointer->screenParent = screenPointer;
 		groupPointer->x = x;
 		groupPointer->y = y;
@@ -232,13 +231,13 @@ void bitmenuBuildGroup(float x, float y, float w, float h){
 void bitmenuBuildObject(const char* name, void (*function)(void)){
 
 	if (groupPointer->objectHead != 0) {
-		objectPointer->objectNext = calloc(1,sizeof(struct BITMENU_object));
+		objectPointer->objectNext = SDL_calloc(1,sizeof(struct BITMENU_object));
 		objectPointer = objectPointer->objectNext;
 
 		strcpy(objectPointer->name,name);
 		objectPointer->function = function;
 	}else {
-		objectPointer = calloc(1,sizeof(struct BITMENU_object));
+		objectPointer = SDL_calloc(1,sizeof(struct BITMENU_object));
 		strcpy(objectPointer->name,name);
 		objectPointer->function = function;
 
@@ -321,14 +320,14 @@ void destroyBitmenu(void){
 
 			last = screen;
 			screen = screen->screenNext;
-			free(last);
+			SDL_free(last);
 		}
 
 		bitmenuGrouptreeDelete(menu->groupHead);
 
 		last = menu;
 		menu = menu->menuNext;
-		free(menu);
+		SDL_free(menu);
 	}
 
 

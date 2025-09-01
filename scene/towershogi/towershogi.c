@@ -3,7 +3,6 @@
 
 
 
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -86,7 +85,7 @@ void updateTowershogi(void){
 void createTowershogi(void){
 
 	memset(&towershogiBoard,0,sizeof(struct TOWERSHOGI_board));
-	towershogiBoard.tile = calloc(sizeof(struct TOWERSHOGI_piece),
+	towershogiBoard.tile = SDL_calloc(sizeof(struct TOWERSHOGI_piece),
 			TOWERSHOGI_BOARD_SIZE);
 	towershogiBoard.selectedTile = SELECTED_NONE;
 	memset(towershogiBoard.tile,0,
@@ -110,7 +109,7 @@ void createTowershogi(void){
 	}}
 
 
-	towershogiVD = calloc(sizeof(unsigned char),TOWERSHOGI_VB_SIZE);
+	towershogiVD = SDL_calloc(sizeof(unsigned char),TOWERSHOGI_VB_SIZE);
 
 	glGenVertexArrays(1,&towershogiVAO[0]);
 	glGenBuffers(1,&towershogiVBO[0]);
@@ -145,12 +144,12 @@ void createTowershogi(void){
 	fseek(imagefile,0,SEEK_END);
 	filesize = ftell(imagefile);
 	fseek(imagefile,0,SEEK_SET);
-	imagedata = malloc(filesize+1);
+	imagedata = SDL_malloc(filesize+1);
 	fread(imagedata,filesize,1,imagefile);
 	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,16*4,16*4,
 			0,GL_RGBA,GL_UNSIGNED_BYTE,(char*)imagedata);
 	fclose(imagefile);
-	free(imagedata);
+	SDL_free(imagedata);
 	}
 
 
@@ -190,7 +189,7 @@ void createTowershogi(void){
 
 void destroyTowershogi(void){
 
-	free(towershogiBoard.tile);
+	SDL_free(towershogiBoard.tile);
 
 
 	glUseProgram(0);
