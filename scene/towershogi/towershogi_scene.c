@@ -67,7 +67,7 @@ static void towershogiCreate(void){
 	isola_timerSetup(&towershogiScene.timing.logicTimer, 60);
 	isola_counterSetup(&towershogiScene.timing.frameCounter, 60);
 
-	isola_inputClear();
+	isola_inputClear(isola_window);
 
 
 	SDL_SetWindowSize(isola_window,towershogiScene.window.windowRes[0],
@@ -77,7 +77,7 @@ static void towershogiCreate(void){
 	SDL_SetWindowBordered(isola_window,towershogiScene.window.windowBorder);
 	SDL_SetWindowResizable(isola_window,towershogiScene.window.windowResizable);
 	if(towershogiScene.window.windowFullscreen){
-		SDL_SetWindowFullscreen(isola_window,SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_SetWindowFullscreen(isola_window,1);
 	}
 	glClearColor(towershogiScene.window.clearColor[0],
 			towershogiScene.window.clearColor[1],
@@ -99,7 +99,7 @@ static void towershogiCreate(void){
 
 static void towershogiDestroy(void){
 
-	isola_inputClear();
+	isola_inputClear(isola_window);
 
 
 	destroyTowershogi();
@@ -122,38 +122,37 @@ unsigned char towershogi_loop(void){
 
 
 	while(towershogiScene.state.run){
+
 		while (SDL_PollEvent(&event)){
-			if(event.type == SDL_QUIT){towershogiScene.state.run = 0;}
-			if(event.type == SDL_WINDOWEVENT){
-				switch(event.window.event){
-					case SDL_WINDOWEVENT_SIZE_CHANGED:
-					case SDL_WINDOWEVENT_RESIZED:
-					case SDL_WINDOWEVENT_DISPLAY_CHANGED:
-						towershogiUpdate();
-					break;
-					case SDL_WINDOWEVENT_CLOSE:
-						towershogiScene.state.returnControlValue = 0;
-						towershogiScene.state.run = 0;
-					break;
-				}
-			}
-			if(event.type == SDL_KEYDOWN){
-				if (!event.key.repeat) {
-					switch (event.key.keysym.sym){
-						case SDLK_ESCAPE:
-							towershogiScene.state.returnControlValue = 1;
-							towershogiScene.state.run = 0;
+			switch (event.type) {
+				case SDL_EVENT_QUIT:
+				case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+					towershogiScene.state.returnControlValue = 0;
+					towershogiScene.state.run = 0;
+				break;
+				case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+				case SDL_EVENT_WINDOW_RESIZED:
+				case SDL_EVENT_WINDOW_DISPLAY_CHANGED:
+					towershogiUpdate();
+				break;
+				case SDL_EVENT_KEY_DOWN:
+					if (!event.key.repeat) {
+						switch (event.key.key){
+							case SDLK_ESCAPE:
+								towershogiScene.state.returnControlValue = 1;
+								towershogiScene.state.run = 0;
+							break;
+						}
+					}
+					switch (event.key.key){
+						case SDLK_BACKSPACE:
+							isola_textEditPop();
 						break;
 					}
-				}
-				switch (event.key.keysym.sym){
-					case SDLK_BACKSPACE:
-						isola_textEditPop();
-					break;
-				}
-			}
-			if(event.type == SDL_TEXTINPUT){
-				isola_textEditPush(&event.text.text);
+				break;
+				case SDL_EVENT_TEXT_INPUT:
+					isola_textEditPush(/* ???well see */(char(*)[32])&event.text.text);
+				break;
 			}
 		}
 

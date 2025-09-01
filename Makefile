@@ -1,7 +1,3 @@
-# to compile for linux, get the following binaries from its source or from your own distribution:
-#  glew - https://github.com/nigels-com/glew
-#  SDL2 - https://github.com/libsdl-org/SDL
-#  opengl drivers
 
 
 
@@ -76,7 +72,7 @@ endif
 #GLOBALDEP = Makefile
 GLOBALDEP =
 #PRERULE =
-PRERULE = isola bin
+PRERULE = bin isola
 #POSTRULE =
 POSTRULE = compdb
 
@@ -118,9 +114,9 @@ ifeq (${TARGET_OS}, linux)
  INCS = -I./
 
  ifeq (${TARGET_LINK}, dynamic)
-  LIBS = -lSDL2 -lGLEW -lGLU -lGL -lm
+  LIBS = -lSDL3 -lGLEW -lGLU -lGL -lm
  else ifeq (${TARGET_LINK}, static)
-	LIBS = -Wl,-Bstatic /home/santi/main/towershogi/bin/SDL3-3.2.18/build/libSDL3.a -lGLEW -pthread -lm -Wl,-Bdynamic -lGLU -lGL
+	LIBS = -Wl,-Bstatic /home/santi/main/towershogi/bin/linux/SDL3-3.2.20/build/libSDL3.a -lGLEW -lpthread -Wl,-Bdynamic -lm -lGLU -lGL
  endif
 
 
@@ -210,19 +206,31 @@ ${OBJ}: %.o : %.c
 
 ifeq (${TARGET_OS}, linux)
 
-bin:
-	mkdir bin
+bin: bin/linux
+
+bin/linux:
+	mkdir bin/linux -p
+	wget https://github.com/libsdl-org/SDL/releases/download/release-3.2.20/SDL3-3.2.20.zip -P bin/linux/
+	wget https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0.zip -P bin/linux/
+	unzip bin/linux/SDL3-3.2.20.zip -d bin/linux/
+	unzip bin/linux/glew-2.2.0.zip -d bin/linux/
+	rm bin/linux/*.zip -f
+	make -C ./bin/linux/glew-2.2.0/
+	cmake -S bin/linux/SDL3-3.2.20/ -B bin/linux/SDL3-3.2.20/build/ -DSDL_SHARED=OFF -DSDL_STATIC=ON
+	cmake --build bin/linux/SDL3-3.2.20/build/
 
 
 else ifeq (${TARGET_OS}, windows)
 
-bin:
-	mkdir bin
-	wget https://github.com/libsdl-org/SDL/releases/download/release-2.30.3/SDL2-devel-2.30.3-mingw.zip -P bin/
-	wget https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0-win32.zip -P bin/
-	unzip bin/SDL2* -d bin/
-	unzip bin/glew* -d bin/
-	rm bin/*.zip -f
+bin: bin/windows
+
+bin/windows:
+	mkdir bin/windows -p
+	wget https://github.com/libsdl-org/SDL/releases/download/release-3.2.20/SDL3-devel-3.2.20-mingw.zip -P bin/windows/
+	wget https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0-win32.zip -P bin/windows
+	unzip bin/windows/SDL3-devel-3.2.20-mingw.zip -d bin/windows/
+	unzip bin/windows/glew-2.2.0-win32.zip -d bin/windows/
+	rm bin/windows/*.zip -f
 
 
 endif

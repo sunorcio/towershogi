@@ -94,7 +94,7 @@ static void towermenu_create(void){
 	isola_counterSetup(&towermenu_scene.timing.frameCounter, 60);
 
 
-	isola_inputClear();
+	isola_inputClear(isola_window);
 
 
 	SDL_SetWindowSize(isola_window,towermenu_scene.window.windowRes[0],
@@ -104,7 +104,7 @@ static void towermenu_create(void){
 	SDL_SetWindowBordered(isola_window,towermenu_scene.window.windowBorder);
 	SDL_SetWindowResizable(isola_window,towermenu_scene.window.windowResizable);
 	if(towermenu_scene.window.windowFullscreen){
-		SDL_SetWindowFullscreen(isola_window,SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_SetWindowFullscreen(isola_window,1);
 	}
 	glClearColor(towermenu_scene.window.clearColor[0],
 			towermenu_scene.window.clearColor[1],
@@ -147,7 +147,7 @@ static void towermenu_create(void){
 
 static void towermenu_destroy(void){
 
-	isola_inputClear();
+	isola_inputClear(isola_window);
 
 
 	destroyBitmenu();
@@ -172,38 +172,37 @@ unsigned char towermenu_loop(void){
 	towermenu_create();
 
 	while(towermenu_scene.state.run){
+
 		while (SDL_PollEvent(&event)){
-			if(event.type == SDL_QUIT){towermenu_scene.state.run = 0;}
-			if(event.type == SDL_WINDOWEVENT){
-				switch(event.window.event){
-					case SDL_WINDOWEVENT_SIZE_CHANGED:
-					case SDL_WINDOWEVENT_RESIZED:
-					case SDL_WINDOWEVENT_DISPLAY_CHANGED:
-						towermenu_update();
-					break;
-					case SDL_WINDOWEVENT_CLOSE:
-						towermenu_scene.state.returnControlValue = 0;
-						towermenu_scene.state.run = 0;
-					break;
-				}
-			}
-			if(event.type == SDL_KEYDOWN){
-				if (!event.key.repeat) {
-					switch (event.key.keysym.sym){
-						case SDLK_ESCAPE:
-							towermenu_scene.state.returnControlValue = 0;
-							towermenu_scene.state.run = 0;
+			switch (event.type) {
+				case SDL_EVENT_QUIT:
+				case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+					towermenu_scene.state.returnControlValue = 0;
+					towermenu_scene.state.run = 0;
+				break;
+				case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+				case SDL_EVENT_WINDOW_RESIZED:
+				case SDL_EVENT_WINDOW_DISPLAY_CHANGED:
+					towermenu_update();
+				break;
+				case SDL_EVENT_KEY_DOWN:
+					if (!event.key.repeat) {
+						switch (event.key.key){
+							case SDLK_ESCAPE:
+								towermenu_scene.state.returnControlValue = 0;
+								towermenu_scene.state.run = 0;
+							break;
+						}
+					}
+					switch (event.key.key){
+						case SDLK_BACKSPACE:
+							isola_textEditPop();
 						break;
 					}
-				}
-				switch (event.key.keysym.sym){
-					case SDLK_BACKSPACE:
-						isola_textEditPop();
-					break;
-				}
-			}
-			if(event.type == SDL_TEXTINPUT){
-				isola_textEditPush(&event.text.text);
+				break;
+				case SDL_EVENT_TEXT_INPUT:
+					isola_textEditPush(/* ???well see */(char(*)[32])&event.text.text);
+				break;
 			}
 		}
 
