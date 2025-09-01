@@ -105,7 +105,7 @@ else ifeq (${TARGET_BUILD}, unified)
 SRC = all.c
 OBJ = ${SRC:.c=.o}
 
-all.c: | ${PRERULE}
+all.c:
 	find . -type f -name '*.c' ! -path '*/bin/*' > all.c.temp
 	sed -e 's/\.\///' all.c.temp > all.c1.temp
 	sed -e 's/.*/#include "&"/' all.c1.temp > all.c
@@ -257,9 +257,11 @@ ${TARGET_BIN}: ${OBJ} | ${POSTRULE}
 
 
 clean:
+	rm all.c
 	rm ${OBJ} -f
 
 deepclean:
+	rm all.c
 	rm perf.* -f
 	rm ${TARGET_BIN}.out ${TARGET_BIN}.exe a.out -f
 	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
