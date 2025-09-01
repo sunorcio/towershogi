@@ -130,7 +130,7 @@ ifeq (${TARGET_OS}, linux)
  ifeq (${TARGET_LINK}, dynamic)
   LIBS = -lSDL3 -lGLEW -lGLU -lGL -lm
  else ifeq (${TARGET_LINK}, static)
-  LIBS = -Wl,-Bstatic /home/santi/main/towershogi/bin/linux/SDL3-3.2.20/build/libSDL3.a -lGLEW -lpthread -Wl,-Bdynamic -lGLU -lGL -lm
+  LIBS = -Wl,-Bstatic ./bin/linux/SDL3-3.2.20/build/libSDL3.a -lGLEW -lpthread -Wl,-Bdynamic -lGLU -lGL -lm
  endif
 
 
