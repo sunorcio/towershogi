@@ -105,7 +105,7 @@ else ifeq (${TARGET_BUILD}, unified)
 SRC = all.c
 OBJ = ${SRC:.c=.o}
 
-all.c:
+all.c: | ${PRERULE}
 	find . -type f -name '*.c' ! -path '*/bin/*' > all.c.temp
 	sed -e 's/\.\///' all.c.temp > all.c1.temp
 	sed -e 's/.*/#include "&"/' all.c1.temp > all.c
