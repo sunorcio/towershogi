@@ -121,7 +121,11 @@ ifeq (${TARGET_OS}, linux)
 
  CC = clang
 
- INCS = -I./
+ ifeq (${TARGET_LINK}, dynamic)
+  INCS = -I./
+ else ifeq (${TARGET_LINK}, static)
+  INCS = -I./ -I./bin/linux/SDL3-3.2.20/include/SDL3
+ endif
 
  ifeq (${TARGET_LINK}, dynamic)
   LIBS = -lSDL3 -lGLEW -lGLU -lGL -lm
