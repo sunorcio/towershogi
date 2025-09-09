@@ -15,7 +15,7 @@ TARGET_BUILD = incremental
 #[off^on]
 TARGET_RELEASE = off
 #[off^on]
-TARGET_DEBUG = off
+TARGET_DEBUG = on
 #[off^on]
 TARGET_SANITIZE = off
 
@@ -76,14 +76,12 @@ PRERULE = isola
 #POSTRULE =
 POSTRULE =
 
-ifeq (${TARGET_RELEASE}, on)
+ifeq (${TARGET_LINK}, static)
  PRERULE += bin
-else ifeq (${TARGET_RELEASE}, off)
 endif
 
 ifeq (${TARGET_BUILD}, incremental)
  POSTRULE += compdb
-else ifeq (${TARGET_BUILD}, unified)
 endif
 
 
@@ -121,16 +119,12 @@ ifeq (${TARGET_OS}, linux)
 
  CC = clang
 
- ifeq (${TARGET_LINK}, dynamic)
-  INCS = -I./
- else ifeq (${TARGET_LINK}, static)
-  INCS = -I./ -I./bin/linux/SDL3-3.2.20/include/
- endif
+ INCS = -I./
 
  ifeq (${TARGET_LINK}, dynamic)
   LIBS = -lSDL3 -lGLEW -lGLU -lGL -lm
  else ifeq (${TARGET_LINK}, static)
-  LIBS = -Wl,-Bstatic ./bin/linux/SDL3-3.2.20/build/libSDL3.a -lGLEW -lpthread -Wl,-Bdynamic -lGLU -lGL -lm
+  LIBS = -Wl,-Bstatic -lGLEW -Wl,-Bdynamic -lSDL3 -lm -lGLU -lGL
  endif
 
 
@@ -154,8 +148,8 @@ ifeq (${TARGET_OS}, linux)
  endif
 
  ifeq (${TARGET_DEBUG}, on)
-  #CFLAGS += -DISOLA_DBG
-  CFLAGS += -g -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer
+  #CFLAGS +=
+  CFLAGS += -g -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -DISOLA_DBG
   #LDFLAGS +=
   LDFLAGS +=
  endif
@@ -224,14 +218,10 @@ bin: bin/linux
 
 bin/linux:
 	mkdir bin/linux -p
-	wget https://github.com/libsdl-org/SDL/releases/download/release-3.2.20/SDL3-3.2.20.zip -P bin/linux/
 	wget https://github.com/nigels-com/glew/releases/download/glew-2.2.0/glew-2.2.0.zip -P bin/linux/
-	unzip bin/linux/SDL3-3.2.20.zip -d bin/linux/
 	unzip bin/linux/glew-2.2.0.zip -d bin/linux/
 	rm bin/linux/*.zip -f
 	make -C ./bin/linux/glew-2.2.0/
-	cmake -S bin/linux/SDL3-3.2.20/ -B bin/linux/SDL3-3.2.20/build/ -DSDL_TEST_LIBRARY=OFF -DSDL_SHARED=OFF -DSDL_STATIC=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-march=x86-64" -DCMAKE_CXX_FLAGS="-march=x86-64"
-	cmake --build bin/linux/SDL3-3.2.20/build/ --config Release
 
 
 else ifeq (${TARGET_OS}, windows)
@@ -257,11 +247,11 @@ ${TARGET_BIN}: ${OBJ} | ${POSTRULE}
 
 
 clean:
-	rm all.c
+	rm all.c all.o -f
 	rm ${OBJ} -f
 
 deepclean:
-	rm all.c
+	rm all.c -f
 	rm perf.* -f
 	rm ${TARGET_BIN}.out ${TARGET_BIN}.exe a.out -f
 	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
