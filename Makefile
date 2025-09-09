@@ -278,10 +278,10 @@ sanitize: clean
 	make a TARGET_BIN=a TARGET_SANITIZE=on clean
 
 release:
-	make clean ${TARGET_BIN} TARGET_OS=linux TARGET_LINK=static TARGET_BUILD=unified TARGET_RELEASE=on
+	make clean ${TARGET_BIN} TARGET_OS=linux TARGET_LINK=static TARGET_BUILD=unified TARGET_RELEASE=on TARGET_DEBUG=off TARGET_SANITIZE=off
 
 windows:
-	make clean ${TARGET_BIN} TARGET_OS=windows TARGET_LINK=static TARGET_BUILD=unified TARGET_RELEASE=on
+	make clean ${TARGET_BIN} TARGET_OS=windows TARGET_LINK=static TARGET_BUILD=unified TARGET_RELEASE=on TARGET_DEBUG=off TARGET_SANITIZE=off
 
 isola:
 	git clone https://github.com/sunorcio/isola --depth 1
