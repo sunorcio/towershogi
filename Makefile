@@ -85,6 +85,15 @@ ifeq (${TARGET_BUILD}, incremental)
 endif
 
 
+LINUX_EXT = .out
+WINDOWS_EXT = .exe
+ifeq (${TARGET_OS}, linux)
+ BIN_EXT = ${LINUX_EXT}
+else ifeq (${TARGET_OS}, windows)
+ BIN_EXT = ${WINDOWS_EXT}
+endif
+
+
 
 
 ifeq (${TARGET_BUILD}, incremental)
@@ -124,7 +133,7 @@ ifeq (${TARGET_OS}, linux)
  ifeq (${TARGET_LINK}, dynamic)
   LIBS = -lSDL3 -lGLEW -lGLU -lGL -lm
  else ifeq (${TARGET_LINK}, static)
-  LIBS = -Wl,-Bstatic -lGLEW -Wl,-Bdynamic -lSDL3 -lm -lGLU -lGL
+  LIBS = -L./bin/linux/glew-2.2.0/lib -Wl,-Bstatic -lGLEW -Wl,-Bdynamic -lSDL3 -lm -lGLU -lGL
  endif
 
 
@@ -155,7 +164,7 @@ ifeq (${TARGET_OS}, linux)
  endif
 
  ifeq (${TARGET_SANITIZE}, on)
-  #CFLAGS += -Werror
+  #CFLAGS += -Werror -Wpedantic
   CFLAGS += -fsanitize=undefined -fsanitize=address -Weverything -std=c89
   #LDFLAGS +=
   LDFLAGS += -fsanitize=undefined -fsanitize=address
@@ -166,32 +175,43 @@ else ifeq (${TARGET_OS}, windows)
 
  CC = x86_64-w64-mingw32-gcc
 
- INCS = -I./ -I./bin/glew-2.2.0/include -I./bin/SDL2-2.30.3/x86_64-w64-mingw32/include
- LIBS = -L./bin/glew-2.2.0/lib/Release/x64 -L./bin/SDL2-2.30.3/x86_64-w64-mingw32/lib -Wl,-Bstatic -static-libgcc -lmingw32 -lSDL2main -lSDL2 -lglew32s -lglu32 -lopengl32 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid
+ INCS = -I./ -I./bin/windows/glew-2.2.0/include -I./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/include
+
+ ifeq (${TARGET_LINK}, dynamic)
+ LIBS = -L./bin/windows/glew-2.2.0/bin/Release/x64 -L./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/bin -Wl,-Bstatic -Wl,-Bdynamic -lSDL3 -lglew32 -lglu32 -lopengl32
+ else ifeq (${TARGET_LINK}, static)
+# LIBS = -L./bin/windows/glew-2.2.0/lib/Release/x64 -Wl,-Bstatic -static-libgcc -lmingw32 ./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/lib/libSDL3.dll.a -lglew32s -lglu32 -lopengl32 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid -lm -lkernel32 -luuid -ladvapi32 -Wl,-Bdynamic
+ LIBS = -L./bin/windows/glew-2.2.0/lib/Release/x64 -L./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/bin -Wl,-Bstatic -lglew32s -Wl,-Bdynamic -lmingw32 -lSDL3 -lglu32 -lopengl32 -lm
+ endif
 
 
  #CFLAGS =
- CFLAGS = ${INCS} -D_REENTRANT -DWIN32_LEAN_AND_MEAN -Wall -Wextra -Wpedantic -std=c89 -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-old-style-declaration
- #LDFLAGS = -v -mwindows
- LDFLAGS = ${LIBS}
+ CFLAGS = ${INCS} -D_REENTRANT -DWIN32_LEAN_AND_MEAN -Wall -Wextra -std=c89 -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-old-style-declaration
+ #LDFLAGS = -v
+ LDFLAGS = ${LIBS} -mwindows
+
+ ifeq (${TARGET_LINK}, static)
+  #CFLAGS +=
+  CFLAGS += -DGLEW_STATIC
+ endif
 
  ifeq (${TARGET_RELEASE}, on)
   #CFLAGS +=
-  CFLAGS += -O3 -ffast-math -pipe -DGLEW_STATIC
+  CFLAGS += -O3 -ffast-math -pipe
   #LDFLAGS +=
   LDFLAGS +=
  endif
 
  ifeq (${TARGET_DEBUG}, on)
-  #CFLAGS += -DISOLA_DBG
-  CFLAGS += -g -fno-omit-frame-pointer
+  #CFLAGS +=
+  CFLAGS += -g -fno-omit-frame-pointer -DISOLA_DBG
   #LDFLAGS +=
   LDFLAGS +=
  endif
 
  ifeq (${TARGET_SANITIZE}, on)
   #CFLAGS +=
-  CFLAGS += -Weverything -Werror -std=c89
+  CFLAGS += -Weverything -Werror -Wpedantic -std=c89
   #LDFLAGS +=
   LDFLAGS +=
  endif
@@ -243,7 +263,7 @@ endif
 
 
 ${TARGET_BIN}: ${OBJ} | ${POSTRULE}
-	${CC} -o $@.out ${OBJ} ${LDFLAGS}
+	${CC} -o $@${BIN_EXT} ${OBJ} ${LDFLAGS}
 
 
 clean:
@@ -253,7 +273,7 @@ clean:
 deepclean:
 	rm all.c -f
 	rm perf.* -f
-	rm ${TARGET_BIN}.out ${TARGET_BIN}.exe a.out -f
+	rm ${TARGET_BIN}${LINUX_EXT} ${TARGET_BIN}${WINDOWS_EXT} a${LINUX_EXT} -f
 	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.d' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.o.json' ! -path '*/bin/*'} -f
@@ -266,10 +286,10 @@ compdb: ${OBJ}
 	sed -e '1s/^/[\n/' -e '$$s/,$$/\n]/' ${shell find . -type f -name "*.o.json" ! -path '*/bin/*'} > compile_commands.json
 
 flamegraph:
-	su -c "perf record -F 999 -g --call-graph dwarf ./a.out; perf script | /opt/FlameGraph/stackcollapse-perf.pl > perf.fold; /opt/FlameGraph/flamegraph.pl perf.fold > perf.svg"
+	su -c "perf record -F 999 -g --call-graph dwarf ./a${LINUX_EXT}; perf script | /opt/FlameGraph/stackcollapse-perf.pl > perf.fold; /opt/FlameGraph/flamegraph.pl perf.fold > perf.svg"
 
 test: ${TARGET_BIN}
-	./${TARGET_BIN}.out
+	./${TARGET_BIN}${LINUX_EXT}
 
 debug: clean
 	make a TARGET_BIN=a TARGET_DEBUG=on clean
@@ -281,7 +301,7 @@ release:
 	make clean ${TARGET_BIN} TARGET_OS=linux TARGET_LINK=static TARGET_BUILD=unified TARGET_RELEASE=on TARGET_DEBUG=off TARGET_SANITIZE=off
 
 windows:
-	make clean ${TARGET_BIN} TARGET_OS=windows TARGET_LINK=static TARGET_BUILD=unified TARGET_RELEASE=on TARGET_DEBUG=off TARGET_SANITIZE=off
+	make clean ${TARGET_BIN} TARGET_OS=windows TARGET_LINK=dynamic TARGET_BUILD=unified TARGET_RELEASE=on TARGET_DEBUG=on TARGET_SANITIZE=off
 
 isola:
 	git clone https://github.com/sunorcio/isola --depth 1

@@ -59,7 +59,6 @@ static void towermenu_update(void){
 	isola_get_window();
 	glViewport(0,0,isola_info_window.width, isola_info_window.height);
 
-
 	updateBitmenu();
 
 
@@ -81,7 +80,7 @@ static void towermenu_create(void){
 	towermenu_scene.window.windowRes[1] = 600;
 	towermenu_scene.window.windowMinRes[0] = 480;
 	towermenu_scene.window.windowMinRes[1] = 360;
-	towermenu_scene.window.clearColor[0] = 0.0625;
+	towermenu_scene.window.clearColor[0] = 0.9625;
 	towermenu_scene.window.clearColor[1] = 0.0625;
 	towermenu_scene.window.clearColor[2] = 0.0625;
 	towermenu_scene.window.clearColor[3] = 1.;
@@ -137,6 +136,7 @@ static void towermenu_create(void){
 	bitmenuBuildObject("quit",towermenu_function_quit);
 
 
+	SDL_Log("Start looking around here for errors?");
 	createBitfont();
 	createDigitfps();
 
