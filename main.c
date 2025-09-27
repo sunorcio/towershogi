@@ -2,9 +2,6 @@
 
 
 
-#include <time.h>
-
-
 #include "isola/isola.h"
 
 
@@ -16,8 +13,15 @@
 
 int main(int argc, char **argv){
 
-	SDL_srand(time(0));
-	isola_init();
+	Sint64 time;
+
+
+	if(!isola_init()){
+		return 1;
+	}
+
+	SDL_GetCurrentTime(&time);
+	SDL_srand(time);
 
 
 
@@ -36,7 +40,7 @@ int main(int argc, char **argv){
 
 
 
-
+	ISOLA_CLEARTERMINAL_()
 	isola_quit();
 	return 0;
 }

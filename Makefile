@@ -76,8 +76,12 @@ PRERULE = isola
 #POSTRULE =
 POSTRULE =
 
-ifeq (${TARGET_LINK}, static)
+ifeq (${TARGET_OS}, windows)
  PRERULE += bin
+else ifeq (${TARGET_OS}, linux)
+ ifeq (${TARGET_LINK}, static)
+  PRERULE += bin
+ endif
 endif
 
 ifeq (${TARGET_BUILD}, incremental)
@@ -180,7 +184,7 @@ else ifeq (${TARGET_OS}, windows)
  ifeq (${TARGET_LINK}, dynamic)
  LIBS = -L./bin/windows/glew-2.2.0/bin/Release/x64 -L./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/bin -Wl,-Bstatic -Wl,-Bdynamic -lSDL3 -lglew32 -lglu32 -lopengl32
  else ifeq (${TARGET_LINK}, static)
-# LIBS = -L./bin/windows/glew-2.2.0/lib/Release/x64 -Wl,-Bstatic -static-libgcc -lmingw32 ./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/lib/libSDL3.dll.a -lglew32s -lglu32 -lopengl32 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid -lm -lkernel32 -luuid -ladvapi32 -Wl,-Bdynamic
+# LIBS = -L./bin/windows/glew-2.2.0/lib/Release/x64 -Wl,-Bstatic -static-libgcc -lmingw32 ./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/lib/libSDL3.dll.a -lglew32s -lglu32 -lopengl32 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid -lkernel32 -luuid -ladvapi32 -Wl,-Bdynamic
  LIBS = -L./bin/windows/glew-2.2.0/lib/Release/x64 -L./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/bin -Wl,-Bstatic -lglew32s -Wl,-Bdynamic -lmingw32 -lSDL3 -lglu32 -lopengl32 -lm
  endif
 
@@ -309,6 +313,9 @@ isola:
 	cp isola_config.h isola/isola_config.h
 	@echo -e '\033[0;31m''!!! ISOLA HAS BEEN UPDATED, RUN MAKE AGAIN !!!''\033[0m'
 	@exit 1
+
+isola_config.h:
+	cp isola/isola_config.h isola_config.h -n
 
 isola/isola_config.h: isola_config.h
 	cp isola_config.h isola/isola_config.h

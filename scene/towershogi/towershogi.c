@@ -50,7 +50,7 @@ unsigned char * towershogiBoardRenderState;
 
 
 
-static ISOLA_state towershogiState = 0x0000000d;
+static enum ISOLA_state towershogiState = 0x0000000d;
 static unsigned int towershogiSP[1] = {0};
 static unsigned int towershogiVAO[1] = {0};
 static unsigned int towershogiVBO[1] = {0};
@@ -85,8 +85,8 @@ void updateTowershogi(void){
 void createTowershogi(void){
 
 	memset(&towershogiBoard,0,sizeof(struct TOWERSHOGI_board));
-	towershogiBoard.tile = SDL_calloc(sizeof(struct TOWERSHOGI_piece),
-			TOWERSHOGI_BOARD_SIZE);
+	towershogiBoard.tile = SDL_calloc(TOWERSHOGI_BOARD_SIZE,
+			sizeof(struct TOWERSHOGI_piece));
 	towershogiBoard.selectedTile = SELECTED_NONE;
 	memset(towershogiBoard.tile,0,
 			sizeof(struct TOWERSHOGI_piece)*TOWERSHOGI_BOARD_SIZE);
@@ -109,7 +109,7 @@ void createTowershogi(void){
 	}}
 
 
-	towershogiVD = SDL_calloc(sizeof(unsigned char),TOWERSHOGI_VB_SIZE);
+	towershogiVD = SDL_calloc(TOWERSHOGI_VB_SIZE,sizeof(unsigned char));
 
 	glGenVertexArrays(1,&towershogiVAO[0]);
 	glGenBuffers(1,&towershogiVBO[0]);
@@ -153,8 +153,8 @@ void createTowershogi(void){
 	}
 
 
-	towershogiSP[0] = isola_shader_buildProgram("scene/towershogi/towershogi.vert",
-			"scene/towershogi/towershogi.frag");
+	towershogiSP[0] = isola_shader_buildProgram("scene/towershogi/glsl/towershogi.vert",
+			"scene/towershogi/glsl/towershogi.frag");
 
 	glUseProgram(towershogiSP[0]);
 

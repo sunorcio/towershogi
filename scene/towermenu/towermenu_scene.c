@@ -27,6 +27,7 @@ static void towermenu_destroy(void);
 
 static void towermenu_function_quit(void){
 
+	currentScene->state.returnControlValue = 0;
 	currentScene->state.run = 0;
 }
 
@@ -80,9 +81,9 @@ static void towermenu_create(void){
 	towermenu_scene.window.windowRes[1] = 600;
 	towermenu_scene.window.windowMinRes[0] = 480;
 	towermenu_scene.window.windowMinRes[1] = 360;
-	towermenu_scene.window.clearColor[0] = 0.9625;
-	towermenu_scene.window.clearColor[1] = 0.0625;
-	towermenu_scene.window.clearColor[2] = 0.0625;
+	towermenu_scene.window.clearColor[0] = 0.125;
+	towermenu_scene.window.clearColor[1] = 0.125;
+	towermenu_scene.window.clearColor[2] = 0.125;
 	towermenu_scene.window.clearColor[3] = 1.;
 
 	towermenu_scene.state.run = 1;
@@ -135,8 +136,6 @@ static void towermenu_create(void){
 	bitmenuBuildGroupLeave();
 	bitmenuBuildObject("quit",towermenu_function_quit);
 
-
-	SDL_Log("Start looking around here for errors?");
 	createBitfont();
 	createDigitfps();
 
@@ -151,7 +150,6 @@ static void towermenu_destroy(void){
 
 
 	destroyBitmenu();
-
 
 	destroyBitfont();
 	destroyDigitfps();

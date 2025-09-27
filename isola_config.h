@@ -7,7 +7,7 @@
 /* isola configuration _____________________________________________________ */
 
 /* alternatively, set -DISOLA_DBG flag */
-#define ISOLA_CONFIG_DEBUG    0 /* [1^0] */
+#define ISOLA_CONFIG_DEBUG    1 /* [1^0] */
 /* input stderr to file (./isola.log) */
 #define ISOLA_CONFIG_LOG      0 /* [1^0] */
 

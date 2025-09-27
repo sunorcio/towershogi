@@ -54,7 +54,7 @@ struct DIGITFPS_font digitfps = {
 static struct ISOLA_counter* digitfpsCounter = {0};
 
 
-static ISOLA_state digitfpsState = 0x00000001;
+static enum ISOLA_state digitfpsState = 0x00000001;
 static unsigned int digitfpsSP;
 static unsigned int digitfpsVAO;
 static unsigned int digitfpsEBO;
@@ -124,8 +124,8 @@ void createDigitfps(void){
 			sizeof(digitfpsED),digitfpsED);
 
 
-	digitfpsSP = isola_shader_buildProgram("module/digitfps/digitfps.vert",
-			"module/digitfps/digitfps.frag");
+	digitfpsSP = isola_shader_buildProgram("module/digitfps/glsl/digitfps.vert",
+			"module/digitfps/glsl/digitfps.frag");
 
 
 	updateDigitfps();
