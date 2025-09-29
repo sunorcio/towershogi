@@ -4,10 +4,10 @@
 
 
 
-extern void updateBitmenu(void);
-extern void createBitmenu(void);
-extern void destroyBitmenu(void);
-extern void stepBitmenu(void);
+extern void bitmenu_update(void);
+extern void bitmenu_create(void);
+extern void bitmenu_destroy(void);
+extern void bitmenu_step(void);
 
 
 

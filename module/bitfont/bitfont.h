@@ -4,10 +4,10 @@
 
 
 
-extern void updateBitfont(void);
-extern void createBitfont(void);
-extern void destroyBitfont(void);
-extern void drawBitfont(void);
+extern void bitfont_update(void);
+extern void bitfont_create(void);
+extern void bitfont_destroy(void);
+extern void bitfont_draw(void);
 
 
 

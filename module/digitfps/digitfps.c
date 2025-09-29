@@ -4,9 +4,6 @@
 
 
 
-#include <stdio.h>
-
-
 #include <isola/isola.h>
 #include <isola/mutil.h>
 #include <isola/timing.h>
@@ -17,14 +14,14 @@
 
 
 
-static float vertexDigit[] = {
+static float digitfps_vertex[] = {
 	 0.,  0. ,      0.5,  0. ,      1.,  0. ,
 	 0.,  0.5,      0.5,  0.5,      1.,  0.5,
 	 0.,  1. ,      0.5,  1. ,      1.,  1. ,
 	 0.,  1.5,      0.5,  1.5,      1.,  1.5,
 	 0.,  2. ,      0.5,  2. ,      1.,  2. ,
 };
-static unsigned short elementDigit[12][12] = {
+static unsigned short digitfps_element[12][12] = {
 	{  0,  0,  0,     0,  0,  0,     0,  0,  0,     0,  0,  0 },
 	{  1,  6,  3,     1,  2,  8,     6, 13, 12,     8, 11, 13 },
 	{  1, 11, 10,     9, 11, 13,     0,  0,  0,     0,  0,  0 },
@@ -46,124 +43,122 @@ static unsigned short elementDigit[12][12] = {
 #define digitfpsPrintAmount 6
 
 
-struct DIGITFPS_font digitfps = { 
+struct DIGITFPS_font digitfps_option = { 
 		{0.375,0.1875,0.375,0.625},
 		8*2 };
 
 
-static struct ISOLA_counter* digitfpsCounter = {0};
+static struct ISOLA_counter* digitfps_counter = {0};
+static char digitfps_string[18] = {0};
 
 
-static enum ISOLA_state digitfpsState = 0x00000001;
-static unsigned int digitfpsSP;
-static unsigned int digitfpsVAO;
-static unsigned int digitfpsEBO;
-static char digitfpsString[18] = {0};
-static unsigned short digitfpsED[18]
-		[sizeof(elementDigit[0])/sizeof(elementDigit[0][0])] = {0};
+static enum ISOLA_state digitfps_glstate = 0x00000001;
+static unsigned int digitfps_shaderProg;
+static unsigned int digitfps_vertArrObj;
+static unsigned int digitfps_eleBufObj;
+static unsigned short digitfps_eleData[18]
+		[sizeof(digitfps_element[0])/
+		sizeof(digitfps_element[0][0])] = {0};
 
 
-void updateDigitfps(void){
+void digitfps_update(void){
 
 	if (isola_info_window.height > 720 && isola_info_window.width > 1280) {
-		digitfps.pixelSize = 8*2;
+		digitfps_option.pixelSize = 8*2;
 	}else {
-		digitfps.pixelSize = 8*1;
+		digitfps_option.pixelSize = 8*1;
 	}
 
 
-	glUseProgram(digitfpsSP);
+	ISOLA_GLDBG_( glUseProgram(digitfps_shaderProg) )
 
-	{int locProj;
+	{int loc;
 	float matProj[4*4] = {0};
+	float lowRes;
+
 	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
 			-isola_info_window.yRatio,isola_info_window.yRatio, 0.25,8.,matProj);
-	locProj = glGetUniformLocation(digitfpsSP,"matProj");
-	if(locProj == -1){SDL_Log("matProj not found in shader %d",0);}
-	glUniformMatrix4fv(locProj,1,GL_FALSE,matProj);
-	}
+	loc = glGetUniformLocation(digitfps_shaderProg,"matProj");
+	if(loc == -1){ SDL_Log("digitfps: matProj not found"); }
+	glUniformMatrix4fv(loc,1,GL_FALSE,matProj);
 
-	{int locDigitCol;
-	locDigitCol = glGetUniformLocation(digitfpsSP,"digitColor");
-	if(locDigitCol == -1){SDL_Log("digitColor not found in shader %d",0);}
-	glUniform4fv(locDigitCol,1,digitfps.color);
-	}
+	loc = glGetUniformLocation(digitfps_shaderProg,"digitColor");
+	if(loc == -1){SDL_Log("digitfps: digitColor not found");}
+	glUniform4fv(loc,1,digitfps_option.color);
 
-	{int locPixSize;
-	locPixSize = glGetUniformLocation(digitfpsSP,"pixelSize");
-	if(locPixSize == -1){SDL_Log("pixelSize not found in shader %d",0);}
-	glUniform1i(locPixSize,digitfps.pixelSize);
-	}
+	loc = glGetUniformLocation(digitfps_shaderProg,"pixelSize");
+	if(loc == -1){SDL_Log("digitfps: pixelSize not found");}
+	glUniform1i(loc,digitfps_option.pixelSize);
 
-	{int locLowRes;
-	float lowRes;
 	if (isola_info_window.xRatio == 1) { lowRes = isola_info_window.width;
 	}else{ lowRes = isola_info_window.height; }
-	locLowRes = glGetUniformLocation(digitfpsSP,"lowResolution");
-	if(locLowRes == -1){SDL_Log("lowResolution not found in shader %d",0);}
-	glUniform1f(locLowRes,lowRes);
+	loc = glGetUniformLocation(digitfps_shaderProg,"lowResolution");
+	if(loc == -1){SDL_Log("digitfps: lowResolution not found");}
+	glUniform1f(loc,lowRes);
 	}
 }
 
 
-void createDigitfps(void){
+void digitfps_create(void){
 
-	digitfpsCounter = &currentScene->timing.frameCounter;
-
-
-	glGenVertexArrays(1,&digitfpsVAO);
-	glGenBuffers(1,&digitfpsEBO);
-
-	glBindVertexArray(digitfpsVAO);
+	digitfps_counter = &currentScene->timing.frameCounter;
 
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,digitfpsEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(digitfpsED),
-			digitfpsED,GL_DYNAMIC_DRAW);
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,0,
-			sizeof(digitfpsED),digitfpsED);
+	ISOLA_GLDBG_( glGenVertexArrays(1,&digitfps_vertArrObj) )
+	ISOLA_GLDBG_( glGenBuffers(1,&digitfps_eleBufObj) )
+
+	ISOLA_GLDBG_( glBindVertexArray(digitfps_vertArrObj) )
 
 
-	digitfpsSP = isola_shader_buildProgram("module/digitfps/glsl/digitfps.vert",
+	ISOLA_GLDBG_( glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,digitfps_eleBufObj) )
+	ISOLA_GLDBG_( glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(digitfps_eleData),
+			digitfps_eleData,GL_DYNAMIC_DRAW) )
+	ISOLA_GLDBG_( glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,0,
+			sizeof(digitfps_eleData),digitfps_eleData) )
+
+
+	digitfps_shaderProg = isola_shader_buildProgram(
+			"module/digitfps/glsl/digitfps.vert",
 			"module/digitfps/glsl/digitfps.frag");
 
 
-	updateDigitfps();
+	digitfps_update();
 }
 
 
-void destroyDigitfps(void){
+void digitfps_destroy(void){
 
 	glUseProgram(0);
 	glBindVertexArray(0);
-	glDeleteProgram(digitfpsSP);
-	glDeleteBuffers(1,&digitfpsEBO);
-	glDeleteVertexArrays(1,&digitfpsVAO);
+	glDeleteProgram(digitfps_shaderProg);
+	glDeleteBuffers(1,&digitfps_eleBufObj);
+	glDeleteVertexArrays(1,&digitfps_vertArrObj);
 }
 
 
-void drawDigitfps(void){
+void digitfps_draw(void){
 
-	isola_set_state(digitfpsState);
+	isola_set_state(digitfps_glstate);
 
 
 	{Uint64 delaySum = 0;
 	{unsigned int i;
 	for(i = 0;i<256;i++){
-		delaySum += digitfpsCounter->stepDelay[i];
+		delaySum += digitfps_counter->stepDelay[i];
 	}}
 
-	{unsigned int i;
+	{unsigned short i;
 	for(i = 0;i<digitfpsPrintAmount;i++){
-		digitfpsString[i] = 0;
+		digitfps_string[i] = 0;
 	}}
-	sprintf(digitfpsString,"%f", 1./((delaySum/256.)/(double)isola_clockFreq) );
+	SDL_snprintf(digitfps_string,sizeof(digitfps_string),"%f",
+			1./((delaySum/256.)/(double)isola_clockFreq) );
 	}
 
-	{unsigned int i;
+	{unsigned short i;
 	unsigned char digit;
 	for(i = 0;i<digitfpsPrintAmount;i++){
-		switch (digitfpsString[i]) {
+		switch (digitfps_string[i]) {
 			case 0:   digit = 0;  break;
 			case ' ': digit = 0;  break;
 			case '0': digit = 1;  break;
@@ -181,22 +176,23 @@ void drawDigitfps(void){
 		}
 
 		{unsigned char j;
-		for(j = 0;j<sizeof(elementDigit[0])/sizeof(elementDigit[0][0]);j++){
-			digitfpsED[i][j] = elementDigit[digit][j]+15*i;
+		for(j = 0;j<sizeof(digitfps_element[0])/
+				sizeof(digitfps_element[0][0]);j++){
+			digitfps_eleData[i][j] = digitfps_element[digit][j]+15*i;
 		}}
 	}}
 
-	glBindVertexArray(digitfpsVAO);
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,0,
-			( sizeof(digitfpsED)/18 )*digitfpsPrintAmount,digitfpsED);
-	glUseProgram(digitfpsSP);
+	ISOLA_GLDBG_( glBindVertexArray(digitfps_vertArrObj) )
+	ISOLA_GLDBG_( glBufferSubData(GL_ELEMENT_ARRAY_BUFFER,0,
+			( sizeof(digitfps_eleData)/18 )*digitfpsPrintAmount,digitfps_eleData) )
+	ISOLA_GLDBG_( glUseProgram(digitfps_shaderProg) )
 
-	glDrawRangeElements(GL_TRIANGLES,0,
-			(sizeof(elementDigit[0])/sizeof(elementDigit[0][0]))
+	ISOLA_GLDBG_( glDrawRangeElements(GL_TRIANGLES,0,
+			(sizeof(digitfps_element[0])/sizeof(digitfps_element[0][0]))
 			*digitfpsPrintAmount-1,
-			(sizeof(elementDigit[0])/sizeof(elementDigit[0][0]))
+			(sizeof(digitfps_element[0])/sizeof(digitfps_element[0][0]))
 			*digitfpsPrintAmount,
-			GL_UNSIGNED_SHORT,(void*)0);
+			GL_UNSIGNED_SHORT,(void*)0) )
 }
 
 

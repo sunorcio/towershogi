@@ -28,8 +28,8 @@ struct BITFONT_data{
 };
 
 
-extern struct BITFONT_data* bitfontRequestPtr(unsigned int size);
-extern void bitfontFreePtr(struct BITFONT_data* ptr);
+extern struct BITFONT_data* bitfont_requestPtr(unsigned int size);
+extern void bitfont_freePtr(struct BITFONT_data* ptr);
 
 
 

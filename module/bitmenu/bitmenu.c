@@ -4,9 +4,6 @@
 
 
 
-#include <string.h>
-
-
 #include <isola/isola.h>
 #include <isola/misc.h>
 #include <isola/input.h>
@@ -44,22 +41,22 @@ struct BITMENU_menu{
 	struct BITMENU_screen* screenHead;
 	struct BITMENU_group* groupHead;
 	struct BITMENU_menu* menuNext;
-}static * bitmenuHead = 0, * bitmenuCurrent = 0, * bitmenuCounter;
+}static * bitmenu_head = 0, * bitmenu_current = 0, * bitmenu_counter;
 
 
-static struct BITFONT_data* bitfontPtr;
-static struct BITFONT_object* bitfontCounter;
+static struct BITFONT_data* bitmenu_bitfontPtr;
+static struct BITFONT_object* bitmenu_bitfontCounter;
 
 
-static struct BITMENU_menu* menuPointer = 0;
-static struct BITMENU_screen* screenPointer = 0;
-static struct BITMENU_group* groupPointer = 0;
-static struct BITMENU_object* objectPointer = 0;
+static struct BITMENU_menu* bitmenu_menuPointer = 0;
+static struct BITMENU_screen* bitmenu_screenPointer = 0;
+static struct BITMENU_group* bitmenu_groupPointer = 0;
+static struct BITMENU_object* bitmenu_objectPointer = 0;
 
 
 
 
-static void bitmenuGrouptreeDelete(struct BITMENU_group* group){
+static void bitmenu_grouptreeDelete(struct BITMENU_group* group){
 
 	void* last;
 	struct BITMENU_object* object;
@@ -70,7 +67,7 @@ static void bitmenuGrouptreeDelete(struct BITMENU_group* group){
 	object = group->objectHead;
 	while (object != 0) {
 
-		bitmenuGrouptreeDelete(object->groupLink);
+		bitmenu_grouptreeDelete(object->groupLink);
 	
 		last = object;
 		object = object->objectNext;
@@ -80,48 +77,49 @@ static void bitmenuGrouptreeDelete(struct BITMENU_group* group){
 	SDL_free(group);
 }
 
-static void bitmenuGrouptreeStep(struct BITMENU_group* group){
+static void bitmenu_grouptreeStep(struct BITMENU_group* group){
 
 	struct BITMENU_object* object;
 	unsigned int o = 0;
 
 
 	if (group == 0) {return;}
-	if (group->screenParent != bitmenuCounter->groupCurrent->screenParent) {
+	if (group->screenParent != bitmenu_counter->groupCurrent->screenParent) {
 		return;
 	}
 
 	object = group->objectHead;
 	while (object != 0) {
 
-		bitfontCounter->pixelSize = 
-				bitmenuCounter->groupCurrent->screenParent->fontScaleGlobal;
-		bitfontCounter->charWrap = BITFONT_STRINGSIZE;
-		strcpy(bitfontCounter->string,object->name);
-		bitfontCounter->x = group->x + isola_info_window.pixelWidth;
-		bitfontCounter->y = group->y
+		bitmenu_bitfontCounter->pixelSize = 
+				bitmenu_counter->groupCurrent->screenParent->fontScaleGlobal;
+		bitmenu_bitfontCounter->charWrap = BITFONT_STRINGSIZE;
+		SDL_strlcpy(bitmenu_bitfontCounter->string,object->name,256);
+		bitmenu_bitfontCounter->x = group->x + isola_info_window.pixelWidth;
+		bitmenu_bitfontCounter->y = group->y
 				-isola_info_window.pixelHeight*16
-				*bitfontCounter->pixelSize*o
+				*bitmenu_bitfontCounter->pixelSize*o
 				-isola_info_window.pixelHeight;
-		bitfontCounter->foreColor[0] = 0.;
-		bitfontCounter->foreColor[1] = 0.;
-		bitfontCounter->foreColor[2] = 0.;
-		bitfontCounter->foreColor[3] = 1.;
-		bitfontCounter->backColor[0] = 1.
-				*(bitmenuCounter->objectCurrent==object);
-		bitfontCounter->backColor[1] = 1.
-				*(bitmenuCounter->objectCurrent==object);
-		bitfontCounter->backColor[2] = 1.;
-		bitfontCounter->backColor[3] = 0.5
-				+0.5*(bitmenuCounter->groupCurrent==group);
+		bitmenu_bitfontCounter->foreColor[0] = 0.;
+		bitmenu_bitfontCounter->foreColor[1] = 0.;
+		bitmenu_bitfontCounter->foreColor[2] = 0.;
+		bitmenu_bitfontCounter->foreColor[3] = 1.;
+		bitmenu_bitfontCounter->backColor[0] = 1.
+				*(bitmenu_counter->objectCurrent==object);
+		bitmenu_bitfontCounter->backColor[1] = 1.
+				*(bitmenu_counter->objectCurrent==object);
+		bitmenu_bitfontCounter->backColor[2] = 1.;
+		bitmenu_bitfontCounter->backColor[3] = 0.5
+				+0.5*(bitmenu_counter->groupCurrent==group);
 
-		if (bitfontCounter != &bitfontPtr->data[bitfontPtr->size-1]) {
-			bitfontCounter += 1;
+		if (bitmenu_bitfontCounter !=
+				&bitmenu_bitfontPtr->data[bitmenu_bitfontPtr->size-1]) {
+			bitmenu_bitfontCounter += 1;
 		}else {
-			SDL_Log("%s : reached bitfont object limit",__FUNCTION__);
+			SDL_Log("bitmenu_grouptreeStep: reached bitfont object limit");
 		}
 
-		bitmenuGrouptreeStep(object->groupLink);
+		bitmenu_grouptreeStep(object->groupLink);
 
 		object = object->objectNext;
 		o += 1;
@@ -129,190 +127,197 @@ static void bitmenuGrouptreeStep(struct BITMENU_group* group){
 }
 
 
-static void bitmenuMoveForward(void){
+static void bitmenu_moveForward(void){
 
-	if (bitmenuCurrent->objectCurrent->objectNext != 0) {
-		bitmenuCurrent->objectCurrent = 
-				bitmenuCurrent->objectCurrent->objectNext;
+	if (bitmenu_current->objectCurrent->objectNext != 0) {
+		bitmenu_current->objectCurrent = 
+				bitmenu_current->objectCurrent->objectNext;
 	}
 }
 
-static void bitmenuMoveBack(void){
+static void bitmenu_moveBack(void){
 
 	struct BITMENU_object* object;
 
 
-	object = bitmenuCurrent->groupCurrent->objectHead;
+	object = bitmenu_current->groupCurrent->objectHead;
 
-	if (object == bitmenuCurrent->objectCurrent) {return;}
+	if (object == bitmenu_current->objectCurrent) {return;}
 
-	while (object->objectNext != bitmenuCurrent->objectCurrent) {
+	while (object->objectNext != bitmenu_current->objectCurrent) {
 		object = object->objectNext;
 	}
 
-	bitmenuCurrent->objectCurrent = object;
+	bitmenu_current->objectCurrent = object;
 }
 
-static void bitmenuActivateObject(void){
+static void bitmenu_activateObject(void){
 
-	if (bitmenuCurrent->objectCurrent->function != 0) {
-		bitmenuCurrent->objectCurrent->function();
+	if (bitmenu_current->objectCurrent->function != 0) {
+		bitmenu_current->objectCurrent->function();
 	}
 
-	if (bitmenuCurrent->objectCurrent->groupLink != 0) {
-		bitmenuCurrent->groupCurrent = bitmenuCurrent->objectCurrent->groupLink;
-		bitmenuCurrent->objectCurrent =
-				bitmenuCurrent->groupCurrent->objectHead;
+	if (bitmenu_current->objectCurrent->groupLink != 0) {
+		bitmenu_current->groupCurrent =
+				bitmenu_current->objectCurrent->groupLink;
+		bitmenu_current->objectCurrent =
+				bitmenu_current->groupCurrent->objectHead;
 	}
 }
 
-static void bitmenuLeaveGroup(void){
+static void bitmenu_leaveGroup(void){
 
-	if (bitmenuCurrent->groupCurrent->groupPrevious == 0) { return; }
+	if (bitmenu_current->groupCurrent->groupPrevious == 0) { return; }
 
-	bitmenuCurrent->groupCurrent = bitmenuCurrent->groupCurrent->groupPrevious;
-	bitmenuCurrent->objectCurrent = bitmenuCurrent->groupCurrent->objectHead;
+	bitmenu_current->groupCurrent =
+			bitmenu_current->groupCurrent->groupPrevious;
+	bitmenu_current->objectCurrent =
+			bitmenu_current->groupCurrent->objectHead;
 }
 
 
-void bitmenuBuildMenu(void){
+void bitmenu_buildMenu(void){
 
-	if (menuPointer != 0) {
-		menuPointer->menuNext = SDL_calloc(1,sizeof(struct BITMENU_menu));
-		menuPointer = menuPointer->menuNext;
+	if (bitmenu_menuPointer != 0) {
+		bitmenu_menuPointer->menuNext = SDL_calloc(1,sizeof(struct BITMENU_menu));
+		bitmenu_menuPointer = bitmenu_menuPointer->menuNext;
 	}else {
-		menuPointer = SDL_calloc(1,sizeof(struct BITMENU_menu));
-		bitmenuHead = menuPointer;
-		bitmenuCurrent = menuPointer;
+		bitmenu_menuPointer = SDL_calloc(1,sizeof(struct BITMENU_menu));
+		bitmenu_head = bitmenu_menuPointer;
+		bitmenu_current = bitmenu_menuPointer;
 	}
 }
 
-void bitmenuBuildScreen(unsigned char fontScaleGlobal){
+void bitmenu_buildScreen(unsigned char fontScaleGlobal){
 
-	if (menuPointer->screenHead != 0) {
-		screenPointer->screenNext = SDL_calloc(1,sizeof(struct BITMENU_screen));
-		screenPointer = screenPointer->screenNext;
-		groupPointer->screenParent = screenPointer;
-		screenPointer->groupTransition = groupPointer;
-		screenPointer->fontScaleGlobal = fontScaleGlobal;
+	if (bitmenu_menuPointer->screenHead != 0) {
+		bitmenu_screenPointer->screenNext = 
+				SDL_calloc(1,sizeof(struct BITMENU_screen));
+		bitmenu_screenPointer = bitmenu_screenPointer->screenNext;
+		bitmenu_groupPointer->screenParent = bitmenu_screenPointer;
+		bitmenu_screenPointer->groupTransition = bitmenu_groupPointer;
+		bitmenu_screenPointer->fontScaleGlobal = fontScaleGlobal;
 	
 	}else {
-		screenPointer = SDL_calloc(1,sizeof(struct BITMENU_screen));
-		menuPointer->screenHead = screenPointer;
-		groupPointer->screenParent = screenPointer;
-		screenPointer->groupTransition = groupPointer;
-		screenPointer->fontScaleGlobal = fontScaleGlobal;
+		bitmenu_screenPointer = SDL_calloc(1,sizeof(struct BITMENU_screen));
+		bitmenu_menuPointer->screenHead = bitmenu_screenPointer;
+		bitmenu_groupPointer->screenParent = bitmenu_screenPointer;
+		bitmenu_screenPointer->groupTransition = bitmenu_groupPointer;
+		bitmenu_screenPointer->fontScaleGlobal = fontScaleGlobal;
 	}
 }
 
-void bitmenuBuildGroup(float x, float y, float w, float h){
+void bitmenu_buildGroup(float x, float y, float w, float h){
 
-	if (menuPointer->groupHead != 0) {
-		objectPointer->groupLink = SDL_calloc(1,sizeof(struct BITMENU_group));
-		objectPointer->groupLink->groupPrevious = groupPointer;
-		groupPointer = objectPointer->groupLink;
-		groupPointer->screenParent = screenPointer;
-		groupPointer->x = x;
-		groupPointer->y = y;
-		groupPointer->w = w;
-		groupPointer->h = h;
+	if (bitmenu_menuPointer->groupHead != 0) {
+		bitmenu_objectPointer->groupLink =
+				SDL_calloc(1,sizeof(struct BITMENU_group));
+		bitmenu_objectPointer->groupLink->groupPrevious = bitmenu_groupPointer;
+		bitmenu_groupPointer = bitmenu_objectPointer->groupLink;
+		bitmenu_groupPointer->screenParent = bitmenu_screenPointer;
+		bitmenu_groupPointer->x = x;
+		bitmenu_groupPointer->y = y;
+		bitmenu_groupPointer->w = w;
+		bitmenu_groupPointer->h = h;
 	}else {
-		groupPointer = SDL_calloc(1,sizeof(struct BITMENU_group));
-		groupPointer->screenParent = screenPointer;
-		groupPointer->x = x;
-		groupPointer->y = y;
-		groupPointer->w = w;
-		groupPointer->h = h;
-		menuPointer->groupHead = groupPointer;
-		menuPointer->groupCurrent = menuPointer->groupHead;
+		bitmenu_groupPointer = SDL_calloc(1,sizeof(struct BITMENU_group));
+		bitmenu_groupPointer->screenParent = bitmenu_screenPointer;
+		bitmenu_groupPointer->x = x;
+		bitmenu_groupPointer->y = y;
+		bitmenu_groupPointer->w = w;
+		bitmenu_groupPointer->h = h;
+		bitmenu_menuPointer->groupHead = bitmenu_groupPointer;
+		bitmenu_menuPointer->groupCurrent = bitmenu_menuPointer->groupHead;
 	}
 }
 
-void bitmenuBuildObject(const char* name, void (*function)(void)){
+void bitmenu_buildObject(const char* name, void (*function)(void)){
 
-	if (groupPointer->objectHead != 0) {
-		objectPointer->objectNext = SDL_calloc(1,sizeof(struct BITMENU_object));
-		objectPointer = objectPointer->objectNext;
+	if (bitmenu_groupPointer->objectHead != 0) {
+		bitmenu_objectPointer->objectNext =
+				SDL_calloc(1,sizeof(struct BITMENU_object));
+		bitmenu_objectPointer = bitmenu_objectPointer->objectNext;
 
-		strcpy(objectPointer->name,name);
-		objectPointer->function = function;
+		SDL_strlcpy(bitmenu_objectPointer->name,name,256);
+		bitmenu_objectPointer->function = function;
 	}else {
-		objectPointer = SDL_calloc(1,sizeof(struct BITMENU_object));
-		strcpy(objectPointer->name,name);
-		objectPointer->function = function;
+		bitmenu_objectPointer = SDL_calloc(1,sizeof(struct BITMENU_object));
+		SDL_strlcpy(bitmenu_objectPointer->name,name,256);
+		bitmenu_objectPointer->function = function;
 
-		groupPointer->objectHead = objectPointer;
-		if (menuPointer->objectCurrent == 0) {
-			menuPointer->objectCurrent = menuPointer->groupHead->objectHead;
+		bitmenu_groupPointer->objectHead = bitmenu_objectPointer;
+		if (bitmenu_menuPointer->objectCurrent == 0) {
+			bitmenu_menuPointer->objectCurrent =
+					bitmenu_menuPointer->groupHead->objectHead;
 		}
 	}
 }
 
-void bitmenuBuildGroupLeave(void){
+void bitmenu_buildGroupLeave(void){
 
-	groupPointer = groupPointer->groupPrevious;
-	objectPointer = groupPointer->objectHead;
-	while (objectPointer->objectNext!=0) {
-		objectPointer=objectPointer->objectNext;
+	bitmenu_groupPointer = bitmenu_groupPointer->groupPrevious;
+	bitmenu_objectPointer = bitmenu_groupPointer->objectHead;
+	while (bitmenu_objectPointer->objectNext!=0) {
+		bitmenu_objectPointer=bitmenu_objectPointer->objectNext;
 	}
 }
 
-void bitmenuBuildExample(void){
+void bitmenu_buildExample(void){
 
-	bitmenuBuildMenu();
-	bitmenuBuildGroup(-1,1,1,1);
-	bitmenuBuildScreen(2);
-	bitmenuBuildObject("menu 1, screen 1, group 1",0);
-	bitmenuBuildObject("go to group 2",0);
-	bitmenuBuildGroup(-1,0,1,1);
-		bitmenuBuildObject("menu 1, screen 1, group 2",0);
-	bitmenuBuildGroupLeave();
-	bitmenuBuildObject("go to screen 2",0);
-	bitmenuBuildGroup(-1,1,1,1);
-		bitmenuBuildScreen(3);
-		bitmenuBuildObject("menu 1, screen 2, group 3",0);
-		bitmenuBuildObject("go to group 4",0);
-		bitmenuBuildGroup(-1,0,1,1);
-			bitmenuBuildObject("menu 1, screen 2, group 4",0);
-		bitmenuBuildGroupLeave();
-	bitmenuBuildGroupLeave();
+	bitmenu_buildMenu();
+	bitmenu_buildGroup(-1,1,1,1);
+	bitmenu_buildScreen(2);
+	bitmenu_buildObject("menu 1, screen 1, group 1",0);
+	bitmenu_buildObject("go to group 2",0);
+	bitmenu_buildGroup(-1,0,1,1);
+		bitmenu_buildObject("menu 1, screen 1, group 2",0);
+	bitmenu_buildGroupLeave();
+	bitmenu_buildObject("go to screen 2",0);
+	bitmenu_buildGroup(-1,1,1,1);
+		bitmenu_buildScreen(3);
+		bitmenu_buildObject("menu 1, screen 2, group 3",0);
+		bitmenu_buildObject("go to group 4",0);
+		bitmenu_buildGroup(-1,0,1,1);
+			bitmenu_buildObject("menu 1, screen 2, group 4",0);
+		bitmenu_buildGroupLeave();
+	bitmenu_buildGroupLeave();
 
-	bitmenuBuildMenu();
-	bitmenuBuildGroup(0,1,1,1);
-	bitmenuBuildScreen(1);
-	bitmenuBuildObject("menu 2, screen 1, group 1",0);
+	bitmenu_buildMenu();
+	bitmenu_buildGroup(0,1,1,1);
+	bitmenu_buildScreen(1);
+	bitmenu_buildObject("menu 2, screen 1, group 1",0);
 }
 
 
 
 
-void updateBitmenu(void){
+void bitmenu_update(void){
 
 }
 
 
-void createBitmenu(void){
+void bitmenu_create(void){
 
-	bitfontPtr = bitfontRequestPtr(0xff);
+	bitmenu_bitfontPtr = bitfont_requestPtr(0xff);
 
-	bitmenuCurrent = 0;
-	bitmenuHead = 0;
+	bitmenu_current = 0;
+	bitmenu_head = 0;
 
-	menuPointer = 0;
-	screenPointer = 0;
-	groupPointer = 0;
-	objectPointer = 0;
+	bitmenu_menuPointer = 0;
+	bitmenu_screenPointer = 0;
+	bitmenu_groupPointer = 0;
+	bitmenu_objectPointer = 0;
 }
 
 
-void destroyBitmenu(void){
+void bitmenu_destroy(void){
 
 	void* last;
 	struct BITMENU_menu* menu;
 	struct BITMENU_screen* screen;
 
 
-	menu = bitmenuHead;
+	menu = bitmenu_head;
 	while (menu != 0) {
 
 		screen = menu->screenHead;
@@ -323,7 +328,7 @@ void destroyBitmenu(void){
 			SDL_free(last);
 		}
 
-		bitmenuGrouptreeDelete(menu->groupHead);
+		bitmenu_grouptreeDelete(menu->groupHead);
 
 		last = menu;
 		menu = menu->menuNext;
@@ -331,35 +336,37 @@ void destroyBitmenu(void){
 	}
 
 
-	bitfontFreePtr(bitfontPtr);
+	bitfont_freePtr(bitmenu_bitfontPtr);
 }
 
 
-void stepBitmenu(void){
+void bitmenu_step(void){
 
 	if (isola_keyState[SDL_SCANCODE_J] && !isola_keyRepeat[SDL_SCANCODE_J]) {
-		bitmenuMoveForward();
+		bitmenu_moveForward();
 	}
 	if (isola_keyState[SDL_SCANCODE_K] && !isola_keyRepeat[SDL_SCANCODE_K]) {
-		bitmenuMoveBack();
+		bitmenu_moveBack();
 	}
 
 	if (isola_keyState[SDL_SCANCODE_Q] && !isola_keyRepeat[SDL_SCANCODE_Q]) {
-		bitmenuLeaveGroup();
-	}else if(isola_keyState[SDL_SCANCODE_RETURN] && !isola_keyRepeat[SDL_SCANCODE_RETURN]) {
-		bitmenuActivateObject();
+		bitmenu_leaveGroup();
+	}else if(isola_keyState[SDL_SCANCODE_RETURN] &&
+			!isola_keyRepeat[SDL_SCANCODE_RETURN]) {
+		bitmenu_activateObject();
 	}
 
 
-	memset(bitfontPtr->data,0,sizeof(struct BITFONT_object)*bitfontPtr->size);
-	bitfontCounter = bitfontPtr->data;
-	bitmenuCounter = bitmenuHead;
-	while (bitmenuCounter != 0) {
+	SDL_memset(bitmenu_bitfontPtr->data,0,
+			sizeof(struct BITFONT_object)*bitmenu_bitfontPtr->size);
+	bitmenu_bitfontCounter = bitmenu_bitfontPtr->data;
+	bitmenu_counter = bitmenu_head;
+	while (bitmenu_counter != 0) {
 
-		bitmenuGrouptreeStep(
-				bitmenuCounter->groupCurrent->screenParent->groupTransition);
+		bitmenu_grouptreeStep(
+				bitmenu_counter->groupCurrent->screenParent->groupTransition);
 
-		bitmenuCounter = bitmenuCounter->menuNext;
+		bitmenu_counter = bitmenu_counter->menuNext;
 	}
 }
 

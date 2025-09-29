@@ -4,12 +4,12 @@
 
 
 
-extern void bitmenuBuildMenu(void);
-extern void bitmenuBuildGroup(float x, float y, float w, float h);
-extern void bitmenuBuildScreen(unsigned char fontScaleGlobal);
-extern void bitmenuBuildObject(const char* name, void (*function)(void));
-extern void bitmenuBuildGroupLeave(void);
-extern void bitmenuBuildExample(void);
+extern void bitmenu_buildMenu(void);
+extern void bitmenu_buildGroup(float x, float y, float w, float h);
+extern void bitmenu_buildScreen(unsigned char fontScaleGlobal);
+extern void bitmenu_buildObject(const char* name, void (*function)(void));
+extern void bitmenu_buildGroupLeave(void);
+extern void bitmenu_buildExample(void);
 
 
 

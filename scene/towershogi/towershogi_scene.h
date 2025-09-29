@@ -4,7 +4,7 @@
 
 
 
-extern unsigned char towershogi_loop(void);
+extern unsigned char towershogi_scene_loop(void);
 
 
 

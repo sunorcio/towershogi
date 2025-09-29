@@ -4,7 +4,7 @@
 
 
 
-extern unsigned char towermenu_loop(void);
+extern unsigned char towermenu_scene_loop(void);
 
 
 

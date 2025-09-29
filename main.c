@@ -27,8 +27,8 @@ int main(int argc, char **argv){
 
 
 	while (1) {
-		if (towermenu_loop()) {
-			if (towershogi_loop()) {
+		if (towermenu_scene_loop()) {
+			if (towershogi_scene_loop()) {
 				continue;
 			}else {
 				break;
@@ -40,7 +40,7 @@ int main(int argc, char **argv){
 
 
 
-	ISOLA_CLEARTERMINAL_()
+
 	isola_quit();
 	return 0;
 }

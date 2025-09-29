@@ -18,9 +18,9 @@
 
 
 
-static void towermenu_update(void);
-static void towermenu_create(void);
-static void towermenu_destroy(void);
+static void towermenu_scene_update(void);
+static void towermenu_scene_create(void);
+static void towermenu_scene_destroy(void);
 
 
 
@@ -45,7 +45,7 @@ struct SCENE_scene towermenu_scene = {0};
 
 
 
-static void towermenu_update(void){
+static void towermenu_scene_update(void){
 
 	isola_get_window();
 	if (isola_info_window.width < towermenu_scene.window.windowMinRes[0]) {
@@ -60,15 +60,15 @@ static void towermenu_update(void){
 	isola_get_window();
 	glViewport(0,0,isola_info_window.width, isola_info_window.height);
 
-	updateBitmenu();
+	bitmenu_update();
 
 
-	updateBitfont();
-	updateDigitfps();
+	bitfont_update();
+	digitfps_update();
 }
 
 
-static void towermenu_create(void){
+static void towermenu_scene_create(void){
 
 	currentScene = &towermenu_scene;
 
@@ -112,47 +112,47 @@ static void towermenu_create(void){
 			towermenu_scene.window.clearColor[3]);
 
 
-	createBitmenu();
+	bitmenu_create();
 
-	bitmenuBuildMenu();
-	bitmenuBuildGroup(-1,1,1,1);
-	bitmenuBuildScreen(2);
-	bitmenuBuildObject("MENU - 'j'/'k' - up/down",0);
-	bitmenuBuildObject("MENU - 'return' - activate option",0);
-	bitmenuBuildObject("edit rules",0);
-	bitmenuBuildGroup(-1,1,1,1);
-		bitmenuBuildScreen(2);
-		bitmenuBuildObject("these are rules :)",0);
-		bitmenuBuildObject("press q to go back to last menu",0);
-	bitmenuBuildGroupLeave();
-	bitmenuBuildObject("play",towermenu_function_play);
-	bitmenuBuildObject("join",0);
-	bitmenuBuildObject("host",0);
-	bitmenuBuildObject("options",0);
-	bitmenuBuildGroup(-1,1,1,1);
-		bitmenuBuildScreen(2);
-		bitmenuBuildObject("these are options :)",0);
-		bitmenuBuildObject("press q to go back to last menu",0);
-	bitmenuBuildGroupLeave();
-	bitmenuBuildObject("quit",towermenu_function_quit);
+	bitmenu_buildMenu();
+	bitmenu_buildGroup(-1,1,1,1);
+	bitmenu_buildScreen(2);
+	bitmenu_buildObject("MENU - 'j'/'k' - up/down",0);
+	bitmenu_buildObject("MENU - 'return' - activate option",0);
+	bitmenu_buildObject("edit rules",0);
+	bitmenu_buildGroup(-1,1,1,1);
+		bitmenu_buildScreen(2);
+		bitmenu_buildObject("these are rules :)",0);
+		bitmenu_buildObject("press q to go back to last menu",0);
+	bitmenu_buildGroupLeave();
+	bitmenu_buildObject("play",towermenu_function_play);
+	bitmenu_buildObject("join",0);
+	bitmenu_buildObject("host",0);
+	bitmenu_buildObject("options",0);
+	bitmenu_buildGroup(-1,1,1,1);
+		bitmenu_buildScreen(2);
+		bitmenu_buildObject("these are options :)",0);
+		bitmenu_buildObject("press q to go back to last menu",0);
+	bitmenu_buildGroupLeave();
+	bitmenu_buildObject("quit",towermenu_function_quit);
 
-	createBitfont();
-	createDigitfps();
+	bitfont_create();
+	digitfps_create();
 
 
-	towermenu_update();
+	towermenu_scene_update();
 }
 
 
-static void towermenu_destroy(void){
+static void towermenu_scene_destroy(void){
 
 	isola_inputClear(isola_window);
 
 
-	destroyBitmenu();
+	bitmenu_destroy();
 
-	destroyBitfont();
-	destroyDigitfps();
+	bitfont_destroy();
+	digitfps_destroy();
 
 
 	glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
@@ -162,12 +162,12 @@ static void towermenu_destroy(void){
 
 
 
-unsigned char towermenu_loop(void){
+unsigned char towermenu_scene_loop(void){
 
 	SDL_Event event = {0};
 
 
-	towermenu_create();
+	towermenu_scene_create();
 
 	while(towermenu_scene.state.run){
 
@@ -181,7 +181,7 @@ unsigned char towermenu_loop(void){
 				case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
 				case SDL_EVENT_WINDOW_RESIZED:
 				case SDL_EVENT_WINDOW_DISPLAY_CHANGED:
-					towermenu_update();
+					towermenu_scene_update();
 				break;
 				case SDL_EVENT_KEY_DOWN:
 					if (!event.key.repeat) {
@@ -208,7 +208,7 @@ unsigned char towermenu_loop(void){
 		if (!towermenu_scene.state.pause) {
 			if(isola_timerStep(&currentScene->timing.logicTimer)){
 
-				stepBitmenu();
+				bitmenu_step();
 				isola_inputRepeat();
 			}
 
@@ -217,8 +217,8 @@ unsigned char towermenu_loop(void){
 				glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 
 
-				drawBitfont();
-				drawDigitfps();
+				bitfont_draw();
+				digitfps_draw();
 
 
 				SDL_GL_SwapWindow(isola_window);
@@ -233,7 +233,7 @@ unsigned char towermenu_loop(void){
 	}
 
 
-	towermenu_destroy();
+	towermenu_scene_destroy();
 	return towermenu_scene.state.returnControlValue;
 }
 
