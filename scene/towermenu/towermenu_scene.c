@@ -40,7 +40,7 @@ static void towermenu_function_play(void){
 
 
 
-struct SCENE_scene towermenu_scene = {0};
+static struct SCENE_scene towermenu_scene = {0};
 
 
 

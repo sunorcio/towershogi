@@ -16,7 +16,7 @@
 
 
 
-struct SCENE_scene towershogi_scene = {0};
+static struct SCENE_scene towershogi_scene = {0};
 
 
 
@@ -37,7 +37,7 @@ static void towershogi_scene_update(void){
 	glViewport(0,0,isola_info_window.width, isola_info_window.height);
 
 
-	updateTowershogi();
+	towershogi_update();
 	digitfps_update();
 }
 
@@ -85,11 +85,11 @@ static void towershogi_scene_create(void){
 			towershogi_scene.window.clearColor[3]);
 
 
-	towershogiBoardSize[0] = 8;
-	towershogiBoardSize[1] = 8;
+	towershogi_boardSize[0] = 8;
+	towershogi_boardSize[1] = 8;
 
 
-	createTowershogi();
+	towershogi_create();
 	digitfps_create();
 
 
@@ -102,7 +102,7 @@ static void towershogi_scene_destroy(void){
 	isola_inputClear(isola_window);
 
 
-	destroyTowershogi();
+	towershogi_destroy();
 	digitfps_destroy();
 
 
@@ -160,7 +160,7 @@ unsigned char towershogi_scene_loop(void){
 		if (!towershogi_scene.state.pause) {
 			if(isola_timerStep(&currentScene->timing.logicTimer)){
 
-				stepTowershogi();
+				towershogi_step();
 
 				isola_inputRepeat();
 			}
@@ -170,7 +170,7 @@ unsigned char towershogi_scene_loop(void){
 				glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 
 
-				drawTowershogi();
+				towershogi_draw();
 				digitfps_draw();
 
 

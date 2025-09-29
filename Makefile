@@ -17,7 +17,7 @@ TARGET_RELEASE = off
 #[off^on]
 TARGET_DEBUG = on
 #[off^on]
-TARGET_SANITIZE = off
+TARGET_SANITIZE = on
 
 #[string], binary name
 TARGET_BIN = isola_example
@@ -168,8 +168,8 @@ ifeq (${TARGET_OS}, linux)
  endif
 
  ifeq (${TARGET_SANITIZE}, on)
-  #CFLAGS += -Werror -Wpedantic
-  CFLAGS += -fsanitize=undefined -fsanitize=address -Weverything -std=c89
+  #CFLAGS += -Werror -Wpedantic -Weverything
+  CFLAGS += -fsanitize=undefined -fsanitize=address -std=c89
   #LDFLAGS +=
   LDFLAGS += -fsanitize=undefined -fsanitize=address
  endif

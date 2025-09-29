@@ -332,7 +332,7 @@ void bitmenu_destroy(void){
 
 		last = menu;
 		menu = menu->menuNext;
-		SDL_free(menu);
+		SDL_free(last);
 	}
 
 

@@ -30,7 +30,7 @@ struct BITFONT_data* bitfont_requestPtr(unsigned int size){
 		if (bitfont_data[i].size == 0) {
 			bitfont_data[i].size = size;
 			bitfont_data[i].data = SDL_calloc(size,sizeof(struct BITFONT_object));
-			return bitfont_data;
+			return &bitfont_data[i];
 		}
 	}}
 

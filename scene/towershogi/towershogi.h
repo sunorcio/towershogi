@@ -4,7 +4,7 @@
 
 
 
-#define TOWERSHOGI_BOARD_SIZE (towershogiBoardSize[0]*towershogiBoardSize[1])
+#define TOWERSHOGI_BOARD_SIZE (towershogi_boardSize[0]*towershogi_boardSize[1])
 
 
 
@@ -21,21 +21,21 @@ struct TOWERSHOGI_board{
 	unsigned short currentTile;
 	unsigned short selectedTile;
 	struct TOWERSHOGI_piece * tile;
-}extern towershogiBoard;
+}extern towershogi_board;
 
 
 
 
-extern unsigned short towershogiBoardSize[2];
+extern unsigned short towershogi_boardSize[2];
 
 
 
 
-extern void updateTowershogi(void);
-extern void createTowershogi(void);
-extern void destroyTowershogi(void);
-extern void stepTowershogi(void);
-extern void drawTowershogi(void);
+extern void towershogi_update(void);
+extern void towershogi_create(void);
+extern void towershogi_destroy(void);
+extern void towershogi_step(void);
+extern void towershogi_draw(void);
 
 
 
