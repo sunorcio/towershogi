@@ -34,7 +34,7 @@ struct BITFONT_data* bitfont_requestPtr(unsigned int size){
 		}
 	}}
 
-	SDL_Log("bitfont_requestPtr: data pointer limit(%d) reached",
+	SDL_Log("bitfont_requestPtr: data pointer limit reached (%d)",
 			BITFONT_MAXDATAPOINTERS);
 	return 0;
 }
@@ -77,8 +77,11 @@ void bitfont_update(void){
 	if(loc == -1){ SDL_Log("bitfont: matProj not found"); }
 	glUniformMatrix4fv(loc,1,GL_FALSE,matProj);
 
-	if (isola_info_window.xRatio == 1) { lowRes = isola_info_window.width;
-	}else{ lowRes = isola_info_window.height; }
+	if (isola_info_window.xRatio == 1.) {
+		lowRes = isola_info_window.width;
+	}else{
+		lowRes = isola_info_window.height;
+	}
 	loc = glGetUniformLocation(bitfont_shaderProg[0],"lowResolution");
 	if(loc == -1){ SDL_Log("bitfont: lowResolution not found"); }
 	glUniform1f(loc,lowRes);

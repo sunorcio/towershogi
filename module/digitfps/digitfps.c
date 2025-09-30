@@ -90,8 +90,11 @@ void digitfps_update(void){
 	if(loc == -1){SDL_Log("digitfps: pixelSize not found");}
 	glUniform1i(loc,digitfps_option.pixelSize);
 
-	if (isola_info_window.xRatio == 1) { lowRes = isola_info_window.width;
-	}else{ lowRes = isola_info_window.height; }
+	if (isola_info_window.xRatio == 1.) {
+		lowRes = isola_info_window.width;
+	}else{ 
+		lowRes = isola_info_window.height;
+	}
 	loc = glGetUniformLocation(digitfps_shaderProg,"lowResolution");
 	if(loc == -1){SDL_Log("digitfps: lowResolution not found");}
 	glUniform1f(loc,lowRes);

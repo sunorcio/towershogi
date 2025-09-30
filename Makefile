@@ -168,8 +168,8 @@ ifeq (${TARGET_OS}, linux)
  endif
 
  ifeq (${TARGET_SANITIZE}, on)
-  #CFLAGS += -Werror -Wpedantic -Weverything
-  CFLAGS += -fsanitize=undefined -fsanitize=address -std=c89
+  #CFLAGS += -Werror -Wpedantic
+  CFLAGS += -fsanitize=undefined -fsanitize=address -std=c89 -Weverything -Wno-switch-default
   #LDFLAGS +=
   LDFLAGS += -fsanitize=undefined -fsanitize=address
  endif
