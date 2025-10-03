@@ -54,7 +54,7 @@ static unsigned int bitfont_shaderProg[1] = {0};
 static unsigned int bitfont_vertArrObj[1] = {0};
 static unsigned int bitfont_vertBufObj[1] = {0};
 static unsigned int bitfont_texObj[1] = {0};
-static unsigned char bitfont_vertData[BITFONT_STRINGSIZE*6] = {0};
+static char bitfont_vertData[BITFONT_STRINGSIZE*6] = {0};
 
 
 void bitfont_update(void){
@@ -69,22 +69,22 @@ void bitfont_update(void){
 
 	{int loc;
 	float matProj[4*4] = {0};
-	float lowRes;
+	int lowRes;
 
 	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
-			-isola_info_window.yRatio,isola_info_window.yRatio,0.25,8.,matProj);
+			-isola_info_window.yRatio,isola_info_window.yRatio,0.25f,8.f,matProj);
 	loc = glGetUniformLocation(bitfont_shaderProg[0],"matProj");
 	if(loc == -1){ SDL_Log("bitfont: matProj not found"); }
 	glUniformMatrix4fv(loc,1,GL_FALSE,matProj);
 
-	if (isola_info_window.xRatio == 1.) {
+	if (isola_info_window.xRatio == 1.f) {
 		lowRes = isola_info_window.width;
 	}else{
 		lowRes = isola_info_window.height;
 	}
 	loc = glGetUniformLocation(bitfont_shaderProg[0],"lowResolution");
 	if(loc == -1){ SDL_Log("bitfont: lowResolution not found"); }
-	glUniform1f(loc,lowRes);
+	glUniform1i(loc,lowRes);
 	}
 }
 
@@ -107,7 +107,7 @@ void bitfont_create(void){
 			bitfont_vertData,GL_DYNAMIC_DRAW) )
 
 	ISOLA_GLDBG_( glEnableVertexAttribArray(0) )
-	ISOLA_GLDBG_( glVertexAttribIPointer(0,1,GL_UNSIGNED_BYTE,
+	ISOLA_GLDBG_( glVertexAttribIPointer(0,1,GL_BYTE,
 			sizeof(bitfont_vertData[0]),(void*)0) )
 
 
@@ -189,7 +189,7 @@ void bitfont_draw(void){
 				{unsigned int v;
 				for(v = 0;v<6;v++){
 
-					bitfont_vertData[c*6+v] = bitfont_data[d].data[o].string[c]-32;
+					bitfont_vertData[c*6+v] = (unsigned char)bitfont_data[d].data[o].string[c]-32;
 				}}
 			}}
 

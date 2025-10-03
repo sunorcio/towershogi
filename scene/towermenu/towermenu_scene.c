@@ -6,14 +6,13 @@
 #include <isola/isola.h>
 #include <isola/timing.h>
 #include <isola/input.h>
-#include <scene/scene.h>
 
 
-#include <module/digitfps/digitfps.h>
-#include <module/digitfps/digitfps_logic.h>
-#include <module/bitfont/bitfont.h>
-#include <module/bitmenu/bitmenu.h>
-#include <module/bitmenu/bitmenu_logic.h>
+#include "scene/scene.h"
+#include "module/digitfps/digitfps.h"
+#include "module/bitfont/bitfont.h"
+#include "module/bitmenu/bitmenu.h"
+#include "module/bitmenu/bitmenu_logic.h"
 
 
 

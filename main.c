@@ -21,7 +21,7 @@ int main(int argc, char **argv){
 	}
 
 	SDL_GetCurrentTime(&time);
-	SDL_srand(time);
+	SDL_srand((Uint64)time);
 
 
 

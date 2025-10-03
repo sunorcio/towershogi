@@ -4,7 +4,7 @@
 
 
 uniform mat4 matProj;
-uniform float lowResolution;
+uniform int lowResolution;
 
 uniform int pixelSize;
 

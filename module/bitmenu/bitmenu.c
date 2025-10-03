@@ -9,7 +9,7 @@
 #include <isola/input.h>
 
 
-#include <module/bitfont/bitfont_logic.h>
+#include "module/bitfont/bitfont_logic.h"
 
 
 
@@ -97,20 +97,20 @@ static void bitmenu_grouptreeStep(struct BITMENU_group* group){
 		SDL_strlcpy(bitmenu_bitfontCounter->string,object->name,256);
 		bitmenu_bitfontCounter->x = group->x + (float)isola_info_window.pixelWidth;
 		bitmenu_bitfontCounter->y = group->y
-				-(float)isola_info_window.pixelHeight*16
-				*bitmenu_bitfontCounter->pixelSize*o
+				-(float)isola_info_window.pixelHeight*16.f
+				*bitmenu_bitfontCounter->pixelSize*(float)o
 				-(float)isola_info_window.pixelHeight;
-		bitmenu_bitfontCounter->foreColor[0] = 0.;
-		bitmenu_bitfontCounter->foreColor[1] = 0.;
-		bitmenu_bitfontCounter->foreColor[2] = 0.;
-		bitmenu_bitfontCounter->foreColor[3] = 1.;
-		bitmenu_bitfontCounter->backColor[0] = 1.
+		bitmenu_bitfontCounter->foreColor[0] = 0.f;
+		bitmenu_bitfontCounter->foreColor[1] = 0.f;
+		bitmenu_bitfontCounter->foreColor[2] = 0.f;
+		bitmenu_bitfontCounter->foreColor[3] = 1.f;
+		bitmenu_bitfontCounter->backColor[0] = 1.f
 				*(bitmenu_counter->objectCurrent==object);
-		bitmenu_bitfontCounter->backColor[1] = 1.
+		bitmenu_bitfontCounter->backColor[1] = 1.f
 				*(bitmenu_counter->objectCurrent==object);
-		bitmenu_bitfontCounter->backColor[2] = 1.;
-		bitmenu_bitfontCounter->backColor[3] = 0.5
-				+0.5*(bitmenu_counter->groupCurrent==group);
+		bitmenu_bitfontCounter->backColor[2] = 1.f;
+		bitmenu_bitfontCounter->backColor[3] = 0.5f
+				+0.5f*(bitmenu_counter->groupCurrent==group);
 
 		if (bitmenu_bitfontCounter !=
 				&bitmenu_bitfontPtr->data[bitmenu_bitfontPtr->size-1]) {

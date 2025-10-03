@@ -1,5 +1,4 @@
 #include "digitfps.h"
-#include "digitfps_logic.h"
 
 
 
@@ -74,7 +73,7 @@ void digitfps_update(void){
 
 	{int loc;
 	float matProj[4*4] = {0};
-	float lowRes;
+	int lowRes;
 
 	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
 			-isola_info_window.yRatio,isola_info_window.yRatio, 0.25,8.,matProj);
@@ -90,14 +89,14 @@ void digitfps_update(void){
 	if(loc == -1){SDL_Log("digitfps: pixelSize not found");}
 	glUniform1i(loc,digitfps_option.pixelSize);
 
-	if (isola_info_window.xRatio == 1.) {
+	if (isola_info_window.xRatio == 1.f) {
 		lowRes = isola_info_window.width;
 	}else{ 
 		lowRes = isola_info_window.height;
 	}
 	loc = glGetUniformLocation(digitfps_shaderProg,"lowResolution");
 	if(loc == -1){SDL_Log("digitfps: lowResolution not found");}
-	glUniform1f(loc,lowRes);
+	glUniform1i(loc,lowRes);
 	}
 }
 
@@ -155,7 +154,7 @@ void digitfps_draw(void){
 		digitfps_string[i] = 0;
 	}}
 	SDL_snprintf(digitfps_string,sizeof(digitfps_string),"%f",
-			1./((delaySum/256.)/(double)isola_clockFreq) );
+			1./(((double)delaySum/256.)/(double)isola_clockFreq) );
 	}
 
 	{unsigned short i;

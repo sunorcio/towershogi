@@ -4,14 +4,13 @@
 
 
 #include <isola/isola.h>
-#include <scene/scene.h>
 #include <isola/timing.h>
 #include <isola/input.h>
 
 
+#include "scene/scene.h"
+#include "module/digitfps/digitfps.h"
 #include "towershogi.h"
-#include <module/digitfps/digitfps.h>
-#include <module/digitfps/digitfps_logic.h>
 
 
 
@@ -83,10 +82,6 @@ static void towershogi_scene_create(void){
 			towershogi_scene.window.clearColor[1],
 			towershogi_scene.window.clearColor[2],
 			towershogi_scene.window.clearColor[3]);
-
-
-	towershogi_boardSize[0] = 8;
-	towershogi_boardSize[1] = 8;
 
 
 	towershogi_create();

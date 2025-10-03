@@ -169,7 +169,7 @@ ifeq (${TARGET_OS}, linux)
 
  ifeq (${TARGET_SANITIZE}, on)
   #CFLAGS += -Werror -Wpedantic
-  CFLAGS += -fsanitize=undefined -fsanitize=address -std=c89 -Weverything -Wno-switch-default
+  CFLAGS += -fsanitize=undefined -fsanitize=address -std=c89 -Weverything -Wno-switch-default -Wno-unused-macros -Wno-padded -Wno-assign-enum
   #LDFLAGS +=
   LDFLAGS += -fsanitize=undefined -fsanitize=address
  endif
@@ -273,6 +273,7 @@ ${TARGET_BIN}: ${OBJ} | ${POSTRULE}
 clean:
 	rm all.c all.o -f
 	rm ${OBJ} -f
+	rm ${DEP} -f
 
 deepclean:
 	rm all.c -f
