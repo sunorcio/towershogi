@@ -1,5 +1,5 @@
-#ifndef BITMENU_LOGIC_H
-#define BITMENU_LOGIC_H
+#ifndef BITMENU_BUILD_H
+#define BITMENU_BUILD_H
 
 
 

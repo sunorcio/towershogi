@@ -12,7 +12,7 @@
 #include "module/digitfps/digitfps.h"
 #include "module/bitfont/bitfont.h"
 #include "module/bitmenu/bitmenu.h"
-#include "module/bitmenu/bitmenu_logic.h"
+#include "module/bitmenu/bitmenu_build.h"
 
 
 
@@ -116,8 +116,8 @@ static void towermenu_scene_create(void){
 	bitmenu_buildMenu();
 	bitmenu_buildGroup(-1,1,1,1);
 	bitmenu_buildScreen(2);
-	bitmenu_buildObject("MENU - 'j'/'k' - up/down",0);
-	bitmenu_buildObject("MENU - 'return' - activate option",0);
+	bitmenu_buildObject("'j'/'k' - up/down",0);
+	bitmenu_buildObject("'return' - activate option",0);
 	bitmenu_buildObject("edit rules",0);
 	bitmenu_buildGroup(-1,1,1,1);
 		bitmenu_buildScreen(2);

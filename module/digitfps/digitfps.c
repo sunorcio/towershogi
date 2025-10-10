@@ -13,14 +13,19 @@
 
 
 
-static float digitfps_vertex[] = {
+/* [0-18] */
+#define digitfpsPrintAmount 6
+
+
+static const float digitfps_vertex[] = {
 	 0.,  0. ,      0.5,  0. ,      1.,  0. ,
 	 0.,  0.5,      0.5,  0.5,      1.,  0.5,
 	 0.,  1. ,      0.5,  1. ,      1.,  1. ,
 	 0.,  1.5,      0.5,  1.5,      1.,  1.5,
 	 0.,  2. ,      0.5,  2. ,      1.,  2. ,
 };
-static unsigned short digitfps_element[12][12] = {
+
+static const unsigned short digitfps_element[12][12] = {
 	{  0,  0,  0,     0,  0,  0,     0,  0,  0,     0,  0,  0 },
 	{  1,  6,  3,     1,  2,  8,     6, 13, 12,     8, 11, 13 },
 	{  1, 11, 10,     9, 11, 13,     0,  0,  0,     0,  0,  0 },
@@ -36,10 +41,6 @@ static unsigned short digitfps_element[12][12] = {
 };
 
 
-
-
-/* [0-18] */
-#define digitfpsPrintAmount 6
 
 
 struct DIGITFPS_font digitfps_option = { 
@@ -58,6 +59,8 @@ static unsigned int digitfps_eleBufObj;
 static unsigned short digitfps_eleData[18]
 		[sizeof(digitfps_element[0])/
 		sizeof(digitfps_element[0][0])] = {0};
+
+
 
 
 void digitfps_update(void){
@@ -122,6 +125,15 @@ void digitfps_create(void){
 	digitfps_shaderProg = isola_shader_buildProgram(
 			"module/digitfps/glsl/digitfps.vert",
 			"module/digitfps/glsl/digitfps.frag");
+
+
+	ISOLA_GLDBG_( glUseProgram(digitfps_shaderProg) )
+
+	{int loc;
+	loc = glGetUniformLocation(digitfps_shaderProg,"digitAmount");
+	if(loc == -1){SDL_Log("digitfps: digitAmount not found");}
+	glUniform1i(loc,digitfpsPrintAmount);
+	}
 
 
 	digitfps_update();

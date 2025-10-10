@@ -1,5 +1,5 @@
 #include "bitfont.h"
-#include "bitfont_logic.h"
+#include "bitfont_data.h"
 
 
 
@@ -58,12 +58,6 @@ static char bitfont_vertData[BITFONT_STRINGSIZE*6] = {0};
 
 
 void bitfont_update(void){
-
-	ISOLA_GLDBG_( glBindVertexArray(bitfont_vertArrObj[0]) )
-	ISOLA_GLDBG_( glBindBuffer(GL_ARRAY_BUFFER,bitfont_vertBufObj[0]) )
-	ISOLA_GLDBG_( glBufferSubData(GL_ARRAY_BUFFER,0,
-			sizeof(bitfont_vertData),bitfont_vertData) )
-
 
 	ISOLA_GLDBG_( glUseProgram(bitfont_shaderProg[0]) )
 

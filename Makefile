@@ -236,6 +236,10 @@ ${OBJ}: %.o : %.c
 
 
 
+${TARGET_BIN}: ${OBJ} | ${POSTRULE}
+	${CC} -o $@${BIN_EXT} ${OBJ} ${LDFLAGS}
+
+
 ifeq (${TARGET_OS}, linux)
 
 bin: bin/linux
@@ -259,15 +263,7 @@ bin/windows:
 	unzip bin/windows/SDL3-devel-3.2.20-mingw.zip -d bin/windows/
 	unzip bin/windows/glew-2.2.0-win32.zip -d bin/windows/
 	rm bin/windows/*.zip -f
-
-
 endif
-
-
-
-
-${TARGET_BIN}: ${OBJ} | ${POSTRULE}
-	${CC} -o $@${BIN_EXT} ${OBJ} ${LDFLAGS}
 
 
 clean:
@@ -297,7 +293,7 @@ test: ${TARGET_BIN}
 	./${TARGET_BIN}${LINUX_EXT}
 
 debug: clean
-	make a TARGET_BIN=a TARGET_DEBUG=on clean
+	make a TARGET_BIN=a TARGET_BUILD=unified TARGET_DEBUG=on TARGET_SANITIZE=off clean
 
 sanitize: clean
 	make a TARGET_BIN=a TARGET_SANITIZE=on clean

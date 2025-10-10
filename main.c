@@ -13,15 +13,15 @@
 
 int main(int argc, char **argv){
 
-	Sint64 time;
-
-
 	if(!isola_init()){
 		return 1;
 	}
 
+
+	{Sint64 time;
 	SDL_GetCurrentTime(&time);
 	SDL_srand((Uint64)time);
+	}
 
 
 

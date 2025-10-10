@@ -1,5 +1,5 @@
 #include "bitmenu.h"
-#include "bitmenu_logic.h"
+#include "bitmenu_build.h"
 
 
 
@@ -9,7 +9,7 @@
 #include <isola/input.h>
 
 
-#include "module/bitfont/bitfont_logic.h"
+#include "module/bitfont/bitfont_data.h"
 
 
 
@@ -265,25 +265,25 @@ void bitmenu_buildGroupLeave(void){
 void bitmenu_buildExample(void){
 
 	bitmenu_buildMenu();
-	bitmenu_buildGroup(-1,1,1,1);
+	bitmenu_buildGroup(-1.f,1.f,1.f,1.f);
 	bitmenu_buildScreen(2);
 	bitmenu_buildObject("menu 1, screen 1, group 1",0);
 	bitmenu_buildObject("go to group 2",0);
-	bitmenu_buildGroup(-1,0,1,1);
+	bitmenu_buildGroup(-1.f,0.f,1.f,1.f);
 		bitmenu_buildObject("menu 1, screen 1, group 2",0);
 	bitmenu_buildGroupLeave();
 	bitmenu_buildObject("go to screen 2",0);
-	bitmenu_buildGroup(-1,1,1,1);
+	bitmenu_buildGroup(-1.f,1.f,1.f,1.f);
 		bitmenu_buildScreen(3);
 		bitmenu_buildObject("menu 1, screen 2, group 3",0);
 		bitmenu_buildObject("go to group 4",0);
-		bitmenu_buildGroup(-1,0,1,1);
+		bitmenu_buildGroup(-1.f,0.f,1.f,1.f);
 			bitmenu_buildObject("menu 1, screen 2, group 4",0);
 		bitmenu_buildGroupLeave();
 	bitmenu_buildGroupLeave();
 
 	bitmenu_buildMenu();
-	bitmenu_buildGroup(0,1,1,1);
+	bitmenu_buildGroup(0.f,1.f,1.f,1.f);
 	bitmenu_buildScreen(1);
 	bitmenu_buildObject("menu 2, screen 1, group 1",0);
 }
