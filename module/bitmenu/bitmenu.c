@@ -91,15 +91,15 @@ static void bitmenu_grouptreeStep(struct BITMENU_group* group){
 	object = group->objectHead;
 	while (object != 0) {
 
-		bitmenu_bitfontCounter->pixelSize = 
+		bitmenu_bitfontCounter->sizeMult = 
 				bitmenu_counter->groupCurrent->screenParent->fontScaleGlobal;
 		bitmenu_bitfontCounter->charWrap = BITFONT_STRINGSIZE;
 		SDL_strlcpy(bitmenu_bitfontCounter->string,object->name,256);
 		bitmenu_bitfontCounter->x = group->x + (float)isola_info_window.pixelWidth;
 		bitmenu_bitfontCounter->y = group->y
-				-(float)isola_info_window.pixelHeight*16.f
-				*bitmenu_bitfontCounter->pixelSize*(float)o
-				-(float)isola_info_window.pixelHeight;
+				-isola_info_window.pixelHeight*16.f
+				*bitmenu_bitfontCounter->sizeMult*(float)o
+				-isola_info_window.pixelHeight;
 		bitmenu_bitfontCounter->foreColor[0] = 0.f;
 		bitmenu_bitfontCounter->foreColor[1] = 0.f;
 		bitmenu_bitfontCounter->foreColor[2] = 0.f;

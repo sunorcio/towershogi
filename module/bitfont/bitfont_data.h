@@ -13,7 +13,7 @@
 
 
 struct BITFONT_object{
-	unsigned short pixelSize;
+	unsigned short sizeMult;
 	unsigned short charWrap;
 	char string[BITFONT_STRINGSIZE];
 	float x, y;

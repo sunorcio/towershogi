@@ -79,7 +79,6 @@ void towershogi_update(void){
 
 	{int loc;
 	float matProj[4*4] = {0};
-	int lowRes;
 
 	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
 			-isola_info_window.yRatio,isola_info_window.yRatio,0.25f,8.f,matProj);
@@ -352,6 +351,9 @@ void towershogi_create(void){
 	if(loc == -1){ SDL_Log("towershogi: boardWidth not found"); }
 	ISOLA_GLDBG_( glUniform1i(loc,TOWERSHOGI_BOARD_WIDTH); )
 
+/* TODO	if (isola_info_window.pixelWidth) {
+	
+	} */
 	ISOLA_GLDBG_( loc = glGetUniformLocation(
 				towershogi_shaderProg[0],"boardSpan"); )
 	if(loc == -1){ SDL_Log("towershogi: boardSpan not found"); }

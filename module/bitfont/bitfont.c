@@ -63,22 +63,24 @@ void bitfont_update(void){
 
 	{int loc;
 	float matProj[4*4] = {0};
-	int lowRes;
+	float pixelScale;
 
 	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
 			-isola_info_window.yRatio,isola_info_window.yRatio,0.25f,8.f,matProj);
-	loc = glGetUniformLocation(bitfont_shaderProg[0],"matProj");
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			bitfont_shaderProg[0],"matProj"); )
 	if(loc == -1){ SDL_Log("bitfont: matProj not found"); }
-	glUniformMatrix4fv(loc,1,GL_FALSE,matProj);
+	ISOLA_GLDBG_( glUniformMatrix4fv(loc,1,GL_FALSE,matProj); )
 
 	if (isola_info_window.xRatio == 1.f) {
-		lowRes = isola_info_window.width;
-	}else{
-		lowRes = isola_info_window.height;
+		pixelScale = isola_info_window.pixelWidth;
+	}else{ 
+		pixelScale = isola_info_window.pixelHeight;
 	}
-	loc = glGetUniformLocation(bitfont_shaderProg[0],"lowResolution");
-	if(loc == -1){ SDL_Log("bitfont: lowResolution not found"); }
-	glUniform1i(loc,lowRes);
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			bitfont_shaderProg[0],"pixelScale"); )
+	if(loc == -1){SDL_Log("digitfps: pixelScale not found");}
+	ISOLA_GLDBG_( glUniform1f(loc,pixelScale); )
 	}
 }
 
@@ -136,9 +138,10 @@ void bitfont_create(void){
 	ISOLA_GLDBG_( glUseProgram(bitfont_shaderProg[0]) )
 
 	{int loc;
-	loc = glGetUniformLocation(bitfont_shaderProg[0],"bitfontAtlas");
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			bitfont_shaderProg[0],"bitfontAtlas"); )
 	if(loc == -1){ SDL_Log("bitfont: bitfontAtlas not found"); }
-	glUniform1i(loc,0);
+	ISOLA_GLDBG_( glUniform1i(loc,0); )
 	}
 
 
@@ -199,25 +202,31 @@ void bitfont_draw(void){
 
 
 			{int loc;
-			loc = glGetUniformLocation(bitfont_shaderProg[0],"screenPos");
+			ISOLA_GLDBG_( loc = glGetUniformLocation(
+					bitfont_shaderProg[0],"screenPos"); )
 			if(loc == -1){ SDL_Log("bitfont: screenPos not found"); }
-			glUniform2f(loc,bitfont_data[d].data[o].x,bitfont_data[d].data[o].y);
+			ISOLA_GLDBG_( glUniform2f(loc,
+					bitfont_data[d].data[o].x,bitfont_data[d].data[o].y); )
 
-			loc = glGetUniformLocation(bitfont_shaderProg[0],"pixelSize");
-			if(loc == -1){ SDL_Log("bitfont: pixelSize not found"); }
-			glUniform1i(loc,bitfont_data[d].data[o].pixelSize);
+			ISOLA_GLDBG_( loc = glGetUniformLocation(
+					bitfont_shaderProg[0],"sizeMult"); )
+			if(loc == -1){ SDL_Log("bitfont: sizeMult not found"); }
+			ISOLA_GLDBG_( glUniform1i(loc,bitfont_data[d].data[o].sizeMult); )
 
-			loc = glGetUniformLocation(bitfont_shaderProg[0],"charWrap");
+			ISOLA_GLDBG_( loc = glGetUniformLocation(
+					bitfont_shaderProg[0],"charWrap"); )
 			if(loc == -1){ SDL_Log("bitfont: charWrap not found"); }
-			glUniform1i(loc,bitfont_data[d].data[o].charWrap);
+			ISOLA_GLDBG_( glUniform1i(loc,bitfont_data[d].data[o].charWrap); )
 
-			loc = glGetUniformLocation(bitfont_shaderProg[0],"fontColor");
+			ISOLA_GLDBG_( loc = glGetUniformLocation(
+					bitfont_shaderProg[0],"fontColor"); )
 			if(loc == -1){ SDL_Log("bitfont: fontColor not found"); }
-			glUniform4fv(loc,1,bitfont_data[d].data[o].foreColor);
+			ISOLA_GLDBG_( glUniform4fv(loc,1,bitfont_data[d].data[o].foreColor); )
 
-			loc = glGetUniformLocation(bitfont_shaderProg[0],"backColor");
+			ISOLA_GLDBG_( loc = glGetUniformLocation(
+					bitfont_shaderProg[0],"backColor"); )
 			if(loc == -1){ SDL_Log("bitfont: backColor not found"); }
-			glUniform4fv(loc,1,bitfont_data[d].data[o].backColor);
+			ISOLA_GLDBG_( glUniform4fv(loc,1,bitfont_data[d].data[o].backColor); )
 			}
 
 			ISOLA_GLDBG_( glDrawArrays(GL_TRIANGLES,0,BITFONT_STRINGSIZE*6) )

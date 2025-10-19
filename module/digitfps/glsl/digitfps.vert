@@ -4,8 +4,8 @@
 
 
 uniform mat4 matProj;
-uniform int lowResolution;
-uniform int pixelSize;
+uniform float pixelScale;
+uniform int sizePixelWidth;
 
 
 uniform int digitAmount;
@@ -13,7 +13,6 @@ uniform int digitAmount;
 
 
 
-#define pixelScale ( (float(pixelSize)/float(lowResolution))*2. )
 #define screenPos vec2(1.,1.)
 #define digitOffset vec2( -float(digitAmount)*1.25,-2.25 )
 
@@ -36,8 +35,8 @@ void main(){
 					( digitVertex[gl_VertexID%15]
 						+vec2((gl_VertexID/15)*1.25,0.)
 						+digitOffset )
-						*pixelScale,
-					-1.,1. )
+						*sizePixelWidth*pixelScale,
+					-1.,1.)
 			+ vec4(screenPos,0.,0.);
 }
 

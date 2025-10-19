@@ -23,7 +23,7 @@ uniform int boardSpan;
 #define texOffsetX (1./4.)
 #define texOffsetY (1./4.)
 
-#define pixelScale ( (float(pixelSize)/float(lowResolution))*2. )
+#define pixelScale ( (1./float(lowResolution))*2. )
 #define tileGap 0.
 #define tileScale (1./(boardSpan*(1.+tileGap)))
 

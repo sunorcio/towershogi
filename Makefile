@@ -102,19 +102,19 @@ endif
 
 ifeq (${TARGET_BUILD}, incremental)
 
-# #HDR = ${shell find . -type f -name '*.h' ! -path '*/bin/*'}
-#HDR =
-#SRC =
-SRC = ${shell find . -type f -name '*.c' ! -path '*/bin/*' ! -name 'all.c'}
-#DEP =
-DEP = ${shell find . -type f -name '*.d' ! -path '*/bin/*'}
-OBJ = ${SRC:.c=.o}
+ ##HDR = ${shell find . -type f -name '*.h' ! -path '*/bin/*'}
+ #HDR =
+ #SRC =
+ SRC = ${shell find . -type f -name '*.c' ! -path '*/bin/*' ! -name 'all.c'}
+ #DEP =
+ DEP = ${shell find . -type f -name '*.d' ! -path '*/bin/*'}
+ OBJ = ${SRC:.c=.o}
 
 
 else ifeq (${TARGET_BUILD}, unified)
 
-SRC = all.c
-OBJ = ${SRC:.c=.o}
+ SRC = all.c
+ OBJ = ${SRC:.c=.o}
 
 all.c:
 	find . -type f -name '*.c' ! -path '*/bin/*' > all.c.temp
@@ -182,10 +182,10 @@ else ifeq (${TARGET_OS}, windows)
  INCS = -I./ -I./bin/windows/glew-2.2.0/include -I./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/include
 
  ifeq (${TARGET_LINK}, dynamic)
- LIBS = -L./bin/windows/glew-2.2.0/bin/Release/x64 -L./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/bin -Wl,-Bstatic -Wl,-Bdynamic -lSDL3 -lglew32 -lglu32 -lopengl32
+  LIBS = -L./bin/windows/glew-2.2.0/bin/Release/x64 -L./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/bin -Wl,-Bstatic -Wl,-Bdynamic -lSDL3 -lglew32 -lglu32 -lopengl32
  else ifeq (${TARGET_LINK}, static)
-# LIBS = -L./bin/windows/glew-2.2.0/lib/Release/x64 -Wl,-Bstatic -static-libgcc -lmingw32 ./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/lib/libSDL3.dll.a -lglew32s -lglu32 -lopengl32 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid -lkernel32 -luuid -ladvapi32 -Wl,-Bdynamic
- LIBS = -L./bin/windows/glew-2.2.0/lib/Release/x64 -L./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/bin -Wl,-Bstatic -lglew32s -Wl,-Bdynamic -lmingw32 -lSDL3 -lglu32 -lopengl32 -lm
+  #LIBS = -L./bin/windows/glew-2.2.0/lib/Release/x64 -Wl,-Bstatic -static-libgcc -lmingw32 ./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/lib/libSDL3.dll.a -lglew32s -lglu32 -lopengl32 -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lversion -lsetupapi -lcfgmgr32 -luuid -lkernel32 -luuid -ladvapi32 -Wl,-Bdynamic
+  LIBS = -L./bin/windows/glew-2.2.0/lib/Release/x64 -L./bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/bin -Wl,-Bstatic -lglew32s -Wl,-Bdynamic -lmingw32 -lSDL3 -lglu32 -lopengl32 -lm
  endif
 
 
@@ -263,6 +263,8 @@ bin/windows:
 	unzip bin/windows/SDL3-devel-3.2.20-mingw.zip -d bin/windows/
 	unzip bin/windows/glew-2.2.0-win32.zip -d bin/windows/
 	rm bin/windows/*.zip -f
+
+
 endif
 
 

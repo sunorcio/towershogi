@@ -45,7 +45,7 @@ static const unsigned short digitfps_element[12][12] = {
 
 struct DIGITFPS_font digitfps_option = { 
 		{0.375,0.1875,0.375,0.625},
-		8*2 };
+		8 };
 
 
 static struct ISOLA_counter* digitfps_counter = {0};
@@ -65,41 +65,38 @@ static unsigned short digitfps_eleData[18]
 
 void digitfps_update(void){
 
-	if (isola_info_window.height > 720 && isola_info_window.width > 1280) {
-		digitfps_option.pixelSize = 8*2;
-	}else {
-		digitfps_option.pixelSize = 8*1;
-	}
-
-
 	ISOLA_GLDBG_( glUseProgram(digitfps_shaderProg) )
 
 	{int loc;
 	float matProj[4*4] = {0};
-	int lowRes;
+	float pixelScale;
 
 	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
 			-isola_info_window.yRatio,isola_info_window.yRatio, 0.25,8.,matProj);
-	loc = glGetUniformLocation(digitfps_shaderProg,"matProj");
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			digitfps_shaderProg,"matProj"); )
 	if(loc == -1){ SDL_Log("digitfps: matProj not found"); }
-	glUniformMatrix4fv(loc,1,GL_FALSE,matProj);
+	ISOLA_GLDBG_( glUniformMatrix4fv(loc,1,GL_FALSE,matProj); )
 
-	loc = glGetUniformLocation(digitfps_shaderProg,"digitColor");
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			digitfps_shaderProg,"digitColor"); )
 	if(loc == -1){SDL_Log("digitfps: digitColor not found");}
-	glUniform4fv(loc,1,digitfps_option.color);
+	ISOLA_GLDBG_( glUniform4fv(loc,1,digitfps_option.color); )
 
-	loc = glGetUniformLocation(digitfps_shaderProg,"pixelSize");
-	if(loc == -1){SDL_Log("digitfps: pixelSize not found");}
-	glUniform1i(loc,digitfps_option.pixelSize);
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			digitfps_shaderProg,"sizePixelWidth"); )
+	if(loc == -1){SDL_Log("digitfps: sizePixelWidth not found");}
+	ISOLA_GLDBG_( glUniform1i(loc,digitfps_option.sizePixelWidth); )
 
 	if (isola_info_window.xRatio == 1.f) {
-		lowRes = isola_info_window.width;
+		pixelScale = isola_info_window.pixelWidth;
 	}else{ 
-		lowRes = isola_info_window.height;
+		pixelScale = isola_info_window.pixelHeight;
 	}
-	loc = glGetUniformLocation(digitfps_shaderProg,"lowResolution");
-	if(loc == -1){SDL_Log("digitfps: lowResolution not found");}
-	glUniform1i(loc,lowRes);
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			digitfps_shaderProg,"pixelScale"); )
+	if(loc == -1){SDL_Log("digitfps: pixelScale not found");}
+	ISOLA_GLDBG_( glUniform1f(loc,pixelScale); )
 	}
 }
 
@@ -130,9 +127,10 @@ void digitfps_create(void){
 	ISOLA_GLDBG_( glUseProgram(digitfps_shaderProg) )
 
 	{int loc;
-	loc = glGetUniformLocation(digitfps_shaderProg,"digitAmount");
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			digitfps_shaderProg,"digitAmount"); )
 	if(loc == -1){SDL_Log("digitfps: digitAmount not found");}
-	glUniform1i(loc,digitfpsPrintAmount);
+	ISOLA_GLDBG_( glUniform1i(loc,digitfpsPrintAmount); )
 	}
 
 
