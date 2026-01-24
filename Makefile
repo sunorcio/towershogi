@@ -154,23 +154,23 @@ ifeq (${TARGET_OS}, linux)
  endif
 
  ifeq (${TARGET_RELEASE}, on)
-  #CFLAGS += -march=native
+  #CFLAGS += -march=native -fno-stack-protector
   CFLAGS += -O3 -ffast-math -pipe -march=x86-64
   #LDFLAGS +=
-  LDFLAGS += -flto=full
+  LDFLAGS += -ffast-math -flto=full -fno-stack-protector
  endif
 
  ifeq (${TARGET_DEBUG}, on)
   #CFLAGS +=
-  CFLAGS += -g -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -DISOLA_DBG
+  CFLAGS += -g -fno-omit-frame-pointer -fno-optimize-sibling-calls -mno-omit-leaf-frame-pointer -DISOLA_DBG
   #LDFLAGS +=
-  LDFLAGS +=
+  LDFLAGS += -g
  endif
 
  ifeq (${TARGET_SANITIZE}, on)
-  #CFLAGS += -Werror -Wpedantic
+  #CFLAGS += -Werror -Wpedantic -fstack-protector-strong -D_FORTIFY_SOURCE=2
   CFLAGS += -fsanitize=undefined -fsanitize=address -std=c89 -Weverything -Wno-switch-default -Wno-unused-macros -Wno-padded -Wno-assign-enum
-  #LDFLAGS +=
+  #LDFLAGS += -fsanitize=cfi
   LDFLAGS += -fsanitize=undefined -fsanitize=address
  endif
 
