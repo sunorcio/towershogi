@@ -153,14 +153,14 @@ unsigned char towershogi_scene_loop(void){
 
 
 		if (!towershogi_scene.state.pause) {
-			if(isola_timerStep(&currentScene->timing.logicTimer)){
+			if(isola_timerStep(&towershogi_scene.timing.logicTimer)){
 
 				towershogi_step();
 
 				isola_inputRepeat();
 			}
 
-			if(isola_counterStep(&currentScene->timing.frameCounter)){
+			if(isola_counterStep(&towershogi_scene.timing.frameCounter)){
 
 				glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 

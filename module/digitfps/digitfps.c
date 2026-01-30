@@ -48,7 +48,7 @@ struct DIGITFPS_font digitfps_option = {
 		8 };
 
 
-static struct ISOLA_counter* digitfps_counter = {0};
+static struct ISOLA_counter const* digitfps_counter = {0};
 static char digitfps_string[18] = {0};
 
 

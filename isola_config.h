@@ -24,7 +24,7 @@
 #define ISOLA_MSANTIALIASING  0 /* [0^2^4^8^16] (requires doublebuffer) */
 #define ISOLA_VSYNC           0 /* [1^0] */
 #define ISOLA_MAJOR_VERSION   3 /* gl version ( e.g. 4.6 == MAJ 4, MIN 6 ) */
-#define ISOLA_MINOR_VERSION   2
+#define ISOLA_MINOR_VERSION   0
 /* SDL_GL_CONTEXT_PROFILE_[CORE^COMPATIBILITY] (only since version 3.2) */
 #define ISOLA_PROFILE         SDL_GL_CONTEXT_PROFILE_COMPATIBILITY
 #define ISOLA_GLSLCHARMAX     10000 /* default glsl buffer size */

@@ -21,25 +21,22 @@ static void towermenu_scene_update(void);
 static void towermenu_scene_create(void);
 static void towermenu_scene_destroy(void);
 
+static struct SCENE_scene towermenu_scene = {0};
+
 
 
 
 static void towermenu_function_quit(void){
 
-	currentScene->state.returnControlValue = 0;
-	currentScene->state.run = 0;
+	towermenu_scene.state.returnControlValue = 0;
+	towermenu_scene.state.run = 0;
 }
 
 static void towermenu_function_play(void){
 
-	currentScene->state.returnControlValue = 1;
-	currentScene->state.run = 0;
+	towermenu_scene.state.returnControlValue = 1;
+	towermenu_scene.state.run = 0;
 }
-
-
-
-
-static struct SCENE_scene towermenu_scene = {0};
 
 
 
@@ -205,13 +202,13 @@ unsigned char towermenu_scene_loop(void){
 
 
 		if (!towermenu_scene.state.pause) {
-			if(isola_timerStep(&currentScene->timing.logicTimer)){
+			if(isola_timerStep(&towermenu_scene.timing.logicTimer)){
 
 				bitmenu_step();
 				isola_inputRepeat();
 			}
 
-			if(isola_counterStep(&currentScene->timing.frameCounter)){
+			if(isola_counterStep(&towermenu_scene.timing.frameCounter)){
 
 				glClear( GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT );
 
