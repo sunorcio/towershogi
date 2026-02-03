@@ -41,9 +41,12 @@
 #define TOWERSHOGI_MOVEMENT_CAPTURE 0xfe
 #define TOWERSHOGI_MOVEMENT_FIRST 0xfd
 
-#define TOWERSHOGI_BOARD_WIDTH 16
+#define TOWERSHOGI_BOARD_WIDTH 8
 #define TOWERSHOGI_BOARD_HEIGHT 8
 #define TOWERSHOGI_BOARD_SIZE (TOWERSHOGI_BOARD_WIDTH*TOWERSHOGI_BOARD_HEIGHT)
+
+#define TOWERSHOGI_TILE_SPAN 16
+#define TOWERSHOGI_TILE_GAP 1
 
 
 
@@ -61,8 +64,6 @@ static struct TOWERSHOGI_TILE* towershogi_hovered = {0};
 static struct TOWERSHOGI_TILE* towershogi_selected = {0};
 
 
-
-
 static enum ISOLA_state towershogi_glstate = 0x00000001;
 static unsigned int towershogi_shaderProg[1] = {0};
 static unsigned int towershogi_vertArrObj[1] = {0};
@@ -71,26 +72,12 @@ static unsigned int towershogi_texObj[1] = {0};
 static unsigned char* towershogi_vertData = {0};
 
 
+static void towershogi_chessSetup(void);
 
 
-void towershogi_update(void){
-
-	ISOLA_GLDBG_( glUseProgram(towershogi_shaderProg[0]) )
-
-	{int loc;
-	float matProj[4*4] = {0};
-
-	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
-			-isola_info_window.yRatio,isola_info_window.yRatio,0.25f,8.f,matProj);
-	ISOLA_GLDBG_( loc = glGetUniformLocation(
-			towershogi_shaderProg[0],"matProj"); )
-	if(loc == -1){ SDL_Log("bitfont: matProj not found"); }
-	ISOLA_GLDBG_( glUniformMatrix4fv(loc,1,GL_FALSE,matProj); )
-	}
-}
 
 
-void towershogi_create(void){
+static void towershogi_chessSetup(void){
 
 	SDL_memset(towershogi_piece,0,
 			sizeof(*towershogi_piece)*TOWERSHOGI_PIECE_AMOUNT);
@@ -290,6 +277,68 @@ void towershogi_create(void){
 			TOWERSHOGI_PIECE_(TOWERSHOGI_PIECE_KNIGHT,TOWERSHOGI_PLAYER_BLACK);
 	towershogi_board[7+7*TOWERSHOGI_BOARD_WIDTH].piece =
 			TOWERSHOGI_PIECE_(TOWERSHOGI_PIECE_ROOK,TOWERSHOGI_PLAYER_BLACK);
+}
+
+
+
+
+void towershogi_update(void){
+
+	ISOLA_GLDBG_( glUseProgram(towershogi_shaderProg[0]) )
+
+	{int loc = {0};
+	float projection[4*4] = {0};
+	int boardWidth = {0};
+	int boardHeight = {0};
+	int resolutionFit = {0};
+	int boardFit = {0};
+	int intScreenScaling = {0};
+	float tileScale = {0};
+	float screenOffset[2] = {0};
+
+	isola_mut_glproj_ortho(-isola_info_window.xLowRatio,
+			isola_info_window.xLowRatio,-isola_info_window.yLowRatio,
+			isola_info_window.yLowRatio,0.25f,8.f,projection);
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			towershogi_shaderProg[0],"projection"); )
+	if(loc == -1){ SDL_Log("towershogi: projection not found"); }
+	ISOLA_GLDBG_( glUniformMatrix4fv(loc,1,GL_FALSE,projection); )
+
+	boardWidth = ( (TOWERSHOGI_TILE_SPAN+TOWERSHOGI_TILE_GAP)
+			*TOWERSHOGI_BOARD_WIDTH )-TOWERSHOGI_TILE_GAP;
+	boardHeight = ( (TOWERSHOGI_TILE_SPAN+TOWERSHOGI_TILE_GAP)
+			*TOWERSHOGI_BOARD_HEIGHT )-TOWERSHOGI_TILE_GAP;
+	if ((float)isola_info_window.width/(float)isola_info_window.height >
+			(float)TOWERSHOGI_BOARD_WIDTH/(float)TOWERSHOGI_BOARD_HEIGHT) {
+		resolutionFit = isola_info_window.height;
+		boardFit = boardHeight;
+	}else{
+		resolutionFit = isola_info_window.width;
+		boardFit = boardWidth;
+	}
+	intScreenScaling = resolutionFit/boardFit;
+	tileScale = (float)TOWERSHOGI_TILE_SPAN*
+			(float)intScreenScaling*isola_info_window.pixelScale;
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			towershogi_shaderProg[0],"tileScale"); )
+	if(loc == -1){ SDL_Log("towershogi: tileScale not found"); }
+	ISOLA_GLDBG_( glUniform1f(loc,tileScale); )
+
+	screenOffset[0] = (1.f-(float)(boardWidth*intScreenScaling)/
+			(float)isola_info_window.width)-1.f;
+	screenOffset[1] = (1.f-(float)(boardHeight*intScreenScaling)/
+			(float)isola_info_window.height)-1.f;
+	ISOLA_GLDBG_( loc = glGetUniformLocation(
+			towershogi_shaderProg[0],"screenOffset"); )
+	if(loc == -1){ SDL_Log("towershogi: screenOffset not found"); }
+	ISOLA_GLDBG_( glUniform2f(loc,screenOffset[0],screenOffset[1]); )
+	}
+}
+
+
+void towershogi_create(void){
+
+	towershogi_chessSetup();
 
 
 	towershogi_selected = 0;
@@ -345,23 +394,19 @@ void towershogi_create(void){
 
 	ISOLA_GLDBG_( glUseProgram(towershogi_shaderProg[0]); )
 
-	{int loc;
+	{int loc = {0};
+	float gapOffset = {0};
+
 	ISOLA_GLDBG_( loc = glGetUniformLocation(
 			towershogi_shaderProg[0],"boardWidth"); )
 	if(loc == -1){ SDL_Log("towershogi: boardWidth not found"); }
 	ISOLA_GLDBG_( glUniform1i(loc,TOWERSHOGI_BOARD_WIDTH); )
 
-/* TODO	if (isola_info_window.pixelWidth) {
-	
-	} */
+	gapOffset = (float)TOWERSHOGI_TILE_GAP/(float)TOWERSHOGI_TILE_SPAN;
 	ISOLA_GLDBG_( loc = glGetUniformLocation(
-				towershogi_shaderProg[0],"boardSpan"); )
-	if(loc == -1){ SDL_Log("towershogi: boardSpan not found"); }
-	ISOLA_GLDBG_( glUniform1i(loc,
-			(TOWERSHOGI_BOARD_HEIGHT
-			 *(TOWERSHOGI_BOARD_HEIGHT>TOWERSHOGI_BOARD_WIDTH)
-			+TOWERSHOGI_BOARD_WIDTH
-			*(TOWERSHOGI_BOARD_WIDTH>=TOWERSHOGI_BOARD_HEIGHT))); )
+			towershogi_shaderProg[0],"gapOffset"); )
+	if(loc == -1){ SDL_Log("towershogi: gapOffset not found"); }
+	ISOLA_GLDBG_( glUniform1f(loc,gapOffset); )
 
 	ISOLA_GLDBG_( loc = glGetUniformLocation(
 				towershogi_shaderProg[0],"pieceAtlas"); )

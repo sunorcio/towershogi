@@ -30,7 +30,6 @@ const vec2 digitVertex[15] = vec2[](
 
 void main(){
 
-
 	gl_Position = matProj * vec4(
 					( digitVertex[gl_VertexID%15]
 						+vec2((gl_VertexID/15)*1.25,0.)

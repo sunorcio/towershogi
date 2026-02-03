@@ -306,6 +306,7 @@ release:
 windows:
 	make clean ${TARGET_BIN} TARGET_OS=windows TARGET_LINK=dynamic TARGET_BUILD=unified TARGET_RELEASE=on TARGET_DEBUG=on TARGET_SANITIZE=off
 
+
 isola:
 	git clone https://github.com/sunorcio/isola --depth 1
 	cp isola/isola_config.h isola_config.h -n

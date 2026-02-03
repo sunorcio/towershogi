@@ -11,6 +11,7 @@ flat out int vfCharIndex;
 
 
 uniform mat4 matProj;
+
 uniform float pixelScale;
 uniform int sizeMult;
 uniform vec2 screenPos;
@@ -58,7 +59,7 @@ void main(){
 					(bitfontVertPos[gl_VertexID%6]
 							+ ivec2( (gl_VertexID/6)%charWrap, -2*(gl_VertexID/6/charWrap))
 							+ vec2(0.,-2.)
-							)*sizeMult*pixelScale*8.,
+							)*sizeMult*8.*pixelScale,
 					-1.,1. )
 			+ vec4(screenPos,0.,0.);
 }

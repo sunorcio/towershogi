@@ -69,10 +69,9 @@ void digitfps_update(void){
 
 	{int loc;
 	float matProj[4*4] = {0};
-	float pixelScale;
 
-	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
-			-isola_info_window.yRatio,isola_info_window.yRatio, 0.25,8.,matProj);
+	isola_mut_glproj_ortho(-isola_info_window.xLowRatio,isola_info_window.xLowRatio,
+			-isola_info_window.yLowRatio,isola_info_window.yLowRatio, 0.25,8.,matProj);
 	ISOLA_GLDBG_( loc = glGetUniformLocation(
 			digitfps_shaderProg,"matProj"); )
 	if(loc == -1){ SDL_Log("digitfps: matProj not found"); }
@@ -88,15 +87,10 @@ void digitfps_update(void){
 	if(loc == -1){SDL_Log("digitfps: sizePixelWidth not found");}
 	ISOLA_GLDBG_( glUniform1i(loc,digitfps_option.sizePixelWidth); )
 
-	if (isola_info_window.xRatio == 1.f) {
-		pixelScale = isola_info_window.pixelWidth;
-	}else{ 
-		pixelScale = isola_info_window.pixelHeight;
-	}
 	ISOLA_GLDBG_( loc = glGetUniformLocation(
 			digitfps_shaderProg,"pixelScale"); )
 	if(loc == -1){SDL_Log("digitfps: pixelScale not found");}
-	ISOLA_GLDBG_( glUniform1f(loc,pixelScale); )
+	ISOLA_GLDBG_( glUniform1f(loc,isola_info_window.pixelScale); )
 	}
 }
 

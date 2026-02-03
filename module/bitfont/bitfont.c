@@ -63,24 +63,18 @@ void bitfont_update(void){
 
 	{int loc;
 	float matProj[4*4] = {0};
-	float pixelScale;
 
-	isola_mut_glproj_ortho(-isola_info_window.xRatio,isola_info_window.xRatio,
-			-isola_info_window.yRatio,isola_info_window.yRatio,0.25f,8.f,matProj);
+	isola_mut_glproj_ortho(-isola_info_window.xLowRatio,isola_info_window.xLowRatio,
+			-isola_info_window.yLowRatio,isola_info_window.yLowRatio,0.25f,8.f,matProj);
 	ISOLA_GLDBG_( loc = glGetUniformLocation(
 			bitfont_shaderProg[0],"matProj"); )
 	if(loc == -1){ SDL_Log("bitfont: matProj not found"); }
 	ISOLA_GLDBG_( glUniformMatrix4fv(loc,1,GL_FALSE,matProj); )
 
-	if (isola_info_window.xRatio == 1.f) {
-		pixelScale = isola_info_window.pixelWidth;
-	}else{ 
-		pixelScale = isola_info_window.pixelHeight;
-	}
 	ISOLA_GLDBG_( loc = glGetUniformLocation(
 			bitfont_shaderProg[0],"pixelScale"); )
 	if(loc == -1){SDL_Log("digitfps: pixelScale not found");}
-	ISOLA_GLDBG_( glUniform1f(loc,pixelScale); )
+	ISOLA_GLDBG_( glUniform1f(loc,isola_info_window.pixelScale); )
 	}
 }
 
