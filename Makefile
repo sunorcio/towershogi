@@ -276,6 +276,7 @@ clean:
 deepclean:
 	rm all.c -f
 	rm perf.* -f
+	rm *.dll -f
 	rm ${TARGET_BIN}${LINUX_EXT} ${TARGET_BIN}${WINDOWS_EXT} a${LINUX_EXT} -f
 	rm ${shell find . -type f -name '*.o' ! -path '*/bin/*'} -f
 	rm ${shell find . -type f -name '*.d' ! -path '*/bin/*'} -f
@@ -305,6 +306,8 @@ release:
 
 windows:
 	make clean ${TARGET_BIN} TARGET_OS=windows TARGET_LINK=dynamic TARGET_BUILD=unified TARGET_RELEASE=on TARGET_DEBUG=on TARGET_SANITIZE=off
+	cp bin/windows/glew-2.2.0/bin/Release/x64/glew32.dll .
+	cp bin/windows/SDL3-3.2.20/x86_64-w64-mingw32/bin/SDL3.dll .
 
 
 isola:

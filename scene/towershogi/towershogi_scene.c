@@ -146,7 +146,7 @@ unsigned char towershogi_scene_loop(void){
 					}
 				break;
 				case SDL_EVENT_TEXT_INPUT:
-					isola_textEditPush(/* ???well see */(char(*)[32])&event.text.text);
+					isola_textEditPush((char(*)[32])&event.text.text);
 				break;
 			}
 		}

@@ -56,9 +56,8 @@ static void towermenu_scene_update(void){
 	isola_get_window();
 	glViewport(0,0,isola_info_window.width, isola_info_window.height);
 
+
 	bitmenu_update();
-
-
 	bitfont_update();
 	digitfps_update();
 }
@@ -109,28 +108,25 @@ static void towermenu_scene_create(void){
 
 
 	bitmenu_create();
-
 	bitmenu_buildMenu();
-	bitmenu_buildGroup(-1,1,1,1);
-	bitmenu_buildScreen(2);
-	bitmenu_buildObject("'j'/'k' - up/down",0);
-	bitmenu_buildObject("'return' - activate option",0);
-	bitmenu_buildObject("edit rules",0);
-	bitmenu_buildGroup(-1,1,1,1);
+		bitmenu_buildGroup(-1.f,1.f,1.f,1.f);
 		bitmenu_buildScreen(2);
-		bitmenu_buildObject("these are rules :)",0);
-		bitmenu_buildObject("press q to go back to last menu",0);
-	bitmenu_buildGroupLeave();
-	bitmenu_buildObject("play",towermenu_function_play);
-	bitmenu_buildObject("join",0);
-	bitmenu_buildObject("host",0);
-	bitmenu_buildObject("options",0);
-	bitmenu_buildGroup(-1,1,1,1);
-		bitmenu_buildScreen(2);
-		bitmenu_buildObject("these are options :)",0);
-		bitmenu_buildObject("press q to go back to last menu",0);
-	bitmenu_buildGroupLeave();
-	bitmenu_buildObject("quit",towermenu_function_quit);
+		bitmenu_buildObject("'j'/'k'= up/down",0);
+		bitmenu_buildObject("'return/enter'= select option",0);
+		bitmenu_buildObject("play",towermenu_function_play);
+		bitmenu_buildObject("join",0);
+		bitmenu_buildGroup(-1.f,1.f,1.f,1.f);
+			bitmenu_buildScreen(2);
+			bitmenu_buildObject("'q'= go back",0);
+			bitmenu_buildObject("nothing here",0);
+			bitmenu_buildGroupLeave();
+		bitmenu_buildObject("host",0);
+		bitmenu_buildGroup(-1.f,1.f,1.f,1.f);
+			bitmenu_buildScreen(2);
+			bitmenu_buildObject("'q'= go back",0);
+			bitmenu_buildObject("nothing here",0);
+			bitmenu_buildGroupLeave();
+		bitmenu_buildObject("quit",towermenu_function_quit);
 
 	bitfont_create();
 	digitfps_create();
@@ -146,7 +142,6 @@ static void towermenu_scene_destroy(void){
 
 
 	bitmenu_destroy();
-
 	bitfont_destroy();
 	digitfps_destroy();
 

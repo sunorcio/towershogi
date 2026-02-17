@@ -52,7 +52,7 @@ static struct ISOLA_counter const* digitfps_counter = {0};
 static char digitfps_string[18] = {0};
 
 
-static enum ISOLA_state digitfps_glstate = 0x00000001;
+static ISOLA_state digitfps_glstate = ISOLA_STATE_BLEND;
 static unsigned int digitfps_shaderProg;
 static unsigned int digitfps_vertArrObj;
 static unsigned int digitfps_eleBufObj;

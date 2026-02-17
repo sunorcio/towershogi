@@ -28,7 +28,7 @@ uniform int boardWidth;
 
 
 
-const vec2 towershogiVertPos[] = vec2[](
+const vec2 vertPos[] = vec2[](
 		vec2(0. ,0. ),
 		vec2(1. ,0. ),
 		vec2(1. ,1. ),
@@ -37,7 +37,7 @@ const vec2 towershogiVertPos[] = vec2[](
 		vec2(0. ,1. )
 		);
 
-const vec2 towershogiTexCoord[] = vec2[](
+const vec2 texCoord[] = vec2[](
 		vec2(0*texOffsetX ,1*texOffsetY ),
 		vec2(1*texOffsetX ,1*texOffsetY ),
 		vec2(1*texOffsetX ,0*texOffsetY ),
@@ -51,16 +51,15 @@ const vec2 towershogiTexCoord[] = vec2[](
 
 void main(){
 
-	vfTexCoord = towershogiTexCoord[gl_VertexID%6]
+	vfTexCoord = texCoord[gl_VertexID%6]
 			+vec2(vertPiece%4*texOffsetX,vertPiece/4*texOffsetY);
 
 
 	vfState = vertState;
 
 
-	gl_Position = projection
-			*vec4(
-				( towershogiVertPos[gl_VertexID%6]
+	gl_Position = projection*
+			vec4( ( vertPos[gl_VertexID%6]
 					+ivec2( (gl_VertexID/6)%boardWidth,
 					(gl_VertexID/6)/boardWidth )*(1.+gapOffset) )*tileScale,
 				-4.,1.)

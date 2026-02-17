@@ -29,7 +29,8 @@ struct BITFONT_data* bitfont_requestPtr(unsigned int size){
 	for(i = 0;i<BITFONT_MAXDATAPOINTERS;i++){
 		if (bitfont_data[i].size == 0) {
 			bitfont_data[i].size = size;
-			bitfont_data[i].data = SDL_calloc(size,sizeof(struct BITFONT_object));
+			bitfont_data[i].data = (struct BITFONT_object*)SDL_calloc(size,
+					sizeof(struct BITFONT_object));
 			return &bitfont_data[i];
 		}
 	}}
@@ -49,7 +50,7 @@ void bitfont_freePtr(struct BITFONT_data* ptr){
 
 
 
-static enum ISOLA_state bitfont_state = 0x00000001;
+static ISOLA_state bitfont_state = ISOLA_STATE_BLEND;
 static unsigned int bitfont_shaderProg[1] = {0};
 static unsigned int bitfont_vertArrObj[1] = {0};
 static unsigned int bitfont_vertBufObj[1] = {0};
@@ -64,8 +65,9 @@ void bitfont_update(void){
 	{int loc;
 	float matProj[4*4] = {0};
 
-	isola_mut_glproj_ortho(-isola_info_window.xLowRatio,isola_info_window.xLowRatio,
-			-isola_info_window.yLowRatio,isola_info_window.yLowRatio,0.25f,8.f,matProj);
+	isola_mut_glproj_ortho(-isola_info_window.xLowRatio,
+			isola_info_window.xLowRatio,-isola_info_window.yLowRatio,
+			isola_info_window.yLowRatio,0.25f,8.f,matProj);
 	ISOLA_GLDBG_( loc = glGetUniformLocation(
 			bitfont_shaderProg[0],"matProj"); )
 	if(loc == -1){ SDL_Log("bitfont: matProj not found"); }
@@ -180,7 +182,8 @@ void bitfont_draw(void){
 				{unsigned int v;
 				for(v = 0;v<6;v++){
 
-					bitfont_vertData[c*6+v] = (unsigned char)bitfont_data[d].data[o].string[c]-32;
+					bitfont_vertData[c*6+v] = 
+							(unsigned char)bitfont_data[d].data[o].string[c]-32;
 				}}
 			}}
 

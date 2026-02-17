@@ -94,8 +94,8 @@ static void bitmenu_grouptreeStep(struct BITMENU_group* group){
 		bitmenu_bitfontCounter->sizeMult = 
 				bitmenu_counter->groupCurrent->screenParent->fontScaleGlobal;
 		bitmenu_bitfontCounter->charWrap = BITFONT_STRINGSIZE;
-		SDL_strlcpy(bitmenu_bitfontCounter->string,object->name,256);
-		bitmenu_bitfontCounter->x = group->x + 2.f/(float)isola_info_window.width;
+		SDL_strlcpy(bitmenu_bitfontCounter->string,object->name,BITFONT_STRINGSIZE);
+		bitmenu_bitfontCounter->x = group->x+2.f/(float)isola_info_window.width;
 		bitmenu_bitfontCounter->y = group->y
 				-16.f*2.f/(float)isola_info_window.height
 				*bitmenu_bitfontCounter->sizeMult*(float)o
@@ -179,10 +179,12 @@ static void bitmenu_leaveGroup(void){
 void bitmenu_buildMenu(void){
 
 	if (bitmenu_menuPointer != 0) {
-		bitmenu_menuPointer->menuNext = SDL_calloc(1,sizeof(struct BITMENU_menu));
+		bitmenu_menuPointer->menuNext = 
+				(struct BITMENU_menu*)SDL_calloc(1,sizeof(struct BITMENU_menu));
 		bitmenu_menuPointer = bitmenu_menuPointer->menuNext;
 	}else {
-		bitmenu_menuPointer = SDL_calloc(1,sizeof(struct BITMENU_menu));
+		bitmenu_menuPointer = 
+				(struct BITMENU_menu*)SDL_calloc(1,sizeof(struct BITMENU_menu));
 		bitmenu_head = bitmenu_menuPointer;
 		bitmenu_current = bitmenu_menuPointer;
 	}
@@ -192,14 +194,15 @@ void bitmenu_buildScreen(unsigned char fontScaleGlobal){
 
 	if (bitmenu_menuPointer->screenHead != 0) {
 		bitmenu_screenPointer->screenNext = 
-				SDL_calloc(1,sizeof(struct BITMENU_screen));
+				(struct BITMENU_screen*)SDL_calloc(1,sizeof(struct BITMENU_screen));
 		bitmenu_screenPointer = bitmenu_screenPointer->screenNext;
 		bitmenu_groupPointer->screenParent = bitmenu_screenPointer;
 		bitmenu_screenPointer->groupTransition = bitmenu_groupPointer;
 		bitmenu_screenPointer->fontScaleGlobal = fontScaleGlobal;
 	
 	}else {
-		bitmenu_screenPointer = SDL_calloc(1,sizeof(struct BITMENU_screen));
+		bitmenu_screenPointer = 
+				(struct BITMENU_screen*)SDL_calloc(1,sizeof(struct BITMENU_screen));
 		bitmenu_menuPointer->screenHead = bitmenu_screenPointer;
 		bitmenu_groupPointer->screenParent = bitmenu_screenPointer;
 		bitmenu_screenPointer->groupTransition = bitmenu_groupPointer;
@@ -211,7 +214,7 @@ void bitmenu_buildGroup(float x, float y, float w, float h){
 
 	if (bitmenu_menuPointer->groupHead != 0) {
 		bitmenu_objectPointer->groupLink =
-				SDL_calloc(1,sizeof(struct BITMENU_group));
+				(struct BITMENU_group*)SDL_calloc(1,sizeof(struct BITMENU_group));
 		bitmenu_objectPointer->groupLink->groupPrevious = bitmenu_groupPointer;
 		bitmenu_groupPointer = bitmenu_objectPointer->groupLink;
 		bitmenu_groupPointer->screenParent = bitmenu_screenPointer;
@@ -220,7 +223,8 @@ void bitmenu_buildGroup(float x, float y, float w, float h){
 		bitmenu_groupPointer->w = w;
 		bitmenu_groupPointer->h = h;
 	}else {
-		bitmenu_groupPointer = SDL_calloc(1,sizeof(struct BITMENU_group));
+		bitmenu_groupPointer = 
+				(struct BITMENU_group*)SDL_calloc(1,sizeof(struct BITMENU_group));
 		bitmenu_groupPointer->screenParent = bitmenu_screenPointer;
 		bitmenu_groupPointer->x = x;
 		bitmenu_groupPointer->y = y;
@@ -235,14 +239,15 @@ void bitmenu_buildObject(const char* name, void (*function)(void)){
 
 	if (bitmenu_groupPointer->objectHead != 0) {
 		bitmenu_objectPointer->objectNext =
-				SDL_calloc(1,sizeof(struct BITMENU_object));
+				(struct BITMENU_object*)SDL_calloc(1,sizeof(struct BITMENU_object));
 		bitmenu_objectPointer = bitmenu_objectPointer->objectNext;
 
-		SDL_strlcpy(bitmenu_objectPointer->name,name,256);
+		SDL_strlcpy(bitmenu_objectPointer->name,name,BITFONT_STRINGSIZE);
 		bitmenu_objectPointer->function = function;
 	}else {
-		bitmenu_objectPointer = SDL_calloc(1,sizeof(struct BITMENU_object));
-		SDL_strlcpy(bitmenu_objectPointer->name,name,256);
+		bitmenu_objectPointer = 
+				(struct BITMENU_object*)SDL_calloc(1,sizeof(struct BITMENU_object));
+		SDL_strlcpy(bitmenu_objectPointer->name,name,BITFONT_STRINGSIZE);
 		bitmenu_objectPointer->function = function;
 
 		bitmenu_groupPointer->objectHead = bitmenu_objectPointer;
@@ -265,27 +270,26 @@ void bitmenu_buildGroupLeave(void){
 void bitmenu_buildExample(void){
 
 	bitmenu_buildMenu();
-	bitmenu_buildGroup(-1.f,1.f,1.f,1.f);
-	bitmenu_buildScreen(2);
-	bitmenu_buildObject("menu 1, screen 1, group 1",0);
-	bitmenu_buildObject("go to group 2",0);
-	bitmenu_buildGroup(-1.f,0.f,1.f,1.f);
-		bitmenu_buildObject("menu 1, screen 1, group 2",0);
-	bitmenu_buildGroupLeave();
-	bitmenu_buildObject("go to screen 2",0);
-	bitmenu_buildGroup(-1.f,1.f,1.f,1.f);
-		bitmenu_buildScreen(3);
-		bitmenu_buildObject("menu 1, screen 2, group 3",0);
-		bitmenu_buildObject("go to group 4",0);
-		bitmenu_buildGroup(-1.f,0.f,1.f,1.f);
-			bitmenu_buildObject("menu 1, screen 2, group 4",0);
-		bitmenu_buildGroupLeave();
-	bitmenu_buildGroupLeave();
+		bitmenu_buildGroup(-1.f,1.f,1.f,1.f);
+			bitmenu_buildScreen(2);
+			bitmenu_buildObject("menu 1, screen 1, group 1",0);
+			bitmenu_buildObject("go to group 2",0);
+			bitmenu_buildGroup(-1.f,0.f,1.f,1.f);
+			bitmenu_buildObject("menu 1, screen 1, group 2",0);
+			bitmenu_buildGroupLeave();
+		bitmenu_buildObject("go to screen 2",0);
+		bitmenu_buildGroup(-1.f,1.f,1.f,1.f);
+			bitmenu_buildScreen(3);
+			bitmenu_buildObject("menu 1, screen 2, group 3",0);
+			bitmenu_buildObject("go to group 4",0);
+			bitmenu_buildGroup(-1.f,0.f,1.f,1.f);
+				bitmenu_buildObject("menu 1, screen 2, group 4",0);
+				bitmenu_buildGroupLeave();
 
 	bitmenu_buildMenu();
-	bitmenu_buildGroup(0.f,1.f,1.f,1.f);
-	bitmenu_buildScreen(1);
-	bitmenu_buildObject("menu 2, screen 1, group 1",0);
+		bitmenu_buildGroup(0.f,1.f,1.f,1.f);
+			bitmenu_buildScreen(1);
+			bitmenu_buildObject("menu 2, screen 1, group 1",0);
 }
 
 
