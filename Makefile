@@ -142,7 +142,8 @@ ifeq (${TARGET_OS}, linux)
 
 
  #CFLAGS = -O3 -ffast-math -pipe -march=native
- CFLAGS = ${INCS} -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result -Wno-sign-compare -Wno-unsafe-buffer-usage -std=c89 -D_REENTRANT
+ CFLAGS = ${INCS} -D_REENTRANT
+ CFLAGS += -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-result
  #LDFLAGS = -flto=full -v
  LDFLAGS = ${LIBS}
 
@@ -169,7 +170,8 @@ ifeq (${TARGET_OS}, linux)
 
  ifeq (${TARGET_SANITIZE}, on)
   #CFLAGS += -Werror -Wpedantic -fstack-protector-strong -D_FORTIFY_SOURCE=2
-  CFLAGS += -fsanitize=undefined -fsanitize=address -std=c89 -Weverything -Wno-switch-default -Wno-unused-macros -Wno-padded -Wno-assign-enum
+  CFLAGS += -fsanitize=undefined -fsanitize=address -std=c89
+  CFLAGS += -Weverything -Wno-unsafe-buffer-usage -Wno-switch-default -Wno-unused-macros -Wno-padded
   #LDFLAGS += -fsanitize=cfi
   LDFLAGS += -fsanitize=undefined -fsanitize=address
  endif
